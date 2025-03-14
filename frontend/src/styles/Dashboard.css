@@ -1,49 +1,52 @@
-.sidebar {
-    width: 250px;
-    height: 100vh;
-    background: #343a40;
-    color: white;
-    padding: 20px;
-    position: fixed;
+:root {
+  --primary-color: #00A86B;
+  --secondary-color: #006942;
+  --background-color: #f4f4f4;
+  --text-color: #fff;
+  font-family: "Camber SemiBold Regular", sans-serif;
+  --menu-background-color: #00A86B;
+  --menu-text-color: #000;
+  --menu-font-family: Arial, sans-serif;
+}
+
+
+
+/* DASHBOARD */
+.dashboard-container {
+  display: flex;
+}
+
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content {
+  padding: 20px;
+}
+
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
   }
-  
-  .sidebar h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar ul li {
-    margin: 15px 0;
-  }
-  
+
   .sidebar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    display: block;
+    font-size: 14px;
     padding: 10px;
-    border-radius: 5px;
-  }
-  
-  .sidebar ul li a:hover {
-    background: #007bff;
   }
 
-  
-
-  .dashboard-container {
-    display: flex;
-  }
-  
   .dashboard-content {
-    margin-left: 250px;
-    padding: 20px;
-    width: 100%;
+    margin-left: 60px;
   }
-  
-  
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row label {
+    margin-right: 0;
+  }
+}
