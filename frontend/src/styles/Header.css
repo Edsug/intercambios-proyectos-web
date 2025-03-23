@@ -1,45 +1,91 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:wght@300;400;600');
+
+/* Banner superior */
+.top-banner {
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  transition: opacity 0.3s ease, height 0.3s ease;
+}
+
+.header-banner-image {
+  height: 100%;
+  max-width: 1200px;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+
 .header {
+  font-family: 'Poppins', sans-serif;
   background: var(--primary-color);
   color: var(--text-color);
-  padding: 10px 20px; /* Reducción del padding */
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px; /* Altura más pequeña */
+  height: 60px;
+  position: sticky; /* Cambiamos de relative a sticky */
+  top: 0; /* Se pegará en la parte superior de la ventana */
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: top 0.3s ease-in-out; /* Agregamos transición para un desplazamiento suave */
 }
 
-/* Menú lateral (botón de hamburguesa) */
-.menu-btn {
-  background: var(--secondary-color);
+/* Botón hamburguesa en el header */
+.hamburger-button {
+  background: transparent;
   border: none;
   color: white;
   cursor: pointer;
-  font-size: 18px;
-  padding: 8px;
-  border-radius: 5px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  padding: 0;
+  margin-right: 10px;
 }
 
-.menu-btn svg {
-  width: 30px;
-  height: 30px;
+.hamburger-button:hover {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
-/* Contenedor de imágenes en el centro */
+/* Título de la aplicación */
+.app-title {
+  font-family: 'Poppins', sans-serif;
+  color: white;
+  font-size: 22px;
+  margin: 0;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.header-center:hover .app-title {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor central */
 .header-center {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-/* Logo principal */
-.header-logo {
-  height: 40px; /* Reducido para mejor proporción */
-}
-
-.header-letters {
-  height: 35px; /* Ajuste proporcional */
+  justify-content: center;
+  flex: 1;
 }
 
 /* Sección de usuario */
@@ -55,130 +101,158 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.user-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.user-btn.active {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 .user-btn svg {
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.user-btn.active svg {
+  transform: scale(1.1);
 }
 
 /* Menú desplegable del usuario */
 .user-menu {
   position: absolute;
-  right: 10px; /* Lo pega más al borde derecho */
-  top: px; /* Lo coloca justo debajo del icono de usuario */
-  background: #ffffff; /* Fondo blanco */
-  color: #333; /* Texto oscuro para contraste */
-  font-family: var(--menu-font-family);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Sombra sutil */
+  right: 0;
+  top: 50px;
+  background: #ffffff;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   min-width: 200px;
   display: flex;
   flex-direction: column;
   padding: 8px 0;
-  border: 1px solid #ddd; /* Borde ligero */
-  z-index: 1000; /* Para que sobresalga sobre otros elementos */
+  border: 1px solid #ddd;
+  z-index: 1000;
+  
+  /* Animación */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.user-menu.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* Botones dentro del menú de usuario */
 .user-menu button {
-  display: block;
+  display: flex;
   width: 100%;
   border: none;
   background: none;
   padding: 12px;
   cursor: pointer;
   text-align: left;
-  color: #333; /* Texto oscuro */
+  color: #333;
   font-size: 16px;
-  font-family: var(--menu-font-family);
+  font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease-in-out;
+  align-items: center;
+  transform: translateX(-10px);
+  opacity: 0;
+}
+
+.user-menu.visible button {
+  transform: translateX(0);
+  opacity: 1;
+  transition-delay: 0.1s;
+}
+
+.user-menu.visible button:nth-child(2) {
+  transition-delay: 0.15s;
+}
+
+.user-menu.visible button:nth-child(3) {
+  transition-delay: 0.2s;
+}
+
+.user-menu button svg {
+  margin-right: 10px;
+  min-width: 16px;
 }
 
 /* Efecto hover: fondo de color y cambio de texto */
 .user-menu button:hover {
-  background: var(--primary-color); /* Color principal como fondo al pasar el mouse */
-  color: #ffffff; /* Texto blanco para mejor contraste */
+  background: var(--primary-color);
+  color: #ffffff;
   font-weight: bold;
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
+  .top-banner {
+    height: 80px;
+  }
+  
   .header {
     height: 55px;
-    padding: 8px 15px;
+    padding: 0 15px;
   }
 
-  .header-left {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-  }
-
-  .header-center {
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .header-logo,
-  .header-letters {
-      height: 35px;
-  }
-
-  .menu-btn svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .user-btn svg {
-    width: 35px;
-    height: 35px;
-  }
-
-  .user-section {
-      margin-top: 10px;
+  .app-title {
+    font-size: 18px;
+    padding: 6px 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .header-logo,
-  .header-letters {
-      max-width: 30px;
+  .top-banner {
+    height: 60px;
   }
-
+  
   .header {
     height: 50px;
-    padding: 6px 10px;
+    padding: 0 10px;
   }
 
-.menu-btn svg {
-    width: 25px;
-    height: 25px;
+  .app-title {
+    font-size: 16px;
+    padding: 4px 10px;
   }
 
   .user-btn svg {
-      width: 32px;
-      height: 32px;
+    width: 22px;
+    height: 22px;
   }
-
 }
 
 /* Ajustes para responsividad */
 @media (max-width: 768px) {
   .user-menu {
-      right: 5px;
-      top: 55px;
-      min-width: 180px;
+    right: 5px;
+    top: 55px;
+    min-width: 180px;
   }
 }
 
 @media (max-width: 480px) {
   .user-menu {
-      right: 0;
-      left: auto;
-      top: 50px;
-      width: 100%;
-      border-radius: 0;
+    right: 0;
+    left: auto;
+    top: 50px;
+    width: 100%;
+    border-radius: 0;
   }
 }

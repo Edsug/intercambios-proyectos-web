@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-import { FaUserCircle, FaSignOutAlt, FaKey, FaUserEdit, FaBars } from "react-icons/fa";
-
+import React, { useState, useRef, useEffect } from "react";
+import { FaUserCircle, FaSignOutAlt, FaKey, FaUserEdit, FaBars, FaTimes } from "react-icons/fa";
 import "../styles/Header.css";
-import logo from "../assets/logo.png"; // Importa logo
-import letrasCu from "../assets/LetrasCu.png"; // Match the exact filename
+import headerImage from "../assets/header.png";
 
-
-const Header = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar, isOpen }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const toggleUserMenu = () => {
     setUserMenuOpen(!userMenuOpen);
@@ -19,37 +17,64 @@ const Header = ({ toggleSidebar }) => {
 
   const handleLogout = () => {
     closeUserMenu();
-    window.location.reload(); // Recarga la página
+    window.location.reload();
   };
 
+  // Cierra el menú si se hace clic fuera de él
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
+
   return (
-    <header className="header">
-      <div className="header-left">
-        <button onClick={toggleSidebar} className="menu-btn">
-          <FaBars size={50} />
-        </button>
+    <>
+      <div className="top-banner">
+        <img src={headerImage} alt="Banner" className="header-banner-image" />
       </div>
-
-      {/* Contenedor central para imágenes */}
-      <div className="header-center">
-        <img src={logo} alt="Logo" className="header-logo" />
-        <img src={letrasCu} alt="Letras CU" className="header-letters" />
-      </div>
-
-      <div className="user-section">
-        <button onClick={toggleUserMenu} className="user-btn">
-          <FaUserCircle size={60} />
+      <header className="header">
+        {/* Botón hamburguesa movido al header */}
+        <button 
+          className="hamburger-button"
+          onClick={toggleSidebar}
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
         </button>
 
-        {userMenuOpen && (
-          <div className="user-menu">
-            <button onClick={closeUserMenu}><FaUserEdit /> Editar Perfil</button>
-            <button onClick={closeUserMenu}><FaKey /> Cambiar Contraseña</button>
-            <button onClick={handleLogout}><FaSignOutAlt /> Cerrar Sesión</button>
+        <div className="header-center">
+          <h1 className="app-title">Sistema de Registro de Intercambio</h1>
+        </div>
+
+        <div className="user-section" ref={menuRef}>
+          <button 
+            onClick={toggleUserMenu} 
+            className={`user-btn ${userMenuOpen ? 'active' : ''}`}
+          >
+            <FaUserCircle size={24} />
+          </button>
+
+          <div className={`user-menu ${userMenuOpen ? 'visible' : ''}`}>
+            <button onClick={closeUserMenu}>
+              <FaUserEdit size={16} /> <span>Editar Perfil</span>
+            </button>
+            <button onClick={closeUserMenu}>
+              <FaKey size={16} /> <span>Cambiar Contraseña</span>
+            </button>
+            <button onClick={handleLogout}>
+              <FaSignOutAlt size={16} /> <span>Cerrar Sesión</span>
+            </button>
           </div>
-        )}
-      </div>
-    </header>
+        </div>
+      </header>
+    </>
   );
 };
 

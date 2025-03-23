@@ -1,49 +1,49 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { 
-  FaBars,
-  FaTimes,
   FaChartBar, 
   FaFileAlt, 
   FaSearch, 
   FaClipboardList, 
-  FaCog 
+  FaCog
 } from "react-icons/fa"; 
 import "../styles/SideBar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const location = useLocation();
+  
   return (
-    <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
-      <button className="toggle-btn" onClick={toggleSidebar}>
-        {isOpen ? <FaTimes /> : <FaBars />}
-      </button>
-      <ul>
-        <li>
-          <Link to="/dashboard" onClick={toggleSidebar}>
-            <FaChartBar /> {isOpen && "Dashboard"}
-          </Link>
-        </li>
-        <li>
-          <Link to="/registro" onClick={toggleSidebar}>
-            <FaFileAlt /> {isOpen && "Registro"}
-          </Link>
-        </li>
-        <li>
-          <Link to="/busqueda" onClick={toggleSidebar}>
-            <FaSearch /> {isOpen && "Buscar"}
-          </Link>
-        </li>
-        <li>
-          <Link to="/reportes" onClick={toggleSidebar}>
-            <FaClipboardList /> {isOpen && "Reportes"}
-          </Link>
-        </li>
-        <li>
-          <Link to="/configuracion" onClick={toggleSidebar}>
-            <FaCog /> {isOpen && "Configuración"}
-          </Link>
-        </li>
-      </ul>
+    <div className="sidebar-wrapper">
+      {/* Eliminado el botón hamburguesa de aquí, ya que ahora está en el header */}
+      <div id="sidebarMenu" className={isOpen ? 'open' : ''}>
+        <ul className="sidebarMenuInner">
+          <li className={location.pathname === "/dashboard" ? "active" : ""}>
+            <Link to="/dashboard" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+              <FaChartBar size={20} /> <span>Dashboard</span>
+            </Link>
+          </li>
+          <li className={location.pathname === "/registro" ? "active" : ""}>
+            <Link to="/registro" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+              <FaFileAlt size={20} /> <span>Registro</span>
+            </Link>
+          </li>
+          <li className={location.pathname === "/busqueda" ? "active" : ""}>
+            <Link to="/busqueda" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+              <FaSearch size={20} /> <span>Buscar</span>
+            </Link>
+          </li>
+          <li className={location.pathname === "/reportes" ? "active" : ""}>
+            <Link to="/reportes" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+              <FaClipboardList size={20} /> <span>Reportes</span>
+            </Link>
+          </li>
+          <li className={location.pathname === "/configuracion" ? "active" : ""}>
+            <Link to="/configuracion" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+              <FaCog size={20} /> <span>Configuración</span>
+            </Link>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

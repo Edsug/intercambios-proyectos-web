@@ -1,7 +1,6 @@
-.App {
-  text-align: center;
-}
+@import url('https://fonts.googleapis.com/css?family=Poppins:wght@300;400;600');
 
+/* Default React styles */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -13,21 +12,9 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
 .App-link {
   color: #61dafb;
 }
-
 
 @keyframes App-logo-spin {
   from {
@@ -36,4 +23,88 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Layout styles */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+.dashboard-container {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 160px); /* 100px banner + 60px header */
+  position: relative;
+}
+
+.dashboard-main {
+  flex: 1;
+  margin-left: 0;
+  transition: all 0.3s ease;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajuste cuando el sidebar está abierto */
+body.sidebar-open .dashboard-main {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .dashboard-container {
+    min-height: calc(100vh - 135px); /* 80px banner + 55px header */
+  }
+  
+  body.sidebar-open .dashboard-main {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    min-height: calc(100vh - 110px); /* 60px banner + 50px header */
+  }
+  
+  body.sidebar-open .dashboard-main {
+    margin-left: 0;
+    width: 100%;
+    opacity: 0.8;
+  }
+  
+  body.sidebar-open::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+    animation: fadeIn 0.3s;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* Ajustes generales */
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ocultar banner en scroll si se desea */
+.top-banner.hidden {
+  opacity: 0;
+  height: 0;
 }

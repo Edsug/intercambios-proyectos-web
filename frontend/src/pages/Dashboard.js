@@ -1,23 +1,27 @@
-import React, { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import React from "react";
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div className="dashboard-container">
-      <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-      <div className="dashboard-main">
-        <Header toggleSidebar={toggleSidebar} />
-        <div className="dashboard-content">
-          <h1>📊 Bienvenido al Dashboard</h1>
-          <p>Aquí verás un resumen de los alumnos registrados y las últimas acciones.</p>
+    <div className="dashboard-content">
+      <div className="dashboard-welcome">
+        <h1>📊 Bienvenido al Dashboard</h1>
+        <p>Aquí verás un resumen de los alumnos registrados y las últimas acciones.</p>
+      </div>
+      
+      {/* Aquí puedes agregar más contenido del dashboard como estadísticas, gráficos, etc. */}
+      <div className="dashboard-stats">
+        <div className="stat-card">
+          <h3>Total de alumnos</h3>
+          <p className="stat-number">124</p>
+        </div>
+        <div className="stat-card">
+          <h3>Registros nuevos</h3>
+          <p className="stat-number">8</p>
+        </div>
+        <div className="stat-card">
+          <h3>Cursos activos</h3>
+          <p className="stat-number">12</p>
         </div>
       </div>
     </div>
