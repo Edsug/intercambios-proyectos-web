@@ -1,16 +1,17 @@
 /* Estilos generales */
+/* Estilos generales */
 .login-container {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(to right, #1e3c72, #2a5298);
+  background: url("../assets/Biblioteca.jpg") no-repeat center center/cover;
   padding: 20px;
 }
 
 /* Caja del formulario */
 .login-box {
-  background: white;
+  background: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -18,6 +19,9 @@
   max-width: 350px;
   text-align: center;
 }
+
+/* Resto del CSS sigue igual */
+
 
 /* Estilos para los grupos de entrada */
 .input-group {
@@ -56,9 +60,7 @@ button {
   transition: 0.3s;
 }
 
-button:hover {
-  background: #0056b3;
-}
+
 
 /* Mensaje de error */
 .error-message {

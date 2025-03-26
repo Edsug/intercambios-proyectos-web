@@ -39,6 +39,10 @@ const Header = ({ toggleSidebar, isOpen }) => {
       <div className="top-banner">
         <img src={headerImage} alt="Banner" className="header-banner-image" />
       </div>
+
+
+
+
       <header className="header">
         {/* Botón hamburguesa movido al header */}
         <button 
@@ -50,7 +54,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
         </button>
 
         <div className="header-center">
-          <h1 className="app-title">Sistema de Registro de Intercambio</h1>
+          <h1 className="app-title">Sistema para la gestion de alumnos area de intercambios</h1>
         </div>
 
         <div className="user-section" ref={menuRef}>
