@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "../styles/Dashboard.css";
+import "../styles/Reportes.css";
 
 const Reportes = () => {
-  const [reportType, setReportType] = useState('general');
+  const [reportType, setReportType] = useState("general");
 
   return (
     <div className="dashboard-content">
@@ -10,39 +10,27 @@ const Reportes = () => {
         <h1>📊 Generar Reportes</h1>
         <p>Aquí se podrán generar y exportar reportes.</p>
       </div>
-      
+
       <div className="report-container">
         <div className="report-options">
-          <h3>Tipo de Reporte</h3>
+          <h3>Filtrar por:</h3>
           <div className="report-type-selector">
-            <button 
-              className={`report-type-button ${reportType === 'general' ? 'active' : ''}`}
-              onClick={() => setReportType('general')}
+            <label htmlFor="reportType">Tipo de reporte:</label>
+            <select
+              id="reportType"
+              className="report-type-dropdown"
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
             >
-              General
-            </button>
-            <button 
-              className={`report-type-button ${reportType === 'becas' ? 'active' : ''}`}
-              onClick={() => setReportType('becas')}
-            >
-              Becas
-            </button>
-            <button 
-              className={`report-type-button ${reportType === 'carreras' ? 'active' : ''}`}
-              onClick={() => setReportType('carreras')}
-            >
-              Por Carrera
-            </button>
-            <button 
-              className={`report-type-button ${reportType === 'paises' ? 'active' : ''}`}
-              onClick={() => setReportType('paises')}
-            >
-              Por País
-            </button>
+              <option value="general">General</option>
+              <option value="becas">Becas</option>
+              <option value="carreras">Por Carrera</option>
+              <option value="paises">Por País</option>
+            </select>
           </div>
-          
+
           <div className="report-filters">
-            <h3>Filtros</h3>
+            <h3>Datos del filtro</h3>
             <div className="filter-row">
               <label>
                 Período:
@@ -50,9 +38,10 @@ const Reportes = () => {
                   <option value="2024A">2024A</option>
                   <option value="2023B">2023B</option>
                   <option value="2023A">2023A</option>
+                  <option value="Todos">Todos</option>
                 </select>
               </label>
-              
+
               <label>
                 Formato:
                 <select className="filter-select">
@@ -63,27 +52,26 @@ const Reportes = () => {
               </label>
             </div>
           </div>
-          
+
           <button className="generate-report-button">Generar Reporte</button>
         </div>
-        
+
         <div className="report-preview">
           <h3>Vista Previa</h3>
           <div className="preview-container">
-            {reportType === 'general' && (
+            {reportType === "general" && (
               <div className="report-chart">
                 <p>Gráfico de estadísticas generales</p>
-                {/* Aquí podrías incluir un componente de gráfico real */}
                 <div className="placeholder-chart">
-                  <div className="chart-bar" style={{height: '60%'}}></div>
-                  <div className="chart-bar" style={{height: '80%'}}></div>
-                  <div className="chart-bar" style={{height: '45%'}}></div>
-                  <div className="chart-bar" style={{height: '70%'}}></div>
+                  <div className="chart-bar" style={{ height: "60%" }}></div>
+                  <div className="chart-bar" style={{ height: "80%" }}></div>
+                  <div className="chart-bar" style={{ height: "45%" }}></div>
+                  <div className="chart-bar" style={{ height: "70%" }}></div>
                 </div>
               </div>
             )}
-            
-            {reportType === 'becas' && (
+
+            {reportType === "becas" && (
               <div className="report-chart">
                 <p>Distribución de becas</p>
                 <div className="placeholder-pie-chart">
@@ -93,20 +81,20 @@ const Reportes = () => {
                 </div>
               </div>
             )}
-            
-            {reportType === 'carreras' && (
+
+            {reportType === "carreras" && (
               <div className="report-chart">
                 <p>Alumnos por carrera</p>
                 <div className="placeholder-chart">
-                  <div className="chart-bar" style={{height: '90%'}}></div>
-                  <div className="chart-bar" style={{height: '60%'}}></div>
-                  <div className="chart-bar" style={{height: '75%'}}></div>
-                  <div className="chart-bar" style={{height: '40%'}}></div>
+                  <div className="chart-bar" style={{ height: "90%" }}></div>
+                  <div className="chart-bar" style={{ height: "60%" }}></div>
+                  <div className="chart-bar" style={{ height: "75%" }}></div>
+                  <div className="chart-bar" style={{ height: "40%" }}></div>
                 </div>
               </div>
             )}
-            
-            {reportType === 'paises' && (
+
+            {reportType === "paises" && (
               <div className="report-chart">
                 <p>Destinos internacionales</p>
                 <div className="placeholder-world-map">

@@ -1,24 +1,35 @@
-import React from "react";
-import "../styles/Dashboard.css";
+import React, { useState } from "react";
+import "../styles/Busqueda.css";
 
 const Busqueda = () => {
+  const [searchType, setSearchType] = useState("nombre");
+
   return (
     <div className="dashboard-content">
       <div className="content-header">
         <h1>🔍 Buscar Alumnos</h1>
         <p>Aquí se podrán buscar los alumnos registrados.</p>
       </div>
-      
+
       <div className="search-container">
         <div className="search-box">
+          <select 
+            className="search-type-select" 
+            value={searchType} 
+            onChange={(e) => setSearchType(e.target.value)}
+          >
+            <option value="nombre">Nombre</option>
+            <option value="codigo">Código</option>
+          </select>
+
           <input 
             type="text" 
-            placeholder="Buscar por nombre, código o carrera..." 
+            placeholder={`Buscar por ${searchType}...`} 
             className="search-input"
           />
           <button className="search-button">Buscar</button>
         </div>
-        
+
         <div className="filter-options">
           <select className="filter-select">
             <option value="">Todas las carreras</option>
@@ -26,7 +37,7 @@ const Busqueda = () => {
             <option value="sistemas">Sistemas</option>
             <option value="negocios">Negocios</option>
           </select>
-          
+
           <select className="filter-select">
             <option value="">Todos los años</option>
             <option value="2024">2024</option>
@@ -35,7 +46,7 @@ const Busqueda = () => {
           </select>
         </div>
       </div>
-      
+
       <div className="results-container">
         <table className="data-table">
           <thead>

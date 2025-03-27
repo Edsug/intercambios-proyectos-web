@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import "../styles/Dashboard.css";
+import "../styles/Configuracion.css";
 
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState('perfil');
   const [userProfile, setUserProfile] = useState({
     nombre: 'ADMINISTRADOR',
-    email: 'admin@example.com',
     password: '********',
     rol: 'Administrador'
   });
@@ -66,12 +65,6 @@ const Configuracion = () => {
           >
             Configuración del Sistema
           </button>
-          <button 
-            className={`config-tab ${currentTab === 'seguridad' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('seguridad')}
-          >
-            Seguridad
-          </button>
         </div>
         
         <div className="config-content">
@@ -83,15 +76,6 @@ const Configuracion = () => {
                   type="text" 
                   name="nombre" 
                   value={userProfile.nombre} 
-                  onChange={handleProfileChange} 
-                />
-              </div>
-              <div className="form-group">
-                <label>Correo Electrónico:</label>
-                <input 
-                  type="email" 
-                  name="email" 
-                  value={userProfile.email} 
                   onChange={handleProfileChange} 
                 />
               </div>
@@ -171,42 +155,6 @@ const Configuracion = () => {
               <button type="submit" className="save-button">Guardar Configuración</button>
             </form>
           )}
-          
-          {currentTab === 'seguridad' && (
-            <div className="security-settings">
-              <div className="form-group">
-                <h3>Cambiar Contraseña</h3>
-                <input type="password" placeholder="Contraseña actual" />
-                <input type="password" placeholder="Nueva contraseña" />
-                <input type="password" placeholder="Confirmar nueva contraseña" />
-                <button className="save-button">Actualizar Contraseña</button>
-              </div>
-              
-              <div className="form-group">
-                <h3>Sesiones Activas</h3>
-                <div className="active-session">
-                  <div>
-                    <strong>Chrome - Windows</strong>
-                    <p>Última actividad: Hoy, 10:45 AM</p>
-                  </div>
-                  <button className="danger-button">Cerrar Sesión</button>
-                </div>
-                <div className="active-session">
-                  <div>
-                    <strong>Firefox - MacOS</strong>
-                    <p>Última actividad: Ayer, 3:20 PM</p>
-                  </div>
-                  <button className="danger-button">Cerrar Sesión</button>
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <h3>Acciones de Seguridad</h3>
-                <button className="danger-button">Cerrar Todas las Sesiones</button>
-                <button className="danger-button">Desactivar Cuenta</button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -214,3 +162,4 @@ const Configuracion = () => {
 };
 
 export default Configuracion;
+

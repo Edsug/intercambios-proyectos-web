@@ -1,0 +1,141 @@
+
+  
+  /* CONTENEDOR PRINCIPAL DE CONFIGURACIÓN */
+  .dashboard-content {
+    padding-top: 60px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .content-header {
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .content-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+  
+  .content-header p {
+    color: #666;
+    margin-bottom: 0;
+  }
+  
+  /* CONTENEDOR DE CONFIGURACIÓN */
+  .config-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .config-tabs {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  
+  .config-tab {
+    background: none;
+    border: 2px solid var(--primary-color);
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 8px;
+  }
+  
+  .config-tab.active {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+  }
+  
+  .config-tab:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }
+  
+  .config-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* FORMULARIOS */
+  .config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .checkbox-group input {
+    transform: scale(1.2);
+  }
+  
+  .save-button {
+    background: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+  }
+  
+  .save-button:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .config-tabs {
+      flex-direction: column;
+    }
+  
+    .config-tab {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .form-group input,
+    .form-group select {
+      width: 100%;
+    }
+  }
+  

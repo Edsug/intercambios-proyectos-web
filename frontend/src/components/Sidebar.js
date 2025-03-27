@@ -14,31 +14,30 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   
   return (
     <div className="sidebar-wrapper">
-      {/* Eliminado el botón hamburguesa de aquí, ya que ahora está en el header */}
       <div id="sidebarMenu" className={isOpen ? 'open' : ''}>
         <ul className="sidebarMenuInner">
           <li className={location.pathname === "/dashboard" ? "active" : ""}>
-            <Link to="/dashboard" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+            <Link to="/dashboard" onClick={toggleSidebar}>
               <FaChartBar size={20} /> <span>Dashboard</span>
             </Link>
           </li>
           <li className={location.pathname === "/registro" ? "active" : ""}>
-            <Link to="/registro" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+            <Link to="/registro" onClick={toggleSidebar}>
               <FaFileAlt size={20} /> <span>Registro</span>
             </Link>
           </li>
           <li className={location.pathname === "/busqueda" ? "active" : ""}>
-            <Link to="/busqueda" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+            <Link to="/busqueda" onClick={toggleSidebar}>
               <FaSearch size={20} /> <span>Buscar</span>
             </Link>
           </li>
           <li className={location.pathname === "/reportes" ? "active" : ""}>
-            <Link to="/reportes" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+            <Link to="/reportes" onClick={toggleSidebar}>
               <FaClipboardList size={20} /> <span>Reportes</span>
             </Link>
           </li>
           <li className={location.pathname === "/configuracion" ? "active" : ""}>
-            <Link to="/configuracion" onClick={() => window.innerWidth <= 480 && toggleSidebar()}>
+            <Link to="/configuracion" onClick={toggleSidebar}>
               <FaCog size={20} /> <span>Configuración</span>
             </Link>
           </li>

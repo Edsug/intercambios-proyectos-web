@@ -71,3 +71,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.save-button, .config-tab {
+  margin: 2px;
+}
