@@ -4,22 +4,52 @@ import "../styles/Configuracion.css";
 const Configuracion = () => {
   const [userProfile, setUserProfile] = useState({
     nombre: "ADMINISTRADOR",
-    password: "",
-    rol: "Administrador"
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    rol: "Administrador",
   });
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setUserProfile({
       ...userProfile,
-      [name]: value
+      [name]: value,
     });
   };
 
-  const handleProfileSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    console.log("Perfil actualizado:", userProfile);
-    alert("Perfil actualizado correctamente");
+
+    if (userProfile.newPassword !== userProfile.confirmPassword) {
+      alert("Las contraseñas nuevas no coinciden");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost/actualizar_usuario.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          currentPassword: userProfile.currentPassword,
+          newPassword: userProfile.newPassword
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        alert("Contraseña actualizada correctamente");
+        setUserProfile({ ...userProfile, currentPassword: "", newPassword: "", confirmPassword: "" });
+      } else {
+        alert("Error al actualizar la contraseña: " + result.message);
+      }
+    } catch (error) {
+      alert("Error de conexión con el servidor");
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -28,42 +58,53 @@ const Configuracion = () => {
         <h1>⚙️ Configuración</h1>
         <p>Administra tu cuenta.</p>
       </div>
-      
+
       <div className="config-container">
         <div className="config-content">
           <form onSubmit={handleProfileSubmit} className="config-form">
             <div className="form-group">
               <label>Nombre:</label>
-              <input 
-                type="text" 
-                name="nombre" 
-                value={userProfile.nombre} 
-                onChange={handleProfileChange} 
+              <input type="text" name="nombre" value={userProfile.nombre} disabled />
+            </div>
+            <div className="form-group">
+              <label>Contraseña Actual:</label>
+              <input
+                type="password"
+                name="currentPassword"
+                value={userProfile.currentPassword}
+                onChange={handleProfileChange}
+                required
               />
             </div>
             <div className="form-group">
-              <label>Contraseña:</label>
-              <input 
-                type="password" 
-                name="password" 
-                value={userProfile.password} 
-                onChange={handleProfileChange} 
+              <label>Nueva Contraseña:</label>
+              <input
+                type="password"
+                name="newPassword"
+                value={userProfile.newPassword}
+                onChange={handleProfileChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Confirmar Nueva Contraseña:</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={userProfile.confirmPassword}
+                onChange={handleProfileChange}
+                required
               />
             </div>
             <div className="form-group">
               <label>Rol:</label>
-              <select 
-                name="rol" 
-                value={userProfile.rol} 
-                onChange={handleProfileChange}
-                disabled
-              >
+              <select name="rol" value={userProfile.rol} disabled>
                 <option value="Administrador">Administrador</option>
                 <option value="Editor">Editor</option>
                 <option value="Visualizador">Visualizador</option>
               </select>
             </div>
-            <button type="submit" className="save-button">Guardar Cambios</button>
+            <button type="submit" className="save-button">Actualizar Contraseña</button>
           </form>
         </div>
       </div>
