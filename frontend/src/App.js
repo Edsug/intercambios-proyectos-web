@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Registro from "./pages/Registro";
 import Busqueda from "./pages/Busqueda";
 import Reportes from "./pages/Reportes";
+import Perfil from "./pages/Perfil"; // Ajusta la ruta si es necesario
 import Configuracion from "./pages/Configuracion";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -111,6 +112,18 @@ function App() {
             isAuthenticated ? (
               <AuthenticatedLayout>
                 <Reportes />
+              </AuthenticatedLayout>
+            ) : (
+              <Navigate to="/" />
+            )
+          } 
+        />
+        <Route 
+          path="/perfil" 
+          element={
+            isAuthenticated ? (
+              <AuthenticatedLayout>
+                <Perfil />
               </AuthenticatedLayout>
             ) : (
               <Navigate to="/" />
