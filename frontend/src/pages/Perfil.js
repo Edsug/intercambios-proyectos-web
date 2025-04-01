@@ -27,24 +27,25 @@ const Configuracion = () => {
     }
 
     try {
-      const response = await fetch("http://localhost/actualizar_usuario.php", {
+      const response = await fetch("http://localhost/basecambios/actualizar_usuario.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
           currentPassword: userProfile.currentPassword,
-          newPassword: userProfile.newPassword
+          newPassword: userProfile.newPassword,
+          rol: userProfile.rol
         }),
       });
 
       const result = await response.json();
 
       if (result.status === "success") {
-        alert("Contraseña actualizada correctamente");
+        alert("Datos actualizados correctamente");
         setUserProfile({ ...userProfile, currentPassword: "", newPassword: "", confirmPassword: "" });
       } else {
-        alert("Error al actualizar la contraseña: " + result.message);
+        alert("Error: " + result.message);
       }
     } catch (error) {
       alert("Error de conexión con el servidor");
@@ -64,7 +65,7 @@ const Configuracion = () => {
           <form onSubmit={handleProfileSubmit} className="config-form">
             <div className="form-group">
               <label>Nombre:</label>
-              <input type="text" name="nombre" value={userProfile.nombre} disabled />
+              <input type="text" name="nombre" value={userProfile.nombre} readOnly />
             </div>
             <div className="form-group">
               <label>Contraseña Actual:</label>
@@ -99,12 +100,12 @@ const Configuracion = () => {
             <div className="form-group">
               <label>Rol:</label>
               <select name="rol" value={userProfile.rol} disabled>
-                <option value="admin">Administrador</option>
+                <option value="Administrador">Administrador</option>
                 <option value="Editor">Editor</option>
                 <option value="Visualizador">Visualizador</option>
               </select>
             </div>
-            <button type="submit" className="save-button">Actualizar Contraseña</button>
+            <button type="submit" className="save-button">Actualizar Datos</button>
           </form>
         </div>
       </div>

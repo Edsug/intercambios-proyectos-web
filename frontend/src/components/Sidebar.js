@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   FaChartBar, 
@@ -11,10 +11,19 @@ import "../styles/SideBar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
-  
+
+  // Evitar scroll en body cuando la sidebar está abierta
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isOpen]);
+
   return (
-    <div className="sidebar-wrapper">
-      <div id="sidebarMenu" className={isOpen ? 'open' : ''}>
+    <div className={`sidebar-overlay ${isOpen ? "active" : ""}`} onClick={toggleSidebar}>
+      <div id="sidebarMenu" className={isOpen ? "open" : ""} onClick={(e) => e.stopPropagation()}>
         <ul className="sidebarMenuInner">
           <li className={location.pathname === "/dashboard" ? "active" : ""}>
             <Link to="/dashboard" onClick={toggleSidebar}>
