@@ -3,7 +3,7 @@ import "../styles/Configuracion.css";
 
 const Configuracion = () => {
   const [userProfile, setUserProfile] = useState({
-    nombre: "ADMINISTRADOR",
+    nombre: "admin",
     password: "",
     rol: "Administrador"
   });
@@ -20,7 +20,7 @@ const Configuracion = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost/actualizar_usuario.php", {
+      const response = await fetch("http://localhost//basecambios/actualizar_usuario.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

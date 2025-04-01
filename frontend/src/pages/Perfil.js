@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import "../styles/Configuracion.css";
+import "../styles/Perfil.css";
 
 const Configuracion = () => {
   const [userProfile, setUserProfile] = useState({
-    nombre: "ADMINISTRADOR",
+    nombre: "admin",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -99,7 +99,7 @@ const Configuracion = () => {
             <div className="form-group">
               <label>Rol:</label>
               <select name="rol" value={userProfile.rol} disabled>
-                <option value="Administrador">Administrador</option>
+                <option value="admin">Administrador</option>
                 <option value="Editor">Editor</option>
                 <option value="Visualizador">Visualizador</option>
               </select>
