@@ -1,29 +1,26 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   FaChartBar, 
   FaFileAlt, 
   FaSearch, 
   FaClipboardList, 
-  FaCog
+  FaCog, 
+  FaTimes // Ícono para cerrar la sidebar
 } from "react-icons/fa"; 
 import "../styles/SideBar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
-
-  // Evitar scroll en body cuando la sidebar está abierta
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [isOpen]);
-
+  
   return (
-    <div className={`sidebar-overlay ${isOpen ? "active" : ""}`} onClick={toggleSidebar}>
-      <div id="sidebarMenu" className={isOpen ? "open" : ""} onClick={(e) => e.stopPropagation()}>
+    <div className="sidebar-wrapper">
+      <div id="sidebarMenu" className={isOpen ? 'open' : ''}>
+        {/* Botón para cerrar sidebar */}
+        <button className="close-btn" onClick={toggleSidebar}>
+          <FaTimes size={24} /> {/* Ajustamos el tamaño del ícono aquí */}
+        </button>
+
         <ul className="sidebarMenuInner">
           <li className={location.pathname === "/dashboard" ? "active" : ""}>
             <Link to="/dashboard" onClick={toggleSidebar}>

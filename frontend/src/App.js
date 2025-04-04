@@ -5,8 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import Registro from "./pages/Registro";
 import Busqueda from "./pages/Busqueda";
 import Reportes from "./pages/Reportes";
-import Perfil from "./pages/Perfil"; // Ajusta la ruta si es necesario
 import Configuracion from "./pages/Configuracion";
+import Perfil from "./pages/Perfil";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
@@ -15,26 +15,26 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Function to toggle sidebar state
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Effect to update body class when sidebar state changes
+  const editarPerfil = () => {
+    // Aquí podrías agregar la lógica que maneja el evento de edición del perfil
+    console.log("Editar perfil");
+  };
+
   useEffect(() => {
     if (sidebarOpen) {
       document.body.classList.add("sidebar-open");
     } else {
       document.body.classList.remove("sidebar-open");
     }
-    
-    // Cleanup function
     return () => {
       document.body.classList.remove("sidebar-open");
     };
   }, [sidebarOpen]);
 
-  // Effect para manejar el comportamiento del banner durante el scroll
   useEffect(() => {
     const handleScroll = () => {
       const banner = document.querySelector('.top-banner');
@@ -53,10 +53,9 @@ function App() {
     };
   }, []);
 
-  // Layout component for authenticated pages
   const AuthenticatedLayout = ({ children }) => (
     <div className="app-container">
-      <Header toggleSidebar={toggleSidebar} isOpen={sidebarOpen} />
+      <Header toggleSidebar={toggleSidebar} isOpen={sidebarOpen} onEditProfile={editarPerfil} />
       <div className="dashboard-container">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <main className="dashboard-main">
@@ -119,11 +118,11 @@ function App() {
           } 
         />
         <Route 
-          path="/perfil" 
+          path="/configuracion" 
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
-                <Perfil />
+                <Configuracion />
               </AuthenticatedLayout>
             ) : (
               <Navigate to="/" />
@@ -131,11 +130,11 @@ function App() {
           } 
         />
         <Route 
-          path="/configuracion" 
+          path="/perfil" 
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
-                <Configuracion />
+                <Perfil />
               </AuthenticatedLayout>
             ) : (
               <Navigate to="/" />

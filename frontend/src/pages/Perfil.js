@@ -1,116 +1,83 @@
 import React, { useState } from "react";
 import "../styles/Perfil.css";
 
-const Configuracion = () => {
-  const [userProfile, setUserProfile] = useState({
-    nombre: "admin",
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-    rol: "Administrador",
-  });
+const Perfil = () => {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");  // Nuevo estado para el tipo de mensaje
 
-  const handleProfileChange = (e) => {
-    const { name, value } = e.target;
-    setUserProfile({
-      ...userProfile,
-      [name]: value,
-    });
-  };
-
-  const handleProfileSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (userProfile.newPassword !== userProfile.confirmPassword) {
-      alert("Las contraseñas nuevas no coinciden");
+    // Validar que las contraseñas coincidan
+    if (newPassword !== confirmNewPassword) {
+      setMessage("Las contraseñas nuevas no coinciden.");
+      setMessageType("error");
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost/basecambios/actualizar_usuario.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          currentPassword: userProfile.currentPassword,
-          newPassword: userProfile.newPassword,
-          rol: userProfile.rol
-        }),
-      });
+    // Enviar la solicitud de cambio de contraseña al backend
+    const response = await fetch("http://localhost/basecambios/actualizar_usuario.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        rol: "admin", // Esto puede ser dinámico dependiendo del rol del usuario
+      }),
+    });
 
-      const result = await response.json();
+    const data = await response.json();
 
-      if (result.status === "success") {
-        alert("Datos actualizados correctamente");
-        setUserProfile({ ...userProfile, currentPassword: "", newPassword: "", confirmPassword: "" });
-      } else {
-        alert("Error: " + result.message);
-      }
-    } catch (error) {
-      alert("Error de conexión con el servidor");
-      console.error("Error:", error);
+    if (data.status === "success") {
+      setMessage("Contraseña actualizada con éxito.");
+      setMessageType("success");
+    } else {
+      setMessage(data.message);
+      setMessageType("error");
     }
   };
 
   return (
-    <div className="dashboard-content">
-      <div className="content-header">
-        <h1>⚙️ Configuración</h1>
-        <p>Administra tu cuenta.</p>
-      </div>
-
-      <div className="config-container">
-        <div className="config-content">
-          <form onSubmit={handleProfileSubmit} className="config-form">
-            <div className="form-group">
-              <label>Nombre:</label>
-              <input type="text" name="nombre" value={userProfile.nombre} readOnly />
-            </div>
-            <div className="form-group">
-              <label>Contraseña Actual:</label>
-              <input
-                type="password"
-                name="currentPassword"
-                value={userProfile.currentPassword}
-                onChange={handleProfileChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Nueva Contraseña:</label>
-              <input
-                type="password"
-                name="newPassword"
-                value={userProfile.newPassword}
-                onChange={handleProfileChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Confirmar Nueva Contraseña:</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={userProfile.confirmPassword}
-                onChange={handleProfileChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Rol:</label>
-              <select name="rol" value={userProfile.rol} disabled>
-                <option value="Administrador">Administrador</option>
-                <option value="Editor">Editor</option>
-                <option value="Visualizador">Visualizador</option>
-              </select>
-            </div>
-            <button type="submit" className="save-button">Actualizar Datos</button>
-          </form>
+    <div>
+      <h1>Cambiar contraseña</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Contraseña Actual</label>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+          />
         </div>
-      </div>
+        <div>
+          <label>Nueva Contraseña</label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Confirmar Nueva Contraseña</label>
+          <input
+            type="password"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Actualizar Contraseña</button>
+      </form>
+      {message && <p className={messageType}>{message}</p>}
     </div>
   );
 };
 
-export default Configuracion;
+export default Perfil;
