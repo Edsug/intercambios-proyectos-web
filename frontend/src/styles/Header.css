@@ -86,118 +86,6 @@
   flex: 1;
 }
 
-/* Sección de usuario */
-.user-section {
-  position: relative;
-}
-
-/* Botón de usuario */
-.user-btn {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.user-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.user-btn.active {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-}
-
-.user-btn svg {
-  width: 24px;
-  height: 24px;
-  transition: transform 0.3s ease;
-}
-
-.user-btn.active svg {
-  transform: scale(1.1);
-}
-
-/* Menú desplegable del usuario */
-.user-menu {
-  position: absolute;
-  right: 0;
-  top: 50px;
-  background: #ffffff;
-  color: #333;
-  font-family: 'Poppins', sans-serif;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  min-width: 200px;
-  display: flex;
-  flex-direction: column;
-  padding: 8px 0;
-  border: 1px solid #ddd;
-  z-index: 1000;
-  
-  /* Animación */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-20px);
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
-
-.user-menu.visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Botones dentro del menú de usuario */
-.user-menu button {
-  display: flex;
-  width: 100%;
-  border: none;
-  background: none;
-  padding: 12px;
-  cursor: pointer;
-  text-align: left;
-  color: #333;
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease-in-out;
-  align-items: center;
-  transform: translateX(-10px);
-  opacity: 0;
-}
-
-.user-menu.visible button {
-  transform: translateX(0);
-  opacity: 1;
-  transition-delay: 0.1s;
-}
-
-.user-menu.visible button:nth-child(2) {
-  transition-delay: 0.15s;
-}
-
-.user-menu.visible button:nth-child(3) {
-  transition-delay: 0.2s;
-}
-
-.user-menu button svg {
-  margin-right: 10px;
-  min-width: 16px;
-}
-
-/* Efecto hover: fondo de color y cambio de texto */
-.user-menu button:hover {
-  background: var(--primary-color);
-  color: #ffffff;
-  font-weight: bold;
-}
-
 /* Responsividad */
 @media (max-width: 768px) {
   .top-banner {
@@ -228,10 +116,5 @@
   .app-title {
     font-size: 16px;
     padding: 4px 10px;
-  }
-
-  .user-btn svg {
-    width: 22px;
-    height: 22px;
   }
 }
