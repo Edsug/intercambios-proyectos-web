@@ -14,53 +14,31 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Function to toggle sidebar state
+  // Función para alternar el estado del sidebar
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    setSidebarOpen((prev) => !prev);
   };
 
-  // Effect to update body class when sidebar state changes
+  // Agregar o quitar clase en body cuando el sidebar está abierto
   useEffect(() => {
     if (sidebarOpen) {
       document.body.classList.add("sidebar-open");
     } else {
       document.body.classList.remove("sidebar-open");
     }
-    
-    // Cleanup function
+
     return () => {
       document.body.classList.remove("sidebar-open");
     };
   }, [sidebarOpen]);
 
-  // Effect para manejar el comportamiento del banner durante el scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const banner = document.querySelector('.top-banner');
-      if (banner) {
-        if (window.scrollY > 50) {
-          banner.classList.add('hidden');
-        } else {
-          banner.classList.remove('hidden');
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  // Layout component for authenticated pages
+  // Componente de diseño para páginas autenticadas
   const AuthenticatedLayout = ({ children }) => (
     <div className="app-container">
       <Header toggleSidebar={toggleSidebar} isOpen={sidebarOpen} />
       <div className="dashboard-container">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-        <main className="dashboard-main">
-          {children}
-        </main>
+        <main className="dashboard-main">{children}</main>
       </div>
     </div>
   );
@@ -69,8 +47,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route 
-          path="/dashboard" 
+        <Route
+          path="/dashboard"
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
@@ -79,10 +57,10 @@ function App() {
             ) : (
               <Navigate to="/" />
             )
-          } 
+          }
         />
-        <Route 
-          path="/registro" 
+        <Route
+          path="/registro"
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
@@ -91,10 +69,10 @@ function App() {
             ) : (
               <Navigate to="/" />
             )
-          } 
+          }
         />
-        <Route 
-          path="/busqueda" 
+        <Route
+          path="/busqueda"
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
@@ -103,10 +81,10 @@ function App() {
             ) : (
               <Navigate to="/" />
             )
-          } 
+          }
         />
-        <Route 
-          path="/reportes" 
+        <Route
+          path="/reportes"
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
@@ -115,10 +93,10 @@ function App() {
             ) : (
               <Navigate to="/" />
             )
-          } 
+          }
         />
-        <Route 
-          path="/configuracion" 
+        <Route
+          path="/configuracion"
           element={
             isAuthenticated ? (
               <AuthenticatedLayout>
@@ -127,7 +105,7 @@ function App() {
             ) : (
               <Navigate to="/" />
             )
-          } 
+          }
         />
       </Routes>
     </Router>

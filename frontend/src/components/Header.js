@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaUserCircle, FaSignOutAlt, FaKey, FaUserEdit, FaBars, FaTimes } from "react-icons/fa";
 import "../styles/Header.css";
-import headerImage from "../assets/header.png";
+import headerImage from "../assets/header.jpg";
 
 const Header = ({ toggleSidebar, isOpen }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -34,17 +34,50 @@ const Header = ({ toggleSidebar, isOpen }) => {
     };
   }, [menuRef]);
 
+  // Manejo del scroll para ocultar/mostrar el banner
+  useEffect(() => {
+    const handleScroll = () => {
+      const banner = document.querySelector('.top-banner');
+      const header = document.querySelector('.header');
+      const contentWrapper = document.querySelector('.content-wrapper');
+      
+      if (window.scrollY > 50) {
+        // Ocultar banner y mover header arriba
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateY(-100px)';
+        header.style.top = '0';
+        
+        // Ajustar el espacio para el contenido
+        if (contentWrapper) {
+          contentWrapper.style.paddingTop = '60px';
+        }
+      } else {
+        // Mostrar banner y mover header abajo
+        banner.style.opacity = '1';
+        banner.style.transform = 'translateY(0)';
+        header.style.top = '100px';
+        
+        // Restaurar el espacio para el contenido
+        if (contentWrapper) {
+          contentWrapper.style.paddingTop = '160px';
+        }
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <div className="top-banner">
         <img src={headerImage} alt="Banner" className="header-banner-image" />
       </div>
 
-
-
-
       <header className="header">
-        {/* Botón hamburguesa movido al header */}
+        {/* Botón hamburguesa */}
         <button 
           className="hamburger-button"
           onClick={toggleSidebar}
@@ -54,7 +87,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
         </button>
 
         <div className="header-center">
-          <h1 className="app-title">Sistema para la gestion de alumnos area de intercambios</h1>
+          <h1 className="app-title">Gestion de area de intercambios</h1>
         </div>
 
         <div className="user-section" ref={menuRef}>

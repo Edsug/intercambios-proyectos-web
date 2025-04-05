@@ -1,29 +1,37 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:wght@300;400;600');
 
-/* Contenedor del sidebar */
+/* Contenedor del sidebar - cambio fundamental para mantenerlo fijo */
 .sidebar-wrapper {
-  position: relative;
-  height: 100%;
+  position: fixed;
+  height: 100vh;
+  z-index: 90; /* Menor que el header pero mayor que otros elementos */
+  left: 0;
+  top: 0;
+  width: var(--sidebar-width);
+  transition: width 250ms ease-in-out;
 }
 
-/* SIDEBAR MENU - Ahora usamos posición absoluta para que se desplace con el scroll */
+body.sidebar-open .sidebar-wrapper {
+  width: var(--sidebar-expanded-width);
+}
+
+/* SIDEBAR MENU - Modo compacto y modo expandido */
 #sidebarMenu {
-  height: 100%;
-  position: fixed; /* Cambiamos de absolute a fixed */
+  position: fixed;
   left: 0;
-  top: 160px; /* Ajustamos a la altura del header (100px banner + 60px header) */
-  width: 250px;
-  transform: translateX(-250px);
-  transition: transform 250ms ease-in-out;
+  top: var(--total-top-height); /* Posición debajo del banner+header */
+  width: var(--sidebar-width); /* Ancho en modo compacto (solo iconos) */
+  height: calc(100% - var(--total-top-height));
+  transition: width 250ms ease-in-out;
   background: linear-gradient(180deg, var(--secondary-color) 0%, #3a4d72 100%);
-  z-index: 100;
-  overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  overflow-y: auto; /* Permitir scroll dentro del sidebar si es necesario */
 }
 
 /* Cuando el sidebar está abierto */
 #sidebarMenu.open {
-  transform: translateX(0);
+  width: var(--sidebar-expanded-width);
 }
 
 .sidebarMenuInner {
@@ -31,6 +39,7 @@
   padding: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   list-style: none;
+  width: var(--sidebar-expanded-width); /* Usar variable para consistencia */
 }
 
 .sidebarMenuInner li {
@@ -52,6 +61,7 @@
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .sidebarMenuInner li a svg {
@@ -63,6 +73,12 @@
 .sidebarMenuInner li a span {
   font-size: 15px;
   opacity: 0.9;
+  transition: opacity 150ms ease-in-out;
+}
+
+/* Ocultar texto en modo compacto */
+#sidebarMenu:not(.open) .sidebarMenuInner li a span {
+  opacity: 0;
 }
 
 .sidebarMenuInner li:hover {
@@ -81,26 +97,65 @@
 /* Ajustes para responsividad */
 @media (max-width: 768px) {
   #sidebarMenu {
-    width: 135px;
-    transform: translateX(-135px);
+    width: var(--sidebar-width);
   }
   
+  #sidebarMenu.open {
+    width: var(--sidebar-expanded-width);
+  }
+
+  .sidebarMenuInner {
+    width: var(--sidebar-expanded-width);
+  }
+
   .sidebarMenuInner li a {
     padding: 12px 16px;
   }
 }
 
 @media (max-width: 480px) {
-  #sidebarMenu {
-    width: 110px;
-    transform: translateX(-110px);
-  }
-  
   .sidebarMenuInner li a {
     padding: 10px 14px;
   }
-  
+
   .sidebarMenuInner li a span {
     font-size: 14px;
+  }
+}
+
+/* Ajuste para que el contenido principal no quede debajo del sidebar */
+.dashboard-main {
+  margin-left: var(--sidebar-width);
+  transition: margin-left 250ms ease-in-out;
+  width: calc(100% - var(--sidebar-width));
+  padding-top: var(--total-top-height);
+  box-sizing: border-box;
+}
+
+/* Cuando el sidebar está abierto, agregar margen al contenido principal */
+body.sidebar-open .dashboard-main {
+  margin-left: var(--sidebar-expanded-width);
+  width: calc(100% - var(--sidebar-expanded-width));
+}
+
+/* Overlay para cerrar sidebar en móviles */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 95; /* Entre el sidebar y el header */
+}
+
+body.sidebar-open .sidebar-overlay {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  body.sidebar-open .sidebar-overlay {
+    display: none;
   }
 }
