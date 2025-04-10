@@ -1,51 +1,45 @@
-/* Contenedor del sidebar */
+@import url('https://fonts.googleapis.com/css?family=Poppins:wght@300;400;600');
+
+/* Contenedor del sidebar - cambio fundamental para mantenerlo fijo */
 .sidebar-wrapper {
-  position: relative;
-  height: 100%;
+  position: fixed;
+  height: 100vh;
+  z-index: 90; /* Menor que el header pero mayor que otros elementos */
+  left: 0;
+  top: 0;
+  width: var(--sidebar-width);
+  transition: width 250ms ease-in-out;
 }
 
-/* SIDEBAR MENU */
+body.sidebar-open .sidebar-wrapper {
+  width: var(--sidebar-expanded-width);
+}
+
+/* SIDEBAR MENU - Modo compacto y modo expandido */
 #sidebarMenu {
-  height: 100%;
   position: fixed;
   left: 0;
-  top: 0; /* Asegura que la sidebar ocupe toda la altura de la pantalla */
-  width: 250px;
-  transform: translateX(-250px);
-  transition: transform 250ms ease-in-out;
+  top: var(--total-top-height); /* Posición debajo del banner+header */
+  width: var(--sidebar-width); /* Ancho en modo compacto (solo iconos) */
+  height: calc(100% - var(--total-top-height));
+  transition: width 250ms ease-in-out;
   background: linear-gradient(180deg, var(--secondary-color) 0%, #3a4d72 100%);
-  z-index: 9999; /* Asegura que se sobreponga a todo */
-  overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  padding-top: 20px; /* Ajustado para dejar espacio entre el borde superior y el contenido */
-  padding-left: 20px; /* Espacio izquierdo para los íconos */
+  overflow-y: auto; /* Permitir scroll dentro del sidebar si es necesario */
 }
 
 /* Cuando el sidebar está abierto */
 #sidebarMenu.open {
-  transform: translateX(0);
+  width: var(--sidebar-expanded-width);
 }
 
-/* Estilos para el botón de cierre */
-.close-btn {
-  position: absolute;
-  top: 10px; /* Ajuste para que el botón de cierre quede separado del borde superior */
-  right: 10px; /* Ajuste para que esté a la derecha */
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 24px; /* Tamaño adecuado para el ícono */
-  padding: 5px;
-  z-index: 10000; /* Asegura que el botón quede sobre la sidebar */
-}
-
-/* Estilos del menú de la sidebar */
 .sidebarMenuInner {
   margin: 0;
   padding: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   list-style: none;
-  padding-top: 40px; /* Añadimos más espacio arriba para que el contenido de la sidebar no se solape con el botón */
+  width: var(--sidebar-expanded-width); /* Usar variable para consistencia */
 }
 
 .sidebarMenuInner li {
@@ -67,6 +61,7 @@
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .sidebarMenuInner li a svg {
@@ -78,6 +73,12 @@
 .sidebarMenuInner li a span {
   font-size: 15px;
   opacity: 0.9;
+  transition: opacity 150ms ease-in-out;
+}
+
+/* Ocultar texto en modo compacto */
+#sidebarMenu:not(.open) .sidebarMenuInner li a span {
+  opacity: 0;
 }
 
 .sidebarMenuInner li:hover {
@@ -96,27 +97,65 @@
 /* Ajustes para responsividad */
 @media (max-width: 768px) {
   #sidebarMenu {
-    width: 135px;
-    transform: translateX(-135px);
+    width: var(--sidebar-width);
   }
   
+  #sidebarMenu.open {
+    width: var(--sidebar-expanded-width);
+  }
+
+  .sidebarMenuInner {
+    width: var(--sidebar-expanded-width);
+  }
+
   .sidebarMenuInner li a {
     padding: 12px 16px;
   }
 }
 
 @media (max-width: 480px) {
-  #sidebarMenu {
-    width: 110px;
-    transform: translateX(-110px);
-  }
-  
   .sidebarMenuInner li a {
     padding: 10px 14px;
   }
-  
+
   .sidebarMenuInner li a span {
     font-size: 14px;
-    opacity: 0.8;
+  }
+}
+
+/* Ajuste para que el contenido principal no quede debajo del sidebar */
+.dashboard-main {
+  margin-left: var(--sidebar-width);
+  transition: margin-left 250ms ease-in-out;
+  width: calc(100% - var(--sidebar-width));
+  padding-top: var(--total-top-height);
+  box-sizing: border-box;
+}
+
+/* Cuando el sidebar está abierto, agregar margen al contenido principal */
+body.sidebar-open .dashboard-main {
+  margin-left: var(--sidebar-expanded-width);
+  width: calc(100% - var(--sidebar-expanded-width));
+}
+
+/* Overlay para cerrar sidebar en móviles */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 95; /* Entre el sidebar y el header */
+}
+
+body.sidebar-open .sidebar-overlay {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  body.sidebar-open .sidebar-overlay {
+    display: none;
   }
 }

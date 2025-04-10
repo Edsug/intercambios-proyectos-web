@@ -57,7 +57,9 @@ const Navbar = ({ onLogout }) => {
         </li>
 
         {/* Menú de usuario */}
-        <div className="user-section" ref={menuRef}>
+        
+      </ul>
+      <div className="user-section" ref={menuRef}>
           <button 
             onClick={toggleUserMenu} 
             className={location.pathname === "/Perfil" ? "active" : ""}
@@ -76,7 +78,6 @@ const Navbar = ({ onLogout }) => {
             </button>
           </div>
         </div>
-      </ul>
     </nav>
   );
 };

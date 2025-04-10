@@ -1,78 +1,192 @@
 /* Estilos generales */
-/* Estilos generales */
 .login-container {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: url("../assets/Biblioteca.jpg") no-repeat center center/cover;
+  background: whitesmoke;
   padding: 20px;
+  position: relative;
 }
 
-/* Caja del formulario */
-.login-box {
-  background: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 350px;
-  text-align: center;
+  height: 100%;
+  z-index: 1;
 }
 
-/* Resto del CSS sigue igual */
+/* Layout de dos columnas */
+.login-box {
+  display: flex;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 800px;
+  overflow: hidden;
+  z-index: 2;
+  position: relative;
+}
 
+/* Columna izquierda (información e imagen) */
+.login-info {
+  background: #00A86B; /* Color principal */
+  color: white;
+  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.login-info h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.login-info p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  max-width: 80%;
+}
+
+/* Contenedor de la imagen central */
+.illustration-container {
+  width: 70%;
+  margin: 10px auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.illustration-container img {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: contain;
+}
+
+/* Columna derecha (formulario) */
+.login-form {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-form h2 {
+  color: #006942; /* Color secundario */
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-logo img {
+  height: 80px;
+  width: auto;
+}
 
 /* Estilos para los grupos de entrada */
 .input-group {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   width: 100%;
+  position: relative;
 }
 
 /* Etiquetas */
 .input-group label {
-  font-weight: bold;
-  margin-bottom: 5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #444;
+  font-size: 14px;
 }
 
 /* Campos de entrada */
 .input-group input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
+  padding: 12px 15px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  border-color: #00A86B;
+  box-shadow: 0 0 0 2px rgba(0, 168, 107, 0.2);
+  outline: none;
 }
 
 /* Botón */
 button {
   width: 100%;
-  padding: 10px;
-  background: #007bff;
+  padding: 14px;
+  background: #00A86B; /* Color principal */
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  margin-top: 10px;
 }
 
-
+button:hover {
+  background: #006942; /* Color secundario */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 105, 66, 0.2);
+}
 
 /* Mensaje de error */
 .error-message {
-  color: red;
+  color: #e74c3c;
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  background: rgba(231, 76, 60, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
 }
 
 /* Diseño responsivo */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .login-box {
-    width: 90%;
-    padding: 20px;
+    flex-direction: column;
+    max-width: 400px;
+  }
+  
+  .login-info {
+    padding: 25px 15px;
+  }
+  
+  .illustration-container {
+    width: 60%;
+    margin: 0 auto 15px;
+  }
+  
+  .login-info h1 {
+    font-size: 20px;
+  }
+  
+  .login-form {
+    padding: 25px;
   }
 }
