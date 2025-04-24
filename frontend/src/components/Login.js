@@ -28,7 +28,7 @@ const Login = ({ setIsAuthenticated }) => {
     }
 
     try {
-      const response = await fetch("http://localhost/basecambios/login.php", {
+      const response = await fetch("http://localhost/basecambios/login.php", { //el archivo php esta configurado para sevidor local
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre_usuario: usuario, contrasena: password }),
