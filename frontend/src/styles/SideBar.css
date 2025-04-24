@@ -1,32 +1,48 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:wght@300;400;600');
 
-/* Contenedor del sidebar - cambio fundamental para mantenerlo fijo */
+/* Contenedor del sidebar con estilo mejorado */
 .sidebar-wrapper {
   position: fixed;
   height: 100vh;
-  z-index: 90; /* Menor que el header pero mayor que otros elementos */
+  z-index: 90;
   left: 0;
   top: 0;
   width: var(--sidebar-width);
-  transition: width 250ms ease-in-out;
+  transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.sidebar-open .sidebar-wrapper {
   width: var(--sidebar-expanded-width);
 }
 
-/* SIDEBAR MENU - Modo compacto y modo expandido */
+/* SIDEBAR MENU con diseño mejorado */
 #sidebarMenu {
   position: fixed;
   left: 0;
-  top: var(--total-top-height); /* Posición debajo del banner+header */
-  width: var(--sidebar-width); /* Ancho en modo compacto (solo iconos) */
+  top: var(--total-top-height);
+  width: var(--sidebar-width);
   height: calc(100% - var(--total-top-height));
-  transition: width 250ms ease-in-out;
-  background: linear-gradient(180deg, var(--secondary-color) 0%, #3a4d72 100%);
+  transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(180deg, var(--secondary-color) 0%, #1a304f 100%);
   overflow-x: hidden;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  overflow-y: auto; /* Permitir scroll dentro del sidebar si es necesario */
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Estilo para scrollbar personalizado */
+#sidebarMenu::-webkit-scrollbar {
+  width: 5px;
+}
+
+#sidebarMenu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#sidebarMenu::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
 }
 
 /* Cuando el sidebar está abierto */
@@ -34,64 +50,136 @@ body.sidebar-open .sidebar-wrapper {
   width: var(--sidebar-expanded-width);
 }
 
+/* Borde decorativo izquierdo */
+#sidebarMenu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+/* Efecto de iluminación superior */
+#sidebarMenu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+  opacity: 0.7;
+}
+
 .sidebarMenuInner {
   margin: 0;
-  padding: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
   list-style: none;
-  width: var(--sidebar-expanded-width); /* Usar variable para consistencia */
+  width: var(--sidebar-expanded-width);
 }
 
 .sidebarMenuInner li {
   list-style: none;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
   padding: 0;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   transition: all 0.3s ease;
+  position: relative;
+  margin: 2px 0;
+}
+
+/* Indicador de elemento activo */
+.sidebarMenuInner li.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: var(--primary-color);
+  box-shadow: 0 0 8px rgba(0, 168, 107, 0.5);
 }
 
 .sidebarMenuInner li a {
-  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  padding: 15px 20px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
   white-space: nowrap;
+  border-radius: 0 6px 6px 0;
+  margin-left: 3px;
+}
+
+.sidebarMenuInner li:not(.active) a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  padding-left: 22px;
+  color: white;
 }
 
 .sidebarMenuInner li a svg {
-  margin-right: 15px;
+  margin-right: 16px;
   min-width: 20px;
   font-size: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.sidebarMenuInner li:hover a svg,
+.sidebarMenuInner li.active a svg {
+  color: white;
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
 }
 
 .sidebarMenuInner li a span {
   font-size: 15px;
-  opacity: 0.9;
-  transition: opacity 150ms ease-in-out;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-10px);
+}
+
+/* Animación de texto al abrir sidebar */
+#sidebarMenu.open .sidebarMenuInner li a span {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.1s;
 }
 
 /* Ocultar texto en modo compacto */
 #sidebarMenu:not(.open) .sidebarMenuInner li a span {
-  opacity: 0;
+  display: none;
 }
 
-.sidebarMenuInner li:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
+/* Elemento activo con nuevo estilo */
 .sidebarMenuInner li.active {
-  background-color: var(--primary-color);
+  background: linear-gradient(90deg, rgba(0, 168, 107, 0.2), transparent);
 }
 
 .sidebarMenuInner li.active a {
   color: white;
   font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Efectos hover */
+.sidebarMenuInner li:not(.active):hover a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 15px;
+  right: 15px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Ajustes para responsividad */
@@ -121,15 +209,21 @@ body.sidebar-open .sidebar-wrapper {
   .sidebarMenuInner li a span {
     font-size: 14px;
   }
+  
+  #sidebarMenu {
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
+  }
 }
 
 /* Ajuste para que el contenido principal no quede debajo del sidebar */
 .dashboard-main {
   margin-left: var(--sidebar-width);
-  transition: margin-left 250ms ease-in-out;
+  transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
   width: calc(100% - var(--sidebar-width));
   padding-top: var(--total-top-height);
   box-sizing: border-box;
+  background: var(--background-color);
+  min-height: 100vh;
 }
 
 /* Cuando el sidebar está abierto, agregar margen al contenido principal */
@@ -138,7 +232,7 @@ body.sidebar-open .dashboard-main {
   width: calc(100% - var(--sidebar-expanded-width));
 }
 
-/* Overlay para cerrar sidebar en móviles */
+/* Overlay para cerrar sidebar con efecto mejorado */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -146,12 +240,16 @@ body.sidebar-open .dashboard-main {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 95; /* Entre el sidebar y el header */
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 95;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease;
+  opacity: 0;
 }
 
 body.sidebar-open .sidebar-overlay {
   display: block;
+  opacity: 1;
 }
 
 @media (min-width: 769px) {
