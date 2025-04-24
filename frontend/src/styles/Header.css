@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:wght@300;400;600');
 
-/* Banner superior - ahora estático */
+/* Banner superior - ahora con diseño mejorado */
 .top-banner {
   width: 100%;
   height: var(--banner-height);
@@ -8,10 +8,11 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; /* Mayor valor para estar en primer plano */
+  z-index: 1000;
   display: flex;
   justify-content: center;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .header-banner-image {
@@ -19,15 +20,32 @@
   width: 100%;
   object-fit: cover;
   object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.top-banner:hover .header-banner-image {
+  transform: scale(1.02);
+}
+
+/* Overlay para el banner */
+.top-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
+  z-index: 2;
 }
 
 .header {
   font-family: 'Poppins', sans-serif;
-  background: var(--primary-color);
-  color: var(--text-color);
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white;
   padding: 0 20px;
   display: flex;
-  align-items: center; /* Centrado vertical */
+  align-items: center;
   justify-content: space-between;
   height: var(--header-height);
   position: fixed;
@@ -35,12 +53,24 @@
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 999; /* Justo debajo del banner pero por encima del resto */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: top 0.3s ease;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
 }
 
-/* Botón hamburguesa en el header - centrado verticalmente */
+/* Efecto de borde inferior para el header */
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), var(--secondary-color));
+  opacity: 0.7;
+}
+
+/* Botón hamburguesa en el header - con efectos mejorados */
 .hamburger-button {
   background: transparent;
   border: none;
@@ -51,167 +81,268 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
   padding: 0;
-  margin-right: 10px;
-  margin-top: 0px;
+  margin-right: 15px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hamburger-button::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transform: scale(0);
+  transition: transform 0.3s ease;
+}
+
+.hamburger-button:hover::before {
+  transform: scale(1);
 }
 
 .hamburger-button:hover {
-  transform: scale(1.1);
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  transform: translateY(-2px);
+  color: white;
 }
 
-/* Título de la aplicación */
+.hamburger-button:active {
+  transform: translateY(0);
+}
+
+/* Título de la aplicación con estilo mejorado */
 .app-title {
   font-family: 'Poppins', sans-serif;
   color: white;
   font-size: 22px;
   margin: 0;
   font-weight: 600;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   letter-spacing: 0.5px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 8px 15px;
-  border-radius: 6px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
   transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.app-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.header-center:hover .app-title::after {
+  transform: translateX(100%);
 }
 
 .header-center:hover .app-title {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Contenedor central - ahora con display flex para alineación */
+/* Contenedor central con efecto hover */
 .header-center {
   display: flex;
-  align-items: center; /* Centrado vertical */
+  align-items: center;
   justify-content: center;
   flex: 1;
+  height: 100%;
+  transition: all 0.3s ease;
 }
 
-/* Sección de usuario - centrado verticalmente */
+/* Sección de usuario con estilo mejorado */
 .user-section {
   position: relative;
   display: flex;
-  align-items: center; /* Centrado vertical */
+  align-items: center;
+  height: 100%;
+  padding: 0 5px;
 }
 
-/* Botón de usuario */
+/* Botón de usuario con efectos nuevos */
 .user-btn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.3s ease;
-  margin-top: 0px;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.user-btn:hover::before {
+  left: 100%;
 }
 
 .user-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .user-btn.active {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .user-btn svg {
   width: 24px;
   height: 24px;
   transition: transform 0.3s ease;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
 
 .user-btn.active svg {
   transform: scale(1.1);
 }
 
-/* Menú desplegable del usuario */
+/* Menú desplegable del usuario mejorado */
 .user-menu {
   position: absolute;
   right: 0;
   top: calc(var(--header-height) - 5px);
-  background: #ffffff;
-  color: #333;
+  background: white;
+  color: var(--text-color);
   font-family: 'Poppins', sans-serif;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  min-width: 200px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
-  border: 1px solid #ddd;
-  z-index: 1001; /* Mayor que el banner */
+  padding: 10px 0;
+  border: 1px solid var(--border-color);
+  z-index: 1001;
+  overflow: hidden;
   
   /* Animación */
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-20px);
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  transform: translateY(-15px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.user-menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
 }
 
 .user-menu.visible {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
-/* Botones dentro del menú de usuario */
+/* Botones dentro del menú de usuario con efectos mejorados */
 .user-menu button {
   display: flex;
   width: 100%;
   border: none;
   background: none;
-  padding: 12px;
+  padding: 14px 16px;
   cursor: pointer;
   text-align: left;
-  color: #333;
-  font-size: 16px;
+  color: var(--text-color);
+  font-size: 15px;
   font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
   align-items: center;
-  transform: translateX(-10px);
+  transform: translateX(-15px);
   opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-menu button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: var(--primary-color);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
 }
 
 .user-menu.visible button {
   transform: translateX(0);
   opacity: 1;
-  transition-delay: 0.1s;
+}
+
+.user-menu.visible button:nth-child(1) {
+  transition-delay: 0.05s;
 }
 
 .user-menu.visible button:nth-child(2) {
-  transition-delay: 0.15s;
+  transition-delay: 0.1s;
 }
 
 .user-menu.visible button:nth-child(3) {
-  transition-delay: 0.2s;
+  transition-delay: 0.15s;
 }
 
 .user-menu button svg {
-  margin-right: 10px;
-  min-width: 16px;
+  margin-right: 12px;
+  min-width: 18px;
+  color: var(--secondary-color);
+  transition: all 0.3s ease;
 }
 
-/* Efecto hover: fondo de color y cambio de texto */
+/* Efecto hover de los botones del menú */
 .user-menu button:hover {
-  background: var(--primary-color);
-  color: #ffffff;
-  font-weight: bold;
+  background: linear-gradient(90deg, rgba(0, 168, 107, 0.1), transparent);
+  color: var(--primary-color);
+  padding-left: 20px;
+}
+
+.user-menu button:hover::before {
+  transform: scaleY(1);
+}
+
+.user-menu button:hover svg {
+  color: var(--primary-color);
+  transform: scale(1.1);
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
   .user-menu {
     right: 5px;
-    min-width: 180px;
+    min-width: 200px;
   }
   
   .header {
@@ -220,7 +351,11 @@
   
   .app-title {
     font-size: 20px;
-    padding: 6px 12px;
+    padding: 6px 14px;
+  }
+  
+  .user-menu button {
+    padding: 12px 14px;
   }
 }
 
@@ -228,8 +363,9 @@
   .user-menu {
     right: 0;
     left: auto;
-    width: 100%;
-    border-radius: 0;
+    width: 85%;
+    max-width: 260px;
+    border-radius: 8px;
   }
   
   .header {
@@ -238,6 +374,14 @@
   
   .app-title {
     font-size: 18px;
-    padding: 5px 10px;
+    padding: 5px 12px;
+  }
+  
+  .user-btn {
+    padding: 6px;
+  }
+  
+  .hamburger-button {
+    margin-right: 10px;
   }
 }
