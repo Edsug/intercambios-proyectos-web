@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: whitesmoke;
+  background: var(--neutral-color);
   padding: 20px;
   position: relative;
 }
@@ -34,7 +34,7 @@
 
 /* Columna izquierda (información e imagen) */
 .login-info {
-  background: #00A86B; /* Color principal */
+  background: var(--secondary-color); /* Color secundario */
   color: white;
   padding: 30px;
   flex: 1;
@@ -85,7 +85,7 @@
 }
 
 .login-form h2 {
-  color: #006942; /* Color secundario */
+  color: var(--primary-color); /* Color principal */
   margin-bottom: 30px;
   text-align: center;
   font-size: 24px;
@@ -129,7 +129,7 @@
 }
 
 .input-group input:focus {
-  border-color: #00A86B;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(0, 168, 107, 0.2);
   outline: none;
 }
@@ -138,7 +138,7 @@
 button {
   width: 100%;
   padding: 14px;
-  background: #00A86B; /* Color principal */
+  background: var(--primary-color); /* Color principal */
   color: white;
   border: none;
   border-radius: 8px;
@@ -150,7 +150,7 @@ button {
 }
 
 button:hover {
-  background: #006942; /* Color secundario */
+  background: var(--primary-color); /* Color secundario */
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 105, 66, 0.2);
 }

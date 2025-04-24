@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaUserCircle, FaSignOutAlt, FaKey, FaUserEdit, FaBars, FaTimes } from "react-icons/fa";
+import { FaUserCircle, FaSignOutAlt,  FaUserEdit, FaBars, FaTimes } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Header.css";
 import headerImage from "../assets/header.jpg";

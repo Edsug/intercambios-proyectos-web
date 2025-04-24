@@ -7,9 +7,13 @@
   --total-top-height: 160px; /* Banner + Header */
   --sidebar-width: 70px;
   --sidebar-expanded-width: 250px;
-  --primary-color: #00A86B;
-  --primary-hover: #006942;
-  --secondary-color: #006942;
+
+  --primary-color: #00A86B;      /* Verde principal (mantener) */
+  --primary-hover: #006942;      /* Verde oscuro para hover (mantener) */
+  --secondary-color: #1B365D;    /* NUEVO: Azul marino (del logo CUSUR) */
+  --accent-color: #5B92E5;       /* NUEVO: Azul claro como acento */
+  --neutral-color: #f5f7fa;      /* NUEVO: Gris muy claro para fondos */
+
   --background-color: #f9f9f9;
   --section-bg: #ffffff;
   --border-color: #e0e0e0;
