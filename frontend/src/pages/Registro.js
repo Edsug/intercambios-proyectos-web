@@ -54,16 +54,26 @@ const Registro = () => {
 
   // Lista de carreras disponibles
   const carreras = [
-    "INGENIERÍA EN COMPUTACIÓN",
-    "MEDICINA",
-    "DERECHO",
-    "PSICOLOGÍA",
-    "ADMINISTRACIÓN DE EMPRESAS",
-    "ENFERMERÍA",
-    "CONTADURÍA PÚBLICA",
-    "TURISMO",
-    "NUTRICIÓN",
-    "AGRONOMÍA"
+    "ABOGADO",
+    "AGROBIOTECNOLOGÍA",
+    "AGRONEGOCIOS",
+    "CIRUJANO DENTISTA",
+    "CULTURA FISICA Y DEPORTES",
+    "DESARROLLO TURISTICO SUSTENTABLE",
+    "EMFERMERÍA",
+    "INGENIERIA EN GEOFISICA",
+    "INGENIERIA EN SISTEMAS BIOLOGICOS",
+    "INGENIERIA EN TELEMATICA",
+    "LETRAS HISPANICAS",
+    "MEDICO CIRUJANO Y PARTERO",
+    "MEDICO VETERINARIO Y ZOOTECNISTA",
+    "NEGOCIOS INTERNACIONALES",
+    "ENFERMERIA MODALIDAD NO ESCOLARIZADA",
+    "NUTRICION",
+    "PERIODISMO",
+    "PSICOLOGIA",
+    "SEGURIDAD LABORAL, PROTECCION CIVIL Y EMERGENCIAS",
+    "TRABAJO SOCIAL"
   ];
 
   // Lista de tipos de movilidad
@@ -183,7 +193,7 @@ const Registro = () => {
   return (
     <div className="dashboard-content">
       <div className="content-header">
-        <h1>📝 REGISTRAR ALUMNO EN PROGRAMA DE MOVILIDAD</h1>
+        <h1> REGISTRAR ALUMNO </h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO EN EL PROGRAMA DE MOVILIDAD</p>
       </div>
       
