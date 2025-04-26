@@ -4,6 +4,9 @@
   font-family: 'Poppins', sans-serif;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .content-header {
@@ -31,6 +34,11 @@
   margin-bottom: 30px;
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
 }
 
 .form-progress::before {
@@ -91,24 +99,28 @@
   color: white;
 }
 
+/* Ajuste del contenedor principal del formulario */
 .registro-form {
+  margin-top: 50px !important; /* Agrega un margen superior para separar el formulario del contenido superior */
   display: flex;
   flex-direction: column;
   max-width: 900px;
-  margin: 0 auto;
+  margin: 20px auto; /* Centra el formulario horizontalmente y ajusta el margen superior */
   background: var(--section-bg);
   padding: 25px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   transition: all var(--transition-speed) var(--transition-function);
   animation: fadeIn 0.5s ease-out;
+  overflow: hidden; /* Evita que el contenido se desborde */
+  box-sizing: border-box; /* Asegura que padding y border no afecten el tamaño total */
 }
 
 .form-section {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  overflow: hidden;
+  overflow: hidden; /* Evita que el contenido se desborde */
   transition: all var(--transition-speed) var(--transition-function);
 }
 
@@ -136,14 +148,16 @@
 .section-content {
   padding: 25px;
   background-color: var(--section-bg);
+  word-wrap: break-word; /* Permite que el texto largo se ajuste al ancho del contenedor */
+  overflow-wrap: break-word; /* Asegura que las palabras largas no se desborden */
 }
 
 .form-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 20px;
+  flex-wrap: wrap; /* Permite que los elementos se ajusten en varias líneas si es necesario */
+  gap: 20px; /* Espaciado entre los elementos */
 }
 
 .form-row label {
@@ -155,6 +169,7 @@
   font-weight: 500;
   font-size: 14px;
   transition: color var(--transition-speed) var(--transition-function);
+  box-sizing: border-box; /* Asegura que el padding no afecte el tamaño */
 }
 
 .form-row label:focus-within {

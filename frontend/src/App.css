@@ -80,7 +80,7 @@ body {
 .dashboard-main {
   flex: 1;
   padding: 25px;
-  padding-top: calc(var(--header-height) + 25px);
+  padding-top: calc(var(--header-height) + 40px);
   transition: all var(--transition-speed) var(--transition-function);
 }
 
@@ -95,6 +95,8 @@ body {
   overflow: hidden;
   transition: transform var(--transition-speed) var(--transition-function),
               box-shadow var(--transition-speed) var(--transition-function);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .section:hover {
