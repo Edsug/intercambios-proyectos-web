@@ -19,7 +19,7 @@ const Busqueda = () => {
     anio: ""
   });
   
-  // Estados para control de UI
+  // Estados para control de UI okikiki
   const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
   const [resultadosVisibles, setResultadosVisibles] = useState(true);
   
