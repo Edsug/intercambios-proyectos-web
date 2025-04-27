@@ -15,9 +15,10 @@ const Registro = () => {
     NOMBRE: '',
     APELLIDOS: '',
     CARRERA: '',
+    NIVEL: '',
     SEMESTRE: '',
     PROMEDIO: '',
-    SEXO: '',
+    GENERO: '',
     FECHA_NACIMIENTO: '',
     
     // Sección Datos de Movilidad
@@ -60,7 +61,7 @@ const Registro = () => {
     "CIRUJANO DENTISTA",
     "CULTURA FISICA Y DEPORTES",
     "DESARROLLO TURISTICO SUSTENTABLE",
-    "EMFERMERÍA",
+    "ENFERMERÍA",
     "INGENIERIA EN GEOFISICA",
     "INGENIERIA EN SISTEMAS BIOLOGICOS",
     "INGENIERIA EN TELEMATICA",
@@ -74,6 +75,14 @@ const Registro = () => {
     "PSICOLOGIA",
     "SEGURIDAD LABORAL, PROTECCION CIVIL Y EMERGENCIAS",
     "TRABAJO SOCIAL"
+  ];
+
+  // Lista de niveles académicos
+  const niveles = [
+    "LICENCIATURA",
+    "MAESTRÍA",
+    "DOCTORADO",
+    "POSGRADO"
   ];
 
   // Lista de tipos de movilidad
@@ -128,7 +137,6 @@ const Registro = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-    // Aquí puedes agregar la lógica para enviar el formulario al backend
     alert("Alumno registrado correctamente para programa de movilidad");
   };
 
@@ -148,7 +156,6 @@ const Registro = () => {
 
   const resetForm = () => {
     setFormData({
-      // Reset all fields to their default values
       PROGRAMA: '',
       ACTIVIDAD: '',
       FOLIO: '',
@@ -157,9 +164,10 @@ const Registro = () => {
       NOMBRE: '',
       APELLIDOS: '',
       CARRERA: '',
+      NIVEL: '',
       SEMESTRE: '',
       PROMEDIO: '',
-      SEXO: '',
+      GENERO: '',
       FECHA_NACIMIENTO: '',
       TIPO_MOVILIDAD: '',
       INSTITUCION_DESTINO: '',
@@ -330,6 +338,15 @@ const Registro = () => {
                 </label>
               </div>
               <div className="form-row">
+                <label className="select-label">
+                  NIVEL:
+                  <select name="NIVEL" value={formData.NIVEL} onChange={handleChange} required>
+                    <option value="">SELECCIONE UN NIVEL</option>
+                    {niveles.map((nivel, index) => (
+                      <option key={index} value={nivel}>{nivel}</option>
+                    ))}
+                  </select>
+                </label>
                 <label>
                   SEMESTRE:
                   <input 
@@ -343,6 +360,8 @@ const Registro = () => {
                     required 
                   />
                 </label>
+              </div>
+              <div className="form-row">
                 <label>
                   PROMEDIO:
                   <input 
@@ -357,16 +376,16 @@ const Registro = () => {
                     required 
                   />
                 </label>
-              </div>
-              <div className="form-row">
                 <label className="select-label">
-                  SEXO:
-                  <select name="SEXO" value={formData.SEXO} onChange={handleChange} required>
+                  GÉNERO:
+                  <select name="GENERO" value={formData.GENERO} onChange={handleChange} required>
                     <option value="">SELECCIONE</option>
                     <option value="M">MASCULINO</option>
                     <option value="F">FEMENINO</option>
                   </select>
                 </label>
+              </div>
+              <div className="form-row">
                 <label>
                   FECHA DE NACIMIENTO:
                   <input 
@@ -415,7 +434,7 @@ const Registro = () => {
                   />
                 </label>
                 <label className="select-label">
-                  PAÍS:
+                  PAÍS O ESTADO:
                   <select name="PAIS" value={formData.PAIS} onChange={handleChange} required>
                     <option value="">SELECCIONE UN PAÍS</option>
                     {paises.map((pais, index) => (
