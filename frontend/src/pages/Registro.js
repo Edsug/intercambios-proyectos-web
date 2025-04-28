@@ -6,7 +6,6 @@ const Registro = () => {
   const [formData, setFormData] = useState({
     // Sección Programa
     PROGRAMA: '',
-    ACTIVIDAD: '',
     FOLIO: '',
     ESTADO: 'ACTIVO',
     
@@ -22,10 +21,14 @@ const Registro = () => {
     
     // Sección Datos de Movilidad
     TIPO_MOVILIDAD: '',
+    ACTIVIDAD: '', // Movido de la sección Programa a Datos de Movilidad
+    TIPO_DESTINO: 'NACIONAL', // Nueva propiedad para determinar si es nacional o internacional
     INSTITUCION_DESTINO: '',
     PAIS: '',
+    ESTADO_REPUBLICA: '', // Nueva propiedad para movilidad nacional
     FECHA_INICIO: '',
     FECHA_FIN: '',
+    OBSERVACIONES: '', // Nuevo campo para observaciones
     
     // Sección Datos de Beca
     BECADO: false,
@@ -84,9 +87,18 @@ const Registro = () => {
     "ESTANCIA CORTA DE INVESTIGACIÓN"
   ];
 
+  // Lista de actividades de movilidad
+  const actividadesMovilidad = [
+    "MOVILIDAD ESTUDIANTIL",
+    "INTERCAMBIO ACADÉMICO",
+    "PRÁCTICAS PROFESIONALES",
+    "INVESTIGACIÓN",
+    "SERVICIO SOCIAL",
+    "OTRO"
+  ];
+
   // Lista de países para movilidad internacional
   const paises = [
-    "MÉXICO",
     "ESPAÑA",
     "ESTADOS UNIDOS",
     "CANADÁ",
@@ -102,6 +114,42 @@ const Registro = () => {
     "JAPÓN",
     "CHINA",
     "OTRO"
+  ];
+
+  // Lista de estados de la república mexicana
+  const estadosRepublica = [
+    "AGUASCALIENTES",
+    "BAJA CALIFORNIA",
+    "BAJA CALIFORNIA SUR",
+    "CAMPECHE",
+    "CHIAPAS",
+    "CHIHUAHUA",
+    "CIUDAD DE MÉXICO",
+    "COAHUILA",
+    "COLIMA",
+    "DURANGO",
+    "ESTADO DE MÉXICO",
+    "GUANAJUATO",
+    "GUERRERO",
+    "HIDALGO",
+    "JALISCO",
+    "MICHOACÁN",
+    "MORELOS",
+    "NAYARIT",
+    "NUEVO LEÓN",
+    "OAXACA",
+    "PUEBLA",
+    "QUERÉTARO",
+    "QUINTANA ROO",
+    "SAN LUIS POTOSÍ",
+    "SINALOA",
+    "SONORA",
+    "TABASCO",
+    "TAMAULIPAS",
+    "TLAXCALA",
+    "VERACRUZ",
+    "YUCATÁN",
+    "ZACATECAS"
   ];
 
   // Lista de programas de beca
@@ -150,7 +198,6 @@ const Registro = () => {
     setFormData({
       // Reset all fields to their default values
       PROGRAMA: '',
-      ACTIVIDAD: '',
       FOLIO: '',
       ESTADO: 'ACTIVO',
       CODIGO: '',
@@ -162,10 +209,14 @@ const Registro = () => {
       SEXO: '',
       FECHA_NACIMIENTO: '',
       TIPO_MOVILIDAD: '',
+      ACTIVIDAD: '',
+      TIPO_DESTINO: 'NACIONAL',
       INSTITUCION_DESTINO: '',
       PAIS: '',
+      ESTADO_REPUBLICA: '',
       FECHA_INICIO: '',
       FECHA_FIN: '',
+      OBSERVACIONES: '',
       BECADO: false,
       BECADO_POR: '',
       BECADO_POR_CUSUR: '',
@@ -239,19 +290,6 @@ const Registro = () => {
                   />
                 </label>
                 <label>
-                  ACTIVIDAD:
-                  <input 
-                    type="text" 
-                    name="ACTIVIDAD" 
-                    value={formData.ACTIVIDAD} 
-                    onChange={handleChange} 
-                    placeholder="Ej. MOVILIDAD ESTUDIANTIL"
-                    required 
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
                   FOLIO:
                   <input 
                     type="text" 
@@ -262,6 +300,8 @@ const Registro = () => {
                     required 
                   />
                 </label>
+              </div>
+              <div className="form-row">
                 <label className="select-label">
                   ESTADO:
                   <select name="ESTADO" value={formData.ESTADO} onChange={handleChange}>
@@ -360,7 +400,7 @@ const Registro = () => {
               </div>
               <div className="form-row">
                 <label className="select-label">
-                  SEXO:
+                  GÉNERO:
                   <select name="SEXO" value={formData.SEXO} onChange={handleChange} required>
                     <option value="">SELECCIONE</option>
                     <option value="M">MASCULINO</option>
@@ -401,7 +441,40 @@ const Registro = () => {
                     ))}
                   </select>
                 </label>
+                <label className="select-label">
+                  ACTIVIDAD:
+                  <select name="ACTIVIDAD" value={formData.ACTIVIDAD} onChange={handleChange} required>
+                    <option value="">SELECCIONE LA ACTIVIDAD</option>
+                    {actividadesMovilidad.map((actividad, index) => (
+                      <option key={index} value={actividad}>{actividad}</option>
+                    ))}
+                  </select>
+                </label>
               </div>
+              
+              <div className="form-row">
+                <label className="checkbox-label">
+                  <input
+                    type="radio"
+                    name="TIPO_DESTINO"
+                    value="NACIONAL"
+                    checked={formData.TIPO_DESTINO === "NACIONAL"}
+                    onChange={handleChange}
+                  />
+                  MOVILIDAD NACIONAL
+                </label>
+                <label className="checkbox-label">
+                  <input
+                    type="radio"
+                    name="TIPO_DESTINO"
+                    value="INTERNACIONAL"
+                    checked={formData.TIPO_DESTINO === "INTERNACIONAL"}
+                    onChange={handleChange}
+                  />
+                  MOVILIDAD INTERNACIONAL
+                </label>
+              </div>
+              
               <div className="form-row">
                 <label>
                   INSTITUCIÓN DESTINO:
@@ -414,16 +487,30 @@ const Registro = () => {
                     required 
                   />
                 </label>
-                <label className="select-label">
-                  PAÍS:
-                  <select name="PAIS" value={formData.PAIS} onChange={handleChange} required>
-                    <option value="">SELECCIONE UN PAÍS</option>
-                    {paises.map((pais, index) => (
-                      <option key={index} value={pais}>{pais}</option>
-                    ))}
-                  </select>
-                </label>
+                
+                {formData.TIPO_DESTINO === "INTERNACIONAL" ? (
+                  <label className="select-label">
+                    PAÍS:
+                    <select name="PAIS" value={formData.PAIS} onChange={handleChange} required>
+                      <option value="">SELECCIONE UN PAÍS</option>
+                      {paises.map((pais, index) => (
+                        <option key={index} value={pais}>{pais}</option>
+                      ))}
+                    </select>
+                  </label>
+                ) : (
+                  <label className="select-label">
+                    ESTADO:
+                    <select name="ESTADO_REPUBLICA" value={formData.ESTADO_REPUBLICA} onChange={handleChange} required>
+                      <option value="">SELECCIONE UN ESTADO</option>
+                      {estadosRepublica.map((estado, index) => (
+                        <option key={index} value={estado}>{estado}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
               </div>
+              
               <div className="form-row">
                 <label>
                   FECHA DE INICIO:
@@ -443,6 +530,19 @@ const Registro = () => {
                     value={formData.FECHA_FIN} 
                     onChange={handleChange} 
                     required 
+                  />
+                </label>
+              </div>
+              
+              <div className="form-row">
+                <label>
+                  OBSERVACIONES:
+                  <textarea 
+                    name="OBSERVACIONES" 
+                    value={formData.OBSERVACIONES} 
+                    onChange={handleChange} 
+                    placeholder="Agregue cualquier observación relevante sobre la movilidad"
+                    rows="3"
                   />
                 </label>
               </div>
