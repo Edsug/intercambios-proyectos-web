@@ -81,7 +81,9 @@ const Header = ({ toggleSidebar, isOpen }) => {
   return (
     <>
       <div className="top-banner">
-        <img src={headerImage} alt="Banner" className="header-banner-image" />
+        <a href="http://www.cusur.udg.mx/es/" target="_blank" rel="noopener noreferrer">
+          <img src={headerImage} alt="Banner" className="header-banner-image" />
+        </a>
       </div>
 
       <header className="header">

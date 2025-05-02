@@ -39,6 +39,13 @@
   z-index: 2;
 }
 
+.top-banner a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+
 .header {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-hover) 100%);
@@ -384,4 +391,8 @@
   .hamburger-button {
     margin-right: 10px;
   }
+
+  
+
+
 }

@@ -5,39 +5,40 @@ import "../styles/SideBar.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
+  const cargo = localStorage.getItem("cargo");
+
+  const items = [];
+
+  if (cargo === "Administrador") {
+    items.push("dashboard", "registro", "busqueda", "reportes", "configuracion");
+  } else if (cargo === "Asistente") {
+    items.push("dashboard", "registro", "busqueda", "reportes");
+  } else if (cargo === "Supervisor") {
+    items.push("busqueda", "reportes");
+  }
+
+  const itemComponents = {
+    dashboard: { path: "/dashboard", label: "Dashboard", icon: <FaChartBar size={20} /> },
+    registro: { path: "/registro", label: "Registro", icon: <FaFileAlt size={20} /> },
+    busqueda: { path: "/busqueda", label: "Buscar", icon: <FaSearch size={20} /> },
+    reportes: { path: "/reportes", label: "Reportes", icon: <FaClipboardList size={20} /> },
+    configuracion: { path: "/configuracion", label: "Configuración", icon: <FaCog size={20} /> }
+  };
 
   return (
     <div className="sidebar-wrapper">
       <div id="sidebarMenu" className={isOpen ? 'open' : ''}>
         <ul className="sidebarMenuInner">
-          <li className={location.pathname === "/dashboard" ? "active" : ""}>
-            <Link to="/dashboard">
-              <FaChartBar size={20} /> <span>Dashboard</span>
-            </Link>
-          </li>
-          <li className={location.pathname === "/registro" ? "active" : ""}>
-            <Link to="/registro">
-              <FaFileAlt size={20} /> <span>Registro</span>
-            </Link>
-          </li>
-          <li className={location.pathname === "/busqueda" ? "active" : ""}>
-            <Link to="/busqueda">
-              <FaSearch size={20} /> <span>Buscar</span>
-            </Link>
-          </li>
-          <li className={location.pathname === "/reportes" ? "active" : ""}>
-            <Link to="/reportes">
-              <FaClipboardList size={20} /> <span>Reportes</span>
-            </Link>
-          </li>
-          <li className={location.pathname === "/configuracion" ? "active" : ""}>
-            <Link to="/configuracion">
-              <FaCog size={20} /> <span>Configuración</span>
-            </Link>
-          </li>
+          {items.map((itemKey) => {
+            const { path, label, icon } = itemComponents[itemKey];
+            return (
+              <li key={itemKey} className={location.pathname === path ? "active" : ""}>
+                <Link to={path}>{icon} <span>{label}</span></Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
-      {/* Overlay para cerrar sidebar en móviles */}
       {isOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
     </div>
   );
