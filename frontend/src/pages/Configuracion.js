@@ -14,6 +14,7 @@ const Configuracion = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [nuevoUsuario, setNuevoUsuario] = useState({ nombre_usuario: "", contrasena: "", cargo: "Asistente" });
   const [editandoUsuario, setEditandoUsuario] = useState(null);
+  const [nuevaContrasena, setNuevaContrasena] = useState("");
 
   const obtenerUsuarios = async () => {
     try {
@@ -81,22 +82,30 @@ const Configuracion = () => {
 
   const iniciarEdicion = (usuario) => {
     setEditandoUsuario(usuario);
+    setNuevaContrasena("");
   };
 
   const cancelarEdicion = () => {
     setEditandoUsuario(null);
+    setNuevaContrasena("");
   };
 
   const guardarEdicion = async () => {
     try {
+      const payload = {
+        ...editandoUsuario,
+        nuevaContrasena: nuevaContrasena.trim() !== "" ? nuevaContrasena : undefined,
+      };
+
       const res = await fetch("http://localhost/basecambios/modificar_usuario.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editandoUsuario),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       alert(data.message);
       setEditandoUsuario(null);
+      setNuevaContrasena("");
       obtenerUsuarios();
     } catch (error) {
       console.error("Error al modificar usuario:", error);
@@ -164,6 +173,7 @@ const Configuracion = () => {
                     <tr>
                       <th>Usuario</th>
                       <th>Cargo</th>
+                      <th>Contraseña</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -179,6 +189,9 @@ const Configuracion = () => {
                             <option value="Supervisor">Supervisor</option>
                           </select>
                         ) : user.cargo}</td>
+                        <td>{editandoUsuario?.id === user.id ? (
+                          <input type="password" placeholder="Nueva contraseña" value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)} />
+                        ) : "••••••"}</td>
                         <td>
                           {editandoUsuario?.id === user.id ? (
                             <>
