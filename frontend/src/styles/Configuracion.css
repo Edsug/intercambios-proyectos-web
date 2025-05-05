@@ -1,141 +1,234 @@
+/* CONTENEDOR PRINCIPAL DE CONFIGURACIÓN */
+.dashboard-content {
+  padding-top: 60px;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  
-  /* CONTENEDOR PRINCIPAL DE CONFIGURACIÓN */
-  .dashboard-content {
-    padding-top: 60px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .content-header {
-    background-color: var(--background-color);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  .content-header h1 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-  }
-  
-  .content-header p {
-    color: #666;
-    margin-bottom: 0;
-  }
-  
-  /* CONTENEDOR DE CONFIGURACIÓN */
-  .config-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background-color: var(--background-color);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
+/* CABECERA */
+.content-header {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.content-header h1 {
+  color: var(--primary-color);
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.content-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* CONTENEDOR DE CONFIGURACIÓN */
+.config-container {
+  background-color: var(--background-color);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* TABS */
+.config-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.config-tab {
+  background: none;
+  border: 2px solid var(--primary-color);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.config-tab.active {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+.config-tab:hover {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+/* FORMULARIOS */
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition: border 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-group input {
+  transform: scale(1.2);
+}
+
+/* BOTONES */
+.save-button,
+.edit-button,
+.delete-button,
+.cancel-button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+.save-button:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.05);
+}
+
+.edit-button {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.edit-button:hover {
+  background-color: #2980b9;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+}
+
+.cancel-button {
+  background-color: #bdc3c7;
+  color: #2c3e50;
+  margin-left: 10px;
+}
+
+.cancel-button:hover {
+  background-color: #95a5a6;
+}
+
+/* TABLA DE USUARIOS */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
   .config-tabs {
-    display: flex;
-    margin-bottom: 20px;
+    flex-direction: column;
   }
-  
+
   .config-tab {
-    background: none;
-    border: 2px solid var(--primary-color);
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--primary-color);
-    cursor: pointer;
-    transition: 0.3s;
-    border-radius: 8px;
+    width: 100%;
   }
-  
-  .config-tab.active {
-    background-color: var(--primary-color);
-    color: var(--text-color);
-  }
-  
-  .config-tab:hover {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
-  }
-  
-  .config-content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  /* FORMULARIOS */
-  .config-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-group label {
-    color: var(--primary-color);
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
+
   .form-group input,
   .form-group select {
-    padding: 12px 18px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
+    width: 100%;
   }
-  
-  .checkbox-group {
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  td {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: none;
   }
-  
-  .checkbox-group input {
-    transform: scale(1.2);
-  }
-  
-  .save-button {
-    background: var(--primary-color);
-    color: var(--text-color);
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+
+  td::before {
+    content: attr(data-label);
     font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 16px;
+    color: #333;
   }
-  
-  .save-button:hover {
-    background: var(--secondary-color);
-    transform: scale(1.05);
-  }
-  
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .config-tabs {
-      flex-direction: column;
-    }
-  
-    .config-tab {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-  
-    .form-group input,
-    .form-group select {
-      width: 100%;
-    }
-  }
-  
+}
