@@ -38,6 +38,7 @@ const Login = ({ setIsAuthenticated }) => {
 
       if (data.status === "success") {
         setIsAuthenticated(true);
+        localStorage.setItem("user", JSON.stringify(data.user)); // Guardar el usuario
         localStorage.setItem("cargo", data.user.cargo); // Guardar el cargo
         navigate("/dashboard");
       } else {
