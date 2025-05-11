@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/FrmRegistro.css";
 
 const Registro = () => {
@@ -6,6 +6,7 @@ const Registro = () => {
   const [formData, setFormData] = useState({
     // Sección Programa
     PROGRAMA: '',
+    PROGRAMA_OTRO: '',
     FOLIO: '',
     ESTADO: 'ACTIVO',
     
@@ -18,6 +19,12 @@ const Registro = () => {
     PROMEDIO: '',
     SEXO: '',
     FECHA_NACIMIENTO: '',
+    TIPO_SANGRE: '',
+    NSS: '',
+    TELEFONO: '',
+    CORREO: '',
+    CONTACTO_EMERGENCIA: '',
+    NOMBRE_CONTACTO_EMERGENCIA: '',
     
     // Sección Datos de Movilidad
     TIPO_MOVILIDAD: '',
@@ -54,6 +61,39 @@ const Registro = () => {
     CUENTA_CON_ALGUNA_DISCAPACIDAD: '',
     PERTENECE_ALGUNA_COMUNIDAD_INDIGENA: ''
   });
+
+  // Lista de programas predefinidos
+  const programasPredefinidos = [
+    "PILA",
+    "PAME",
+    "UAM",
+    "LLEIDA",
+    "RED MARCO UNIVERSIDADES",
+    "PIMA",
+    "PROGRAMA DELFIN"
+  ];
+
+  // Estado para almacenar programas personalizados
+  const [programasPersonalizados, setProgramasPersonalizados] = useState([]);
+  // Estado para mostrar sugerencias de programas similares
+  const [sugerenciasProgramas, setSugerenciasProgramas] = useState([]);
+  // Estado para controlar si se muestra el campo de otro programa
+  const [mostrarOtroCampo, setMostrarOtroCampo] = useState(false);
+  // Estado para indicar si un programa es similar a uno existente
+  const [programaSimilarExiste, setProgramaSimilarExiste] = useState(false);
+  // Estado para guardar programa en lista
+  const [guardarPrograma, setGuardarPrograma] = useState(false);
+  // Estado para mensaje de error
+  const [errorMensaje, setErrorMensaje] = useState('');
+
+  // Efecto para cargar programas personalizados guardados anteriormente
+  useEffect(() => {
+    // En una aplicación real, esto se cargaría desde una base de datos o localStorage
+    const programasGuardados = localStorage.getItem('programasPersonalizados');
+    if (programasGuardados) {
+      setProgramasPersonalizados(JSON.parse(programasGuardados));
+    }
+  }, []);
 
   // Lista de carreras disponibles
   const carreras = [
@@ -163,24 +203,170 @@ const Registro = () => {
     "OTRO"
   ];
 
+  // Función para normalizar texto (quitar acentos, convertir a mayúsculas, quitar espacios extras)
+  const normalizarTexto = (texto) => {
+    return texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase()
+      .trim()
+      .replace(/\s+/g, " ");
+  };
+
+  // Función para buscar programas similares
+  const buscarProgramasSimilares = (texto) => {
+    if (!texto || texto.length < 3) {
+      setSugerenciasProgramas([]);
+      setProgramaSimilarExiste(false);
+      setErrorMensaje('');
+      return;
+    }
+
+    const normalizado = normalizarTexto(texto);
+    // Combinar programas predefinidos y personalizados
+    const todosLosProgramas = [...programasPredefinidos, ...programasPersonalizados];
+    
+    const similares = todosLosProgramas.filter(programa => {
+      const programaNormalizado = normalizarTexto(programa);
+      
+      // Verificar si el programa contiene el texto o viceversa
+      return programaNormalizado.includes(normalizado) || 
+             normalizado.includes(programaNormalizado) ||
+             // Verificar si hay palabras en común
+             programaNormalizado.split(" ").some(palabra => 
+               normalizado.split(" ").includes(palabra) && palabra.length > 3
+             );
+    });
+    
+    setSugerenciasProgramas(similares);
+    
+    // Verificar si existe un programa idéntico
+    const existeExacto = todosLosProgramas.some(
+      programa => normalizarTexto(programa) === normalizado
+    );
+    
+    setProgramaSimilarExiste(existeExacto);
+    
+    if (existeExacto) {
+      setErrorMensaje('Este programa ya existe en la lista. Por favor selecciónelo de las opciones disponibles.');
+    } else {
+      setErrorMensaje('');
+    }
+  };
+
+  // Función para agregar un nuevo programa personalizado
+  const agregarProgramaPersonalizado = (nuevoPrograma) => {
+    if (!nuevoPrograma || nuevoPrograma.trim() === "") return;
+    
+    const programaNormalizado = normalizarTexto(nuevoPrograma);
+    
+    // Verificar si ya existe un programa similar
+    const todosLosProgramas = [...programasPredefinidos, ...programasPersonalizados];
+    const yaExiste = todosLosProgramas.some(
+      programa => normalizarTexto(programa) === programaNormalizado
+    );
+    
+    if (yaExiste) {
+      setErrorMensaje("Ya existe un programa similar en la lista.");
+      return null;
+    }
+    
+    // Solo agregar a la lista de programas personalizados si se ha marcado el checkbox
+    if (guardarPrograma) {
+      const nuevosPersonalizados = [...programasPersonalizados, programaNormalizado];
+      setProgramasPersonalizados(nuevosPersonalizados);
+      
+      // Guardar en localStorage (en una aplicación real esto iría a una base de datos)
+      localStorage.setItem('programasPersonalizados', JSON.stringify(nuevosPersonalizados));
+    }
+    
+    return programaNormalizado;
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) : value;
     
+    // Lógica especial para el campo PROGRAMA
+    if (name === "PROGRAMA") {
+      if (value === "OTRO") {
+        setMostrarOtroCampo(true);
+        // Resetear campos relacionados con el programa otro
+        setGuardarPrograma(false);
+        setProgramaSimilarExiste(false);
+        setErrorMensaje('');
+      } else {
+        setMostrarOtroCampo(false);
+        setSugerenciasProgramas([]);
+        setErrorMensaje('');
+      }
+    }
+    
+    // Lógica para el campo PROGRAMA_OTRO
+    if (name === "PROGRAMA_OTRO") {
+      buscarProgramasSimilares(value);
+    }
+    
+    // Lógica para el checkbox de guardar programa
+    if (name === "GUARDAR_PROGRAMA") {
+      setGuardarPrograma(checked);
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === 'checkbox' ? checked : type === 'text' ? value.toUpperCase() : val
+      });
+    }
+  };
+
+  const handleSelectSugerencia = (programa) => {
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : type === 'text' ? value.toUpperCase() : val
+      PROGRAMA: programa,
+      PROGRAMA_OTRO: ''
     });
+    setMostrarOtroCampo(false);
+    setSugerenciasProgramas([]);
+    setErrorMensaje('');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Si se seleccionó "OTRO" y se ingresó un programa personalizado, verificar si es válido
+    if (formData.PROGRAMA === "OTRO" && formData.PROGRAMA_OTRO) {
+      if (programaSimilarExiste) {
+        alert("Este programa ya existe. Por favor selecciónelo de la lista o ingrese uno diferente.");
+        return;
+      }
+      
+      const programaNormalizado = agregarProgramaPersonalizado(formData.PROGRAMA_OTRO);
+      if (programaNormalizado) {
+        setFormData({
+          ...formData,
+          PROGRAMA: programaNormalizado
+        });
+      } else {
+        return; // No continuar si hubo un error
+      }
+    }
+    
     console.log(formData);
     // Aquí puedes agregar la lógica para enviar el formulario al backend
     alert("Alumno registrado correctamente para programa de movilidad");
+    
+    // Opcional: Resetear el formulario después de enviar
+    resetForm();
   };
 
   const nextSection = () => {
+    // Validación específica para sección 1 si se seleccionó "OTRO"
+    if (activeSection === 1 && formData.PROGRAMA === "OTRO" && formData.PROGRAMA_OTRO) {
+      if (programaSimilarExiste) {
+        alert("Este programa ya existe. Por favor selecciónelo de la lista o ingrese uno diferente.");
+        return;
+      }
+    }
+    
     if (activeSection < 5) {
       setActiveSection(activeSection + 1);
       window.scrollTo(0, 0);
@@ -198,6 +384,7 @@ const Registro = () => {
     setFormData({
       // Reset all fields to their default values
       PROGRAMA: '',
+      PROGRAMA_OTRO: '',
       FOLIO: '',
       ESTADO: 'ACTIVO',
       CODIGO: '',
@@ -238,6 +425,11 @@ const Registro = () => {
       CUENTA_CON_ALGUNA_DISCAPACIDAD: '',
       PERTENECE_ALGUNA_COMUNIDAD_INDIGENA: ''
     });
+    setMostrarOtroCampo(false);
+    setSugerenciasProgramas([]);
+    setGuardarPrograma(false);
+    setProgramaSimilarExiste(false);
+    setErrorMensaje('');
     setActiveSection(1);
   };
 
@@ -278,16 +470,23 @@ const Registro = () => {
             <h2 className="section-title">Programa</h2>
             <div className="section-content">
               <div className="form-row">
-                <label>
+                <label className="select-label">
                   PROGRAMA:
-                  <input 
-                    type="text" 
+                  <select 
                     name="PROGRAMA" 
                     value={formData.PROGRAMA} 
-                    onChange={handleChange} 
-                    placeholder="Ej. PROGRAMA DE ESTANCIAS ACADÉMICAS (PEA)"
-                    required 
-                  />
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">SELECCIONE UN PROGRAMA</option>
+                    {programasPredefinidos.map((programa, index) => (
+                      <option key={`predefinido-${index}`} value={programa}>{programa}</option>
+                    ))}
+                    {programasPersonalizados.map((programa, index) => (
+                      <option key={`personalizado-${index}`} value={programa}>{programa}</option>
+                    ))}
+                    <option value="OTRO">OTRO</option>
+                  </select>
                 </label>
                 <label>
                   FOLIO:
@@ -301,6 +500,64 @@ const Registro = () => {
                   />
                 </label>
               </div>
+              
+              {mostrarOtroCampo && (
+                <div className="form-section-otro">
+                  <div className="form-row">
+                    <label>
+                      ESPECIFIQUE OTRO PROGRAMA:
+                      <input 
+                        type="text" 
+                        name="PROGRAMA_OTRO" 
+                        value={formData.PROGRAMA_OTRO} 
+                        onChange={handleChange} 
+                        placeholder="Ingrese el nombre del programa"
+                        required={formData.PROGRAMA === "OTRO"}
+                        className={programaSimilarExiste ? "input-error" : ""}
+                      />
+                    </label>
+                  </div>
+                  
+                  {errorMensaje && (
+                    <div className="error-mensaje">
+                      {errorMensaje}
+                    </div>
+                  )}
+                  
+                  {!programaSimilarExiste && formData.PROGRAMA_OTRO.trim() !== "" && (
+                    <div className="form-row checkbox-row">
+                      <label className="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          name="GUARDAR_PROGRAMA" 
+                          checked={guardarPrograma} 
+                          onChange={handleChange} 
+                        />
+                        ¿DESEAS GUARDAR ESTE NUEVO PROGRAMA PARA FUTURAS SELECCIONES?
+                      </label>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {sugerenciasProgramas.length > 0 && (
+                <div className="sugerencias-container">
+                  <p>¿Quizás quiso decir?</p>
+                  <div className="sugerencias-lista">
+                    {sugerenciasProgramas.map((programa, index) => (
+                      <button 
+                        key={index} 
+                        type="button" 
+                        className="sugerencia-btn"
+                        onClick={() => handleSelectSugerencia(programa)}
+                      >
+                        {programa}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <div className="form-row">
                 <label className="select-label">
                   ESTADO:
@@ -313,118 +570,202 @@ const Registro = () => {
               </div>
             </div>
             <div className="form-navigation">
-              <button type="button" onClick={nextSection} className="next-button">Siguiente</button>
+              <button 
+                type="button" 
+                onClick={nextSection} 
+                className="next-button"
+                disabled={formData.PROGRAMA === "OTRO" && programaSimilarExiste}
+              >Siguiente</button>
             </div>
           </div>
         )}
 
-        {/* SECCIÓN 2: DATOS DEL ALUMNO */}
-        {activeSection === 2 && (
-          <div className="form-section">
-            <h2 className="section-title">Datos del Alumno</h2>
-            <div className="section-content">
-              <div className="form-row">
-                <label>
-                  CÓDIGO:
-                  <input 
-                    type="text" 
-                    name="CODIGO" 
-                    value={formData.CODIGO} 
-                    onChange={handleChange} 
-                    placeholder="Código del alumno"
-                    required 
-                  />
-                </label>
-                <label>
-                  NOMBRE(S):
-                  <input 
-                    type="text" 
-                    name="NOMBRE" 
-                    value={formData.NOMBRE} 
-                    onChange={handleChange} 
-                    placeholder="Nombre(s) del alumno"
-                    required 
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  APELLIDOS:
-                  <input 
-                    type="text" 
-                    name="APELLIDOS" 
-                    value={formData.APELLIDOS} 
-                    onChange={handleChange} 
-                    placeholder="Apellidos del alumno"
-                    required 
-                  />
-                </label>
-                <label className="select-label">
-                  CARRERA:
-                  <select name="CARRERA" value={formData.CARRERA} onChange={handleChange} required>
-                    <option value="">SELECCIONE UNA CARRERA</option>
-                    {carreras.map((carrera, index) => (
-                      <option key={index} value={carrera}>{carrera}</option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  SEMESTRE:
-                  <input 
-                    type="number" 
-                    min="1" 
-                    max="12" 
-                    name="SEMESTRE" 
-                    value={formData.SEMESTRE} 
-                    onChange={handleChange} 
-                    placeholder="Semestre actual"
-                    required 
-                  />
-                </label>
-                <label>
-                  PROMEDIO:
-                  <input 
-                    type="number" 
-                    step="0.01" 
-                    min="0" 
-                    max="100" 
-                    name="PROMEDIO" 
-                    value={formData.PROMEDIO} 
-                    onChange={handleChange} 
-                    placeholder="Promedio general"
-                    required 
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label className="select-label">
-                  GÉNERO:
-                  <select name="SEXO" value={formData.SEXO} onChange={handleChange} required>
-                    <option value="">SELECCIONE</option>
-                    <option value="M">MASCULINO</option>
-                    <option value="F">FEMENINO</option>
-                  </select>
-                </label>
-                <label>
-                  FECHA DE NACIMIENTO:
-                  <input 
-                    type="date" 
-                    name="FECHA_NACIMIENTO" 
-                    value={formData.FECHA_NACIMIENTO} 
-                    onChange={handleChange} 
-                    required 
-                  />
-                </label>
-              </div>
-            </div>
-            <div className="form-navigation">
-              <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
-              <button type="button" onClick={nextSection} className="next-button">Siguiente</button>
-            </div>
-          </div>
-        )}
+                     {/* SECCIÓN 2: DATOS DEL ALUMNO */}
+              {activeSection === 2 && (
+                <div className="form-section">
+                  <h2 className="section-title">Datos del Alumno</h2>
+                  <div className="section-content">
+                    <div className="form-row">
+                      <label>
+                        CÓDIGO:
+                        <input 
+                          type="text" 
+                          name="CODIGO" 
+                          value={formData.CODIGO} 
+                          onChange={handleChange} 
+                          placeholder="Código del alumno"
+                          required 
+                        />
+                      </label>
+                      <label>
+                        NOMBRE(S):
+                        <input 
+                          type="text" 
+                          name="NOMBRE" 
+                          value={formData.NOMBRE} 
+                          onChange={handleChange} 
+                          placeholder="Nombre(s) del alumno"
+                          required 
+                        />
+                      </label>
+                    </div>
+                    <div className="form-row">
+                      <label>
+                        APELLIDOS:
+                        <input 
+                          type="text" 
+                          name="APELLIDOS" 
+                          value={formData.APELLIDOS} 
+                          onChange={handleChange} 
+                          placeholder="Apellidos del alumno"
+                          required 
+                        />
+                      </label>
+                      <label className="select-label">
+                        CARRERA:
+                        <select name="CARRERA" value={formData.CARRERA} onChange={handleChange} required>
+                          <option value="">SELECCIONE UNA CARRERA</option>
+                          {carreras.map((carrera, index) => (
+                            <option key={index} value={carrera}>{carrera}</option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                    <div className="form-row">
+                      <label>
+                        SEMESTRE:
+                        <input 
+                          type="number" 
+                          min="1" 
+                          max="12" 
+                          name="SEMESTRE" 
+                          value={formData.SEMESTRE} 
+                          onChange={handleChange} 
+                          placeholder="Semestre actual"
+                          required 
+                        />
+                      </label>
+                      <label>
+                        PROMEDIO:
+                        <input 
+                          type="number" 
+                          step="0.01" 
+                          min="0" 
+                          max="100" 
+                          name="PROMEDIO" 
+                          value={formData.PROMEDIO} 
+                          onChange={handleChange} 
+                          placeholder="Promedio general"
+                          required 
+                        />
+                      </label>
+                    </div>
+                    <div className="form-row">
+                      <label className="select-label">
+                        GÉNERO:
+                        <select name="SEXO" value={formData.SEXO} onChange={handleChange} required>
+                          <option value="">SELECCIONE</option>
+                          <option value="M">MASCULINO</option>
+                          <option value="F">FEMENINO</option>
+                        </select>
+                      </label>
+                      <label>
+                        FECHA DE NACIMIENTO:
+                        <input 
+                          type="date" 
+                          name="FECHA_NACIMIENTO" 
+                          value={formData.FECHA_NACIMIENTO} 
+                          onChange={handleChange} 
+                          required 
+                        />
+                      </label>
+                    </div>
+                    <div className="form-row">
+                      <label className="select-label">
+                        TIPO DE SANGRE:
+                        <select name="TIPO_SANGRE" value={formData.TIPO_SANGRE} onChange={handleChange} required>
+                          <option value="">SELECCIONE</option>
+                          <option value="A+">A+</option>
+                          <option value="A-">A-</option>
+                          <option value="B+">B+</option>
+                          <option value="B-">B-</option>
+                          <option value="AB+">AB+</option>
+                          <option value="AB-">AB-</option>
+                          <option value="O+">O+</option>
+                          <option value="O-">O-</option>
+                        </select>
+                      </label>
+                      <label>
+                        NÚMERO DE TELÉFONO:
+                        <input 
+                          type="tel" 
+                          name="TELEFONO" 
+                          value={formData.TELEFONO} 
+                          onChange={handleChange} 
+                          placeholder="Número de teléfono"
+                          required 
+                        />
+                      </label>
+                    </div>
+                    <div className="form-row">
+                      <label>
+                        CORREO INSTITUCIONAL:
+                        <input 
+                          type="email" 
+                          name="CORREO" 
+                          value={formData.CORREO} 
+                          onChange={handleChange} 
+                          placeholder="Correo institucional"
+                          required 
+                        />
+                      </label>
+                      <label>
+                        CONTACTO DE EMERGENCIA (TELÉFONO):
+                        <input 
+                          type="tel" 
+                          name="CONTACTO_EMERGENCIA" 
+                          value={formData.CONTACTO_EMERGENCIA} 
+                          onChange={handleChange} 
+                          placeholder="Teléfono de emergencia"
+                          required 
+                        />
+                      </label>
+                    </div>
+                    {formData.CONTACTO_EMERGENCIA && (
+                      <div className="form-row">
+                        <label>
+                          NOMBRE DEL CONTACTO DE EMERGENCIA:
+                          <input 
+                            type="text" 
+                            name="NOMBRE_CONTACTO_EMERGENCIA" 
+                            value={formData.NOMBRE_CONTACTO_EMERGENCIA} 
+                            onChange={handleChange} 
+                            placeholder="Nombre del contacto de emergencia"
+                            required 
+                          />
+                        </label>
+                      </div>
+                    )}
+                    <div className="form-row">
+                      <label>
+                        NÚMERO DE SEGURO SOCIAL (NSS):
+                        <input 
+                          type="text" 
+                          name="NSS" 
+                          value={formData.NSS} 
+                          onChange={handleChange} 
+                          placeholder="Número de Seguro Social"
+                          required 
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div className="form-navigation">
+                    <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
+                    <button type="button" onClick={nextSection} className="next-button">Siguiente</button>
+                  </div>
+                </div>
+              )}
 
         {/* SECCIÓN 3: DATOS DE MOVILIDAD */}
         {activeSection === 3 && (
