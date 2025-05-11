@@ -38,39 +38,46 @@ const Registro = () => {
     OBSERVACIONES: '', // Nuevo campo para observaciones
     
     // Sección Datos de Beca
-    BECADO: false,
-    BECADO_POR: '',
-    BECADO_POR_CUSUR: '',
-    ORGANISMO_EXTERNO_NOMBRE: '',
-    ORGANISMO_EXTERNO_MONTO: '',
-    BECADO_POR_LA_SEP: '',
+    BECADO_CUSUR: false,
+    MONTO_CUSUR: '',
+    DETALLES_CUSUR: '',
+    BECADO_CGCI: false,
+    NUMERO_BECAS_CGCI: 0,
+    BECADO_PROGRAMA: false,
+    MONTO_PROGRAMA: '',
+    DETALLES_PROGRAMA: '',
+    BECADO_EXTERNO: false,
+    NUMERO_BECAS_EXTERNAS: 0,
+    
     
     // Sección Datos Adicionales
-    PROMOCION: '',
-    CALIFICACIONES: '',
-    REVALIDACION: '',
-    CALF_SIIAU: '',
-    CONTINUA_MOVILIDAD: false,
-    RECTORIA: '',
-    CGCI_PEA_AMPLIADO: '',
-    PROFOCIE_PPE: '',
-    ESACIES: '',
-    RENUNCIAS: '',
-    APOYO_REPATRIACION: '',
-    COVID_19: '',
-    CUENTA_CON_ALGUNA_DISCAPACIDAD: '',
-    PERTENECE_ALGUNA_COMUNIDAD_INDIGENA: ''
+  REVALIDACION_MATERIAS: false,
+  DATOS_REVALIDACION: '',
+  CERTIFICADO_CALIFICACIONES: null,
+  CUENTA_CON_ALGUNA_DISCAPACIDAD: false,
+  DATOS_DISCAPACIDAD: '',
+  SEGURO_VIAJE: false,
+  NOMBRE_ASEGURADORA: '',
+  NUMERO_POLIZA: '',
+  FECHA_INICIO_SEGURO: '',
+  FECHA_FIN_SEGURO: '',
+  CONTACTO_ASEGURADORA: '',
+  OBSERVACIONES_SEGURO: '',
+  EXPERIENCIA_COMPARTIDA: false,
+  DETALLES_EXPERIENCIA: '',
+
   });
 
   // Lista de programas predefinidos
   const programasPredefinidos = [
     "PILA",
     "PAME",
+    "PIMA",
     "UAM",
     "LLEIDA",
     "RED MARCO UNIVERSIDADES",
-    "PIMA",
-    "PROGRAMA DELFIN"
+    "PROGRAMA DELFIN", 
+    "PROGRAMA DE MOVILIDAD NACIONAL E INTERNACIONAL"
   ];
 
   // Estado para almacenar programas personalizados
@@ -118,25 +125,7 @@ const Registro = () => {
     "SEGURIDAD LABORAL, PROTECCION CIVIL Y EMERGENCIAS",
     "TRABAJO SOCIAL"
   ];
-
-  // Lista de tipos de movilidad
-  const tiposMovilidad = [
-    "ESTANCIA PARA CURSAR ASIGNATURAS",
-    "ESTANCIA DE INVESTIGACIÓN",
-    "ESTANCIA PARA PRÁCTICAS PROFESIONALES",
-    "ESTANCIA CORTA DE INVESTIGACIÓN"
-  ];
-
-  // Lista de actividades de movilidad
-  const actividadesMovilidad = [
-    "MOVILIDAD ESTUDIANTIL",
-    "INTERCAMBIO ACADÉMICO",
-    "PRÁCTICAS PROFESIONALES",
-    "INVESTIGACIÓN",
-    "SERVICIO SOCIAL",
-    "OTRO"
-  ];
-
+  
   // Lista de países para movilidad internacional
   const paises = [
     "ESPAÑA",
@@ -153,7 +142,6 @@ const Registro = () => {
     "AUSTRALIA",
     "JAPÓN",
     "CHINA",
-    "OTRO"
   ];
 
   // Lista de estados de la república mexicana
@@ -190,17 +178,6 @@ const Registro = () => {
     "VERACRUZ",
     "YUCATÁN",
     "ZACATECAS"
-  ];
-
-  // Lista de programas de beca
-  const programasBeca = [
-    "NINGUNO",
-    "COORDINACIÓN DE INTERNACIONALIZACIÓN (CI)",
-    "SEP",
-    "CUSUR",
-    "DELFIN",
-    "ORGANISMO EXTERNO",
-    "OTRO"
   ];
 
   // Función para normalizar texto (quitar acentos, convertir a mayúsculas, quitar espacios extras)
@@ -379,6 +356,14 @@ const Registro = () => {
       window.scrollTo(0, 0);
     }
   };
+
+  const handleChangeDynamic = (e, index, fieldPrefix) => {
+  const { value } = e.target;
+  setFormData({
+    ...formData,
+    [`${fieldPrefix}_${index}`]: value,
+  });
+};
 
   const resetForm = () => {
     setFormData({
@@ -767,7 +752,7 @@ const Registro = () => {
                 </div>
               )}
 
-        {/* SECCIÓN 3: DATOS DE MOVILIDAD */}
+                {/* SECCIÓN 3: DATOS DE MOVILIDAD */}
         {activeSection === 3 && (
           <div className="form-section">
             <h2 className="section-title">Datos de Movilidad</h2>
@@ -777,22 +762,15 @@ const Registro = () => {
                   TIPO DE MOVILIDAD:
                   <select name="TIPO_MOVILIDAD" value={formData.TIPO_MOVILIDAD} onChange={handleChange} required>
                     <option value="">SELECCIONE EL TIPO DE MOVILIDAD</option>
-                    {tiposMovilidad.map((tipo, index) => (
-                      <option key={index} value={tipo}>{tipo}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="select-label">
-                  ACTIVIDAD:
-                  <select name="ACTIVIDAD" value={formData.ACTIVIDAD} onChange={handleChange} required>
-                    <option value="">SELECCIONE LA ACTIVIDAD</option>
-                    {actividadesMovilidad.map((actividad, index) => (
-                      <option key={index} value={actividad}>{actividad}</option>
-                    ))}
+                    <option value="ESTACIA ACADEMICA">ESTACIA ACADEMICA</option>
+                    <option value="ESTANCIA DE INVESTIGACION">ESTANCIA DE INVESTIGACION</option>  
+                    <option value="ESTANCIA PARA PRACTICAS PROFESIONALES">ESTANCIA PARA PRACTICAS PROFESIONALES</option>
+                    <option value="ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)">ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)</option>
+                    <option value="ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS">ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS</option>
                   </select>
                 </label>
               </div>
-              
+        
               <div className="form-row">
                 <label className="checkbox-label">
                   <input
@@ -815,7 +793,7 @@ const Registro = () => {
                   MOVILIDAD INTERNACIONAL
                 </label>
               </div>
-              
+        
               <div className="form-row">
                 <label>
                   INSTITUCIÓN DESTINO:
@@ -830,14 +808,29 @@ const Registro = () => {
                 </label>
                 
                 {formData.TIPO_DESTINO === "INTERNACIONAL" ? (
-                  <label className="select-label">
+                  <label>
                     PAÍS:
-                    <select name="PAIS" value={formData.PAIS} onChange={handleChange} required>
-                      <option value="">SELECCIONE UN PAÍS</option>
+                    <input 
+                      type="text" 
+                      name="PAIS" 
+                      value={formData.PAIS} 
+                      onChange={(e) => {
+                        const inputPais = e.target.value.toUpperCase();
+                        const paisEncontrado = paises.find(pais => pais.toUpperCase() === inputPais);
+                        setFormData({
+                          ...formData,
+                          PAIS: paisEncontrado || inputPais // Si coincide, usa el predefinido; si no, usa el ingresado
+                        });
+                      }} 
+                      placeholder="Escriba o seleccione un país"
+                      list="paises-list"
+                      required 
+                    />
+                    <datalist id="paises-list">
                       {paises.map((pais, index) => (
-                        <option key={index} value={pais}>{pais}</option>
+                        <option key={index} value={pais} />
                       ))}
-                    </select>
+                    </datalist>
                   </label>
                 ) : (
                   <label className="select-label">
@@ -851,7 +844,7 @@ const Registro = () => {
                   </label>
                 )}
               </div>
-              
+        
               <div className="form-row">
                 <label>
                   FECHA DE INICIO:
@@ -874,7 +867,7 @@ const Registro = () => {
                   />
                 </label>
               </div>
-              
+        
               <div className="form-row">
                 <label>
                   OBSERVACIONES:
@@ -895,95 +888,288 @@ const Registro = () => {
           </div>
         )}
 
-        {/* SECCIÓN 4: DATOS DE BECA */}
+                {/* SECCIÓN 4: DATOS DE BECA */}
         {activeSection === 4 && (
           <div className="form-section">
             <h2 className="section-title">Datos de Beca</h2>
             <div className="section-content">
+              
+              {/* Opción 1: Beca Cusur */}
               <div className="form-row checkbox-row">
                 <label className="checkbox-label">
                   <input 
                     type="checkbox" 
-                    name="BECADO" 
-                    checked={formData.BECADO} 
+                    name="BECADO_CUSUR" 
+                    checked={formData.BECADO_CUSUR} 
                     onChange={handleChange} 
                   />
-                  ¿CUENTA CON BECA?
+                  ¿CUENTA CON BECA CUSUR?
                 </label>
               </div>
-              
-              {formData.BECADO && (
+              {formData.BECADO_CUSUR && (
+                <div className="form-row">
+                  <label>
+                    MONTO OBTENIDO:
+                    <input 
+                      type="number" 
+                      name="MONTO_CUSUR" 
+                      value={formData.MONTO_CUSUR} 
+                      onChange={handleChange} 
+                      placeholder="Monto en MXN"
+                      required 
+                    />
+                  </label>
+                  <label>
+                    DETALLES EXTRAS:
+                    <textarea 
+                      name="DETALLES_CUSUR" 
+                      value={formData.DETALLES_CUSUR} 
+                      onChange={handleChange} 
+                      placeholder="Detalles adicionales sobre la beca"
+                      rows="3"
+                    />
+                  </label>
+                </div>
+              )}
+        
+              {/* Opción 2: Becas CGCI */}
+              <div className="form-row checkbox-row">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    name="BECADO_CGCI" 
+                    checked={formData.BECADO_CGCI} 
+                    onChange={handleChange} 
+                  />
+                  ¿CUENTA CON BECAS CGCI?
+                </label>
+              </div>
+              {formData.BECADO_CGCI && (
                 <>
                   <div className="form-row">
-                    <label className="select-label">
-                      BECADO POR:
-                      <select name="BECADO_POR" value={formData.BECADO_POR} onChange={handleChange}>
-                        <option value="">SELECCIONE</option>
-                        {programasBeca.map((programa, index) => (
-                          <option key={index} value={programa}>{programa}</option>
-                        ))}
-                      </select>
+                    <label>
+                      ¿CUÁNTAS BECAS TIENE?
+                      <input 
+                        type="number" 
+                        name="NUMERO_BECAS_CGCI" 
+                        value={formData.NUMERO_BECAS_CGCI} 
+                        onChange={handleChange} 
+                        placeholder="Número de becas"
+                        min="1"
+                        required 
+                      />
                     </label>
                   </div>
-                  
-                  {formData.BECADO_POR === "CUSUR" && (
-                    <div className="form-row">
+                  {Array.from({ length: formData.NUMERO_BECAS_CGCI || 0 }).map((_, index) => (
+                    <div key={index} className="form-row">
                       <label>
-                        TIPO DE BECA CUSUR:
-                        <input 
-                          type="text" 
-                          name="BECADO_POR_CUSUR" 
-                          value={formData.BECADO_POR_CUSUR} 
-                          onChange={handleChange} 
-                          placeholder="Especifique el tipo de beca CUSUR"
-                        />
+                        TIPO DE BECA:
+                        <select 
+                          name={`TIPO_BECA_CGCI_${index}`} 
+                          value={formData[`TIPO_BECA_CGCI_${index}`] || ''} 
+                          onChange={(e) => handleChangeDynamic(e, index, 'TIPO_BECA_CGCI')}
+                          required
+                        >
+                          <option value="">SELECCIONE</option>
+                          <option value="PAEME">PAEME</option>
+                          <option value="AMES">AMES</option>
+                          <option value="ESACIES">ESACIES</option>
+                          <option value="OTRO">OTRO</option>
+                        </select>
                       </label>
-                    </div>
-                  )}
-                  
-                  {formData.BECADO_POR === "ORGANISMO EXTERNO" && (
-                    <>
-                      <div className="form-row">
+                      {formData[`TIPO_BECA_CGCI_${index}`] === "OTRO" && (
                         <label>
-                          NOMBRE DEL ORGANISMO:
+                          NOMBRE DEL PROGRAMA:
                           <input 
                             type="text" 
-                            name="ORGANISMO_EXTERNO_NOMBRE" 
-                            value={formData.ORGANISMO_EXTERNO_NOMBRE} 
-                            onChange={handleChange} 
-                            placeholder="Nombre del organismo externo"
+                            name={`NOMBRE_BECA_CGCI_${index}`} 
+                            value={formData[`NOMBRE_BECA_CGCI_${index}`] || ''} 
+                            onChange={(e) => handleChangeDynamic(e, index, 'NOMBRE_BECA_CGCI')}
+                            placeholder="Nombre del programa"
+                            required 
                           />
                         </label>
-                      </div>
-                      <div className="form-row">
-                        <label>
-                          MONTO OTORGADO:
-                          <input 
-                            type="number" 
-                            name="ORGANISMO_EXTERNO_MONTO" 
-                            value={formData.ORGANISMO_EXTERNO_MONTO} 
-                            onChange={handleChange} 
-                            placeholder="Monto en MXN"
-                          />
-                        </label>
-                      </div>
-                    </>
-                  )}
-                  
-                  {formData.BECADO_POR === "SEP" && (
-                    <div className="form-row">
+                      )}
                       <label>
-                        PROGRAMA SEP:
+                        MONTO OBTENIDO:
                         <input 
-                          type="text" 
-                          name="BECADO_POR_LA_SEP" 
-                          value={formData.BECADO_POR_LA_SEP} 
-                          onChange={handleChange} 
-                          placeholder="Especifique el programa SEP"
+                          type="number" 
+                          name={`MONTO_BECA_CGCI_${index}`} 
+                          value={formData[`MONTO_BECA_CGCI_${index}`] || ''} 
+                          onChange={(e) => handleChangeDynamic(e, index, 'MONTO_BECA_CGCI')}
+                          placeholder="Monto en MXN"
+                          required 
+                        />
+                      </label>
+                      <label>
+                        DETALLES EXTRAS:
+                        <textarea 
+                          name={`DETALLES_BECA_CGCI_${index}`} 
+                          value={formData[`DETALLES_BECA_CGCI_${index}`] || ''} 
+                          onChange={(e) => handleChangeDynamic(e, index, 'DETALLES_BECA_CGCI')}
+                          placeholder="Detalles adicionales"
+                          rows="3"
                         />
                       </label>
                     </div>
-                  )}
+                  ))}
+                </>
+              )}
+        
+              {/* Opción 3: Beca del Programa de Movilidad */}
+              <div className="form-row checkbox-row">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    name="BECADO_PROGRAMA" 
+                    checked={formData.BECADO_PROGRAMA} 
+                    onChange={handleChange} 
+                  />
+                  ¿EL PROGRAMA INCLUYE BECA?
+                </label>
+              </div>
+              {formData.BECADO_PROGRAMA && (
+                <div className="form-row">
+                  <label>
+                    PROGRAMA:
+                    <input 
+                      type="text" 
+                      value={formData.PROGRAMA} 
+                      readOnly 
+                      disabled 
+                    />
+                  </label>
+                  <label>
+                    MONTO OBTENIDO:
+                    <input 
+                      type="number" 
+                      name="MONTO_PROGRAMA" 
+                      value={formData.MONTO_PROGRAMA} 
+                      onChange={handleChange} 
+                      placeholder="Monto en MXN"
+                      required 
+                    />
+                  </label>
+                  <label>
+                    DETALLES EXTRAS:
+                    <textarea 
+                      name="DETALLES_PROGRAMA" 
+                      value={formData.DETALLES_PROGRAMA} 
+                      onChange={handleChange} 
+                      placeholder="Detalles adicionales sobre la beca"
+                      rows="3"
+                    />
+                  </label>
+                </div>
+              )}
+
+             {/* Opción 4: Becas Externas */}
+              <div className="form-row checkbox-row">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    name="BECADO_EXTERNO" 
+                    checked={formData.BECADO_EXTERNO} 
+                    onChange={handleChange} 
+                  />
+                  ¿CUENTA CON BECAS EXTERNAS?
+                </label>
+              </div>
+              {formData.BECADO_EXTERNO && (
+                <>
+                  <div className="form-row">
+                    <label>
+                      TIPO DE MOVILIDAD:
+                      <input 
+                        type="text" 
+                        value={formData.TIPO_DESTINO === "NACIONAL" ? "NACIONAL" : "INTERNACIONAL"} 
+                        readOnly 
+                        disabled 
+                      />
+                    </label>
+                  </div>
+                  <div className="form-row">
+                    <label>
+                      ¿CUÁNTAS BECAS EXTERNAS TIENE?
+                      <input 
+                        type="number" 
+                        name="NUMERO_BECAS_EXTERNAS" 
+                        value={formData.NUMERO_BECAS_EXTERNAS} 
+                        onChange={handleChange} 
+                        placeholder="Número de becas externas"
+                        min="1"
+                        required 
+                      />
+                    </label>
+                  </div>
+                  {Array.from({ length: formData.NUMERO_BECAS_EXTERNAS || 0 }).map((_, index) => (
+                    <div key={index} className="form-row">
+                      <label>
+                        NOMBRE DE LA BECA:
+                        <select 
+                          name={`TIPO_BECA_EXTERNA_${index}`} 
+                          value={formData[`TIPO_BECA_EXTERNA_${index}`] || ''} 
+                          onChange={(e) => handleChangeDynamic(e, index, 'TIPO_BECA_EXTERNA')}
+                          required
+                        >
+                          <option value="">SELECCIONE</option>
+                          {formData.TIPO_DESTINO === "NACIONAL" ? (
+                            <>
+                              <option value="BECA DE EXCELENCIA DE LA SEP">BECA DE EXCELENCIA DE LA SEP</option>
+                              <option value="FIBERH">FIBERH</option>
+                              <option value="FUNED">FUNED</option>
+                              <option value="ALIANZA DEL PACIFICO">ALIANZA DEL PACIFICO</option>
+                              <option value="OTRO">OTRO</option>
+                            </>
+                          ) : (
+                            <>
+                              <option value="DAAD">DAAD (Alemania)</option>
+                              <option value="COMEXUS">COMEXUS (EE.UU)</option>
+                              <option value="JASSO">JASSO (Japón)</option>
+                              <option value="CAMPUS FRANCE">CAMPUS FRANCE (Francia)</option>
+                              <option value="Erasmus+">Erasmus+ (Unión Europea)</option>
+                              <option value="Chevening">Chevening (Reino Unido)</option>
+                              <option value="OTRO">OTRO</option>
+                            </>
+                          )}
+                        </select>
+                      </label>
+                      {formData[`TIPO_BECA_EXTERNA_${index}`] === "OTRO" && (
+                        <label>
+                          NOMBRE DEL PROGRAMA:
+                          <input 
+                            type="text" 
+                            name={`NOMBRE_BECA_EXTERNA_${index}`} 
+                            value={formData[`NOMBRE_BECA_EXTERNA_${index}`] || ''} 
+                            onChange={(e) => handleChangeDynamic(e, index, 'NOMBRE_BECA_EXTERNA')}
+                            placeholder="Nombre del programa"
+                            required 
+                          />
+                        </label>
+                      )}
+                      <label>
+                        MONTO OBTENIDO:
+                        <input 
+                          type="number" 
+                          name={`MONTO_BECA_EXTERNA_${index}`} 
+                          value={formData[`MONTO_BECA_EXTERNA_${index}`] || ''} 
+                          onChange={(e) => handleChangeDynamic(e, index, 'MONTO_BECA_EXTERNA')}
+                          placeholder="Monto en MXN"
+                          required 
+                        />
+                      </label>
+                      <label>
+                        DETALLES EXTRAS:
+                        <textarea 
+                          name={`DETALLES_BECA_EXTERNA_${index}`} 
+                          value={formData[`DETALLES_BECA_EXTERNA_${index}`] || ''} 
+                          onChange={(e) => handleChangeDynamic(e, index, 'DETALLES_BECA_EXTERNA')}
+                          placeholder="Detalles adicionales"
+                          rows="3"
+                        />
+                      </label>
+                    </div>
+                  ))}
                 </>
               )}
             </div>
@@ -993,177 +1179,194 @@ const Registro = () => {
             </div>
           </div>
         )}
+        
 
-        {/* SECCIÓN 5: DATOS ADICIONALES */}
+                {/* SECCIÓN 5: DATOS ADICIONALES */}
         {activeSection === 5 && (
           <div className="form-section">
             <h2 className="section-title">Datos Adicionales</h2>
             <div className="section-content">
-              <div className="form-row">
-                <label>
-                  PROMOCIÓN:
-                  <input 
-                    type="text" 
-                    name="PROMOCION" 
-                    value={formData.PROMOCION} 
-                    onChange={handleChange} 
-                    placeholder="Promoción (opcional)"
-                  />
-                </label>
-                <label>
-                  CALIFICACIONES:
-                  <input 
-                    type="text" 
-                    name="CALIFICACIONES" 
-                    value={formData.CALIFICACIONES} 
-                    onChange={handleChange} 
-                    placeholder="Calificaciones (opcional)"
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  REVALIDACIÓN:
-                  <input 
-                    type="text" 
-                    name="REVALIDACION" 
-                    value={formData.REVALIDACION} 
-                    onChange={handleChange} 
-                    placeholder="Revalidación (opcional)"
-                  />
-                </label>
-                <label>
-                  CALIFICACIONES SIIAU:
-                  <input 
-                    type="text" 
-                    name="CALF_SIIAU" 
-                    value={formData.CALF_SIIAU} 
-                    onChange={handleChange} 
-                    placeholder="Calificaciones SIIAU (opcional)"
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  CGCI PEA AMPLIADO:
-                  <input 
-                    type="text" 
-                    name="CGCI_PEA_AMPLIADO" 
-                    value={formData.CGCI_PEA_AMPLIADO} 
-                    onChange={handleChange} 
-                    placeholder="CGCI PEA Ampliado (opcional)"
-                  />
-                </label>
-                <label>
-                  PROFOCIE PPE:
-                  <input 
-                    type="text" 
-                    name="PROFOCIE_PPE" 
-                    value={formData.PROFOCIE_PPE} 
-                    onChange={handleChange} 
-                    placeholder="PROFOCIE PPE (opcional)"
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  ESACIES:
-                  <input 
-                    type="text" 
-                    name="ESACIES" 
-                    value={formData.ESACIES} 
-                    onChange={handleChange} 
-                    placeholder="ESACIES (opcional)"
-                  />
-                </label>
-                <label>
-                  RENUNCIAS:
-                  <input 
-                    type="text" 
-                    name="RENUNCIAS" 
-                    value={formData.RENUNCIAS} 
-                    onChange={handleChange} 
-                    placeholder="Renuncias (opcional)"
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  APOYO REPATRIACIÓN:
-                  <input 
-                    type="text" 
-                    name="APOYO_REPATRIACION" 
-                    value={formData.APOYO_REPATRIACION} 
-                    onChange={handleChange} 
-                    placeholder="Apoyo Repatriación (opcional)"
-                  />
-                </label>
-                <label>
-                  COVID-19:
-                  <input 
-                    type="text" 
-                    name="COVID_19" 
-                    value={formData.COVID_19} 
-                    onChange={handleChange} 
-                    placeholder="Información COVID-19 (opcional)"
-                  />
-                </label>
-              </div>
-              <div className="form-row">
-                <label>
-                  RECTORÍA:
-                  <input 
-                    type="text" 
-                    name="RECTORIA" 
-                    value={formData.RECTORIA} 
-                    onChange={handleChange} 
-                    placeholder="Rectoría (opcional)"
-                  />
-                </label>
-              </div>
+        
+              {/* Revalidación de materias */}
               <div className="form-row checkbox-row">
                 <label className="checkbox-label">
                   <input 
                     type="checkbox" 
-                    name="CONTINUA_MOVILIDAD" 
-                    checked={formData.CONTINUA_MOVILIDAD} 
+                    name="REVALIDACION_MATERIAS" 
+                    checked={formData.REVALIDACION_MATERIAS} 
                     onChange={handleChange} 
                   />
-                  CONTINÚA EN MOVILIDAD
+                  ¿HUBO REVALIDACIÓN DE MATERIAS?
                 </label>
               </div>
+              {formData.REVALIDACION_MATERIAS && (
+                <div className="form-row">
+                  <label>
+                    DATOS EXTRA:
+                    <textarea 
+                      name="DATOS_REVALIDACION" 
+                      value={formData.DATOS_REVALIDACION} 
+                      onChange={handleChange} 
+                      placeholder="Ingrese detalles sobre la revalidación"
+                      rows="3"
+                    />
+                  </label>
+                  <label>
+                    ADJUNTAR CERTIFICADO DE CALIFICACIONES (PDF):
+                    <input 
+                      type="file" 
+                      name="CERTIFICADO_CALIFICACIONES" 
+                      accept=".pdf" 
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        CERTIFICADO_CALIFICACIONES: e.target.files[0] 
+                      })} 
+                    />
+                  </label>
+                </div>
+              )}
+        
+              {/* Discapacidad */}
               <div className="form-row checkbox-row">
                 <label className="checkbox-label">
                   <input 
                     type="checkbox" 
                     name="CUENTA_CON_ALGUNA_DISCAPACIDAD" 
-                    checked={formData.CUENTA_CON_ALGUNA_DISCAPACIDAD === 'SI'} 
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        CUENTA_CON_ALGUNA_DISCAPACIDAD: e.target.checked ? 'SI' : 'NO'
-                      });
-                    }} 
+                    checked={formData.CUENTA_CON_ALGUNA_DISCAPACIDAD} 
+                    onChange={handleChange} 
                   />
-                  CUENTA CON ALGUNA DISCAPACIDAD
+                  ¿CUENTA CON ALGUNA DISCAPACIDAD?
                 </label>
               </div>
+              {formData.CUENTA_CON_ALGUNA_DISCAPACIDAD && (
+                <div className="form-row">
+                  <label>
+                    DATOS EXTRA:
+                    <textarea 
+                      name="DATOS_DISCAPACIDAD" 
+                      value={formData.DATOS_DISCAPACIDAD} 
+                      onChange={handleChange} 
+                      placeholder="Ingrese detalles sobre la discapacidad"
+                      rows="3"
+                    />
+                  </label>
+                </div>
+              )}
+        
+              {/* Seguro de viaje */}
               <div className="form-row checkbox-row">
                 <label className="checkbox-label">
                   <input 
                     type="checkbox" 
-                    name="PERTENECE_ALGUNA_COMUNIDAD_INDIGENA" 
-                    checked={formData.PERTENECE_ALGUNA_COMUNIDAD_INDIGENA === 'SI'} 
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        PERTENECE_ALGUNA_COMUNIDAD_INDIGENA: e.target.checked ? 'SI' : 'NO'
-                      });
-                    }} 
+                    name="SEGURO_VIAJE" 
+                    checked={formData.SEGURO_VIAJE} 
+                    onChange={handleChange} 
                   />
-                  PERTENECE A ALGUNA COMUNIDAD INDÍGENA
+                  ¿CUENTA CON SEGURO DE VIAJE?
                 </label>
               </div>
+              {formData.SEGURO_VIAJE && (
+                <div className="form-row">
+                  <label>
+                    NOMBRE DE LA ASEGURADORA:
+                    <input 
+                      type="text" 
+                      name="NOMBRE_ASEGURADORA" 
+                      value={formData.NOMBRE_ASEGURADORA} 
+                      onChange={handleChange} 
+                      placeholder="Nombre de la aseguradora"
+                      required 
+                    />
+                  </label>
+                  <label>
+                    NÚMERO DE PÓLIZA:
+                    <input 
+                      type="text" 
+                      name="NUMERO_POLIZA" 
+                      value={formData.NUMERO_POLIZA} 
+                      onChange={handleChange} 
+                      placeholder="Número de póliza"
+                      required 
+                    />
+                  </label>
+                </div>
+              )}
+              {formData.SEGURO_VIAJE && (
+                <div className="form-row">
+                  <label>
+                    FECHA DE INICIO DE LA COBERTURA:
+                    <input 
+                      type="date" 
+                      name="FECHA_INICIO_SEGURO" 
+                      value={formData.FECHA_INICIO_SEGURO} 
+                      onChange={handleChange} 
+                      required 
+                    />
+                  </label>
+                  <label>
+                    FECHA DE FIN DE LA COBERTURA:
+                    <input 
+                      type="date" 
+                      name="FECHA_FIN_SEGURO" 
+                      value={formData.FECHA_FIN_SEGURO} 
+                      onChange={handleChange} 
+                      required 
+                    />
+                  </label>
+                </div>
+              )}
+              {formData.SEGURO_VIAJE && (
+                <div className="form-row">
+                  <label>
+                    TELÉFONO O CONTACTO DE EMERGENCIAS DE LA ASEGURADORA:
+                    <input 
+                      type="tel" 
+                      name="CONTACTO_ASEGURADORA" 
+                      value={formData.CONTACTO_ASEGURADORA} 
+                      onChange={handleChange} 
+                      placeholder="Teléfono de emergencias"
+                      required 
+                    />
+                  </label>
+                  <label>
+                    OBSERVACIONES:
+                    <textarea 
+                      name="OBSERVACIONES_SEGURO" 
+                      value={formData.OBSERVACIONES_SEGURO} 
+                      onChange={handleChange} 
+                      placeholder="Ingrese observaciones adicionales"
+                      rows="3"
+                    />
+                  </label>
+                </div>
+              )}
+        
+              {/* Experiencia compartida */}
+              <div className="form-row checkbox-row">
+                <label className="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    name="EXPERIENCIA_COMPARTIDA" 
+                    checked={formData.EXPERIENCIA_COMPARTIDA} 
+                    onChange={handleChange} 
+                  />
+                  ¿EL ALUMNO PRESENTÓ Y COMPARTIÓ SU EXPERIENCIA?
+                </label>
+              </div>
+              {formData.EXPERIENCIA_COMPARTIDA && (
+                <div className="form-row">
+                  <label>
+                    DETALLES:
+                    <textarea 
+                      name="DETALLES_EXPERIENCIA" 
+                      value={formData.DETALLES_EXPERIENCIA} 
+                      onChange={handleChange} 
+                      placeholder="Ingrese detalles sobre la experiencia compartida"
+                      rows="3"
+                    />
+                  </label>
+                </div>
+              )}
             </div>
             <div className="form-navigation">
               <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
