@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../styles/FrmRegistro.css";
-import { initialFormData, REGEX } from "../config/config";
-import SeccionPrograma          from "../components/SeccionPrograma";
-import SeccionDatosAlumno       from "../components/SeccionDatosAlumno";
-import SeccionMovilidad         from "../components/SeccionMovilidad";
-import SeccionDatosBeca         from "../components/SeccionDatosBeca";
-import SeccionDatosAdicionales  from "../components/SeccionDatosAdicionales";
+import { initialFormData, REGEX } from "../config";
+import SeccionPrograma from "./components/SeccionPrograma";
+import SeccionDatosAlumno from "./components/SeccionDatosAlumno";
+import SeccionMovilidad from "./components/SeccionMovilidad";
+import SeccionDatosBeca from "./components/SeccionDatosBeca";
+import SeccionDatosAdicionales from "./components/SeccionDatosAdicionales";
 
 const Registro = () => {
   const [activeSection, setActiveSection] = useState(1);
@@ -83,87 +83,57 @@ const Registro = () => {
   };
 
   return (
-    <div className="dashboard-content">
-      <div className="content-header">
-        <h1> REGISTRAR ALUMNO </h1>
-        <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO EN EL PROGRAMA DE MOVILIDAD</p>
-      </div>
-        
-      <div className="form-progress">
-        <div 
-          className={`progress-step ${activeSection >= 1 ? 'active' : ''} ${activeSection > 1 ? 'completed' : ''}`}
-          data-title="Programa"
-        >1</div>
-        <div 
-          className={`progress-step ${activeSection >= 2 ? 'active' : ''} ${activeSection > 2 ? 'completed' : ''}`}
-          data-title="Datos del Alumno"
-        >2</div>
-        <div 
-          className={`progress-step ${activeSection >= 3 ? 'active' : ''} ${activeSection > 3 ? 'completed' : ''}`}
-          data-title="Datos de Movilidad"
-        >3</div>
-        <div 
-          className={`progress-step ${activeSection >= 4 ? 'active' : ''} ${activeSection > 4 ? 'completed' : ''}`}
-          data-title="Datos de Beca"
-        >4</div>
-        <div 
-          className={`progress-step ${activeSection >= 5 ? 'active' : ''}`}
-          data-title="Datos Adicionales"
-        >5</div>
-      </div>
-      
-      <form className="registro-form" onSubmit={handleSubmit}>
-        {activeSection === 1 && (
-          <SeccionPrograma
-            formData={formData}
-            handleChange={handleChange}
-            nextSection={nextSection}
-            errores={errores}
-          />
-        )}
+    <form className="registro-form" onSubmit={handleSubmit}>
+      {activeSection === 1 && (
+        <SeccionPrograma
+          formData={formData}
+          handleChange={handleChange}
+          nextSection={nextSection}
+          errores={errores}
+        />
+      )}
 
-        {activeSection === 2 && (
-          <SeccionDatosAlumno
-            formData={formData}
-            handleChange={handleChange}
-            setFormData={setFormData}
-            prevSection={prevSection}
-            nextSection={nextSection}
-            errores={errores}
-          />
-        )}
+      {activeSection === 2 && (
+        <SeccionDatosAlumno
+          formData={formData}
+          handleChange={handleChange}
+          setFormData={setFormData}
+          prevSection={prevSection}
+          nextSection={nextSection}
+          errores={errores}
+        />
+      )}
 
-        {activeSection === 3 && (
-          <SeccionMovilidad
-            formData={formData}
-            handleChange={handleChange}
-            prevSection={prevSection}
-            nextSection={nextSection}
-            errores={errores}
-          />
-        )}
+      {activeSection === 3 && (
+        <SeccionMovilidad
+          formData={formData}
+          handleChange={handleChange}
+          prevSection={prevSection}
+          nextSection={nextSection}
+          errores={errores}
+        />
+      )}
 
-        {activeSection === 4 && (
-          <SeccionDatosBeca
-            formData={formData}
-            handleChange={handleChange}
-            prevSection={prevSection}
-            nextSection={nextSection}
-            errores={errores}
-          />
-        )}
+      {activeSection === 4 && (
+        <SeccionDatosBeca
+          formData={formData}
+          handleChange={handleChange}
+          prevSection={prevSection}
+          nextSection={nextSection}
+          errores={errores}
+        />
+      )}
 
-        {activeSection === 5 && (
-          <SeccionDatosAdicionales
-            formData={formData}
-            handleChange={handleChange}
-            prevSection={prevSection}
-            handleSubmit={handleSubmit}
-            errores={errores}
-          />
-        )}
-      </form>
-    </div>
+      {activeSection === 5 && (
+        <SeccionDatosAdicionales
+          formData={formData}
+          handleChange={handleChange}
+          prevSection={prevSection}
+          handleSubmit={handleSubmit}
+          errores={errores}
+        />
+      )}
+    </form>
   );
 };
 

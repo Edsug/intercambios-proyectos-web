@@ -212,6 +212,12 @@
   padding-right: 40px;
 }
 
+.error-message {
+  color: red;
+  font-size: 0.9em;
+  margin-left: 5px;
+}
+
 /* Asegura que los checkbox estén alineados a la izquierda */
 .checkbox-row {
   display: flex;
