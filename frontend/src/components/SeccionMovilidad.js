@@ -1,6 +1,6 @@
 // components/SeccionMovilidad.js
 import React from 'react';
-import { paises, estadosRepublica } from '../config/config';
+import { paises, estadosRepublica, estancias } from '../config/config';
 
 export default function SeccionMovilidad({ formData, handleChange, prevSection, nextSection, errores }) {
   return (
@@ -17,37 +17,29 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
               required
             >
               <option value="">SELECCIONE EL TIPO DE MOVILIDAD</option>
-                <option value="ESTACIA ACADEMICA">ESTACIA ACADEMICA</option>
-                <option value="ESTANCIA DE INVESTIGACION">ESTANCIA DE INVESTIGACION</option>  
-                <option value="ESTANCIA PARA PRACTICAS PROFESIONALES">ESTANCIA PARA PRACTICAS PROFESIONALES</option>
-                <option value="ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)">ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)</option>
-                <option value="ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS">ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS</option>
+                {estancias.map((programa, i) => (
+                  <option key={i} value={programa}>{programa}</option>
+                ))}
             </select>
             {errores.TIPO_MOVILIDAD && <span className="error-message">{errores.TIPO_MOVILIDAD}</span>}
           </label> 
         </div>
         <div className="form-row">
-          <label className="checkbox-label">
-            <input
-              type="radio"
+          <label className="select-label">
+            TIPO DE DESTINO:
+            <select
               name="TIPO_DESTINO"
-              value="NACIONAL"
-              checked={formData.TIPO_DESTINO === "NACIONAL"}
+              value={formData.TIPO_DESTINO}
               onChange={handleChange}
-            />
-            MOVILIDAD NACIONAL
+              required
+            >
+              <option value="">SELECCIONE TIPO DE DESTINO</option>
+              <option value="NACIONAL">NACIONAL</option>
+              <option value="INTERNACIONAL">INTERNACIONAL</option>
+            </select>
+            {errores.TIPO_DESTINO && <span className="error-message">{errores.TIPO_DESTINO}</span>}
           </label>
-          <label className="checkbox-label">
-            <input
-              type="radio"
-              name="TIPO_DESTINO"
-              value="INTERNACIONAL"
-              checked={formData.TIPO_DESTINO === "INTERNACIONAL"}
-              onChange={handleChange}
-              />
-              MOVILIDAD INTERNACIONAL
-              </label>
-          </div>
+        </div>
 
         <div className="form-row">
           <label>

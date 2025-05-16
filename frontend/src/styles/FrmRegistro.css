@@ -434,6 +434,25 @@
   box-shadow: 0 5px 15px rgba(127, 140, 141, 0.25);
 }
 
+.alerta-formulario {
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.5s;
+}
+.alerta-formulario.error {
+  background-color: #ffe0e0;
+  color: #c0392b;
+  border: 1px solid #e74c3c;
+}
+.alerta-formulario.exito {
+  background-color: #e0ffe8;
+  color: #27ae60;
+  border: 1px solid #2ecc71;
+}
 /* Animaciones */
 @keyframes fadeIn {
   from { opacity: 0; }
