@@ -1,117 +1,183 @@
 import React, { useState, useEffect } from "react";
 import "../styles/FrmRegistro.css";
 import { initialFormData, REGEX } from "../config/config";
-import SeccionPrograma          from "../components/SeccionPrograma";
-import SeccionDatosAlumno       from "../components/SeccionDatosAlumno";
-import SeccionMovilidad         from "../components/SeccionMovilidad";
-import SeccionDatosBeca         from "../components/SeccionDatosBeca";
-import SeccionDatosAdicionales  from "../components/SeccionDatosAdicionales";
+import SeccionPrograma from "../components/SeccionPrograma";
+import SeccionDatosAlumno from "../components/SeccionDatosAlumno";
+import SeccionMovilidad from "../components/SeccionMovilidad";
+import SeccionDatosBeca from "../components/SeccionDatosBeca";
+import SeccionDatosAdicionales from "../components/SeccionDatosAdicionales";
 
 const Registro = () => {
   const [activeSection, setActiveSection] = useState(1);
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({
+    ...initialFormData,
+    BECAS: []
+  });
   const [errores, setErrores] = useState({});
 
-  useEffect(() => {
-    // Si necesitas cargar datos guardados, hazlo aquí
-  }, []);
+  useEffect(() => setErrores({}), [activeSection]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => {
+      const next = { ...prev, [name]: type === "checkbox" ? checked : value };
+      if (name === "NIVEL_ACADEMICO") {
+        next.CARRERA = "";
+        next.MAESTRIA = "";
+      }
+      return next;
+    });
+  };
+
+  const handleAddBeca = (beca) => {
+    setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      BECAS: [...prev.BECAS, beca]
     }));
   };
 
-  const validarCampos = () => {
-    const nuevosErrores = {};
-
-    // Sección 1: Programa
-    if (!formData.PROGRAMA) nuevosErrores.PROGRAMA = 'Seleccione un programa.';
-    if (!formData.FOLIO) nuevosErrores.FOLIO = 'Ingrese el folio.';
-
-    // Sección 2: Datos del Alumno
-    if (!formData.CODIGO) nuevosErrores.CODIGO = 'Ingrese el código.';
-    else if (!REGEX.CODIGO.test(formData.CODIGO)) nuevosErrores.CODIGO = 'El código debe tener 9 dígitos.';
-    if (!formData.NOMBRE) nuevosErrores.NOMBRE = 'Ingrese el nombre.';
-    if (!formData.APELLIDOS) nuevosErrores.APELLIDOS = 'Ingrese los apellidos.';
-    if (!formData.NIVEL_ACADEMICO) nuevosErrores.NIVEL_ACADEMICO = 'Seleccione el nivel académico.';
-    else if (formData.NIVEL_ACADEMICO === 'LICENCIATURA' && !formData.CARRERA) nuevosErrores.CARRERA = 'Seleccione la carrera.';
-    else if (formData.NIVEL_ACADEMICO === 'MAESTRÍA' && !formData.MAESTRIA) nuevosErrores.MAESTRIA = 'Seleccione la maestría.';
-    if (!formData.SEMESTRE) nuevosErrores.SEMESTRE = 'Ingrese el semestre.';
-    if (!formData.PROMEDIO) nuevosErrores.PROMEDIO = 'Ingrese el promedio.';
-    if (!formData.SEXO) nuevosErrores.SEXO = 'Seleccione el género.';
-    if (!formData.FECHA_NACIMIENTO) nuevosErrores.FECHA_NACIMIENTO = 'Ingrese la fecha de nacimiento.';
-    if (!formData.TELEFONO) nuevosErrores.TELEFONO = 'Ingrese el teléfono.';
-    else if (!REGEX.TELEFONO.test(formData.TELEFONO)) nuevosErrores.TELEFONO = 'El teléfono debe tener 10 dígitos.';
-    if (!formData.CORREO) nuevosErrores.CORREO = 'Ingrese el correo institucional.';
-    if (!formData.CONTACTO_EMERGENCIA) nuevosErrores.CONTACTO_EMERGENCIA = 'Ingrese teléfono de emergencia.';
-    else if (!REGEX.TELEFONO.test(formData.CONTACTO_EMERGENCIA)) nuevosErrores.CONTACTO_EMERGENCIA = 'El teléfono debe tener 10 dígitos.';
-    if (formData.CONTACTO_EMERGENCIA && !formData.NOMBRE_CONTACTO_EMERGENCIA) nuevosErrores.NOMBRE_CONTACTO_EMERGENCIA = 'Ingrese el nombre del contacto.';
-    if (!formData.NSS) nuevosErrores.NSS = 'Ingrese el NSS.';
-    else if (!REGEX.NSS.test(formData.NSS)) nuevosErrores.NSS = 'El NSS debe tener 11 dígitos.';
-
-    // Sección 3: Movilidad
-    if (!formData.TIPO_MOVILIDAD) nuevosErrores.TIPO_MOVILIDAD = 'Seleccione el tipo de movilidad.';
-    if (!formData.ACTIVIDAD) nuevosErrores.ACTIVIDAD = 'Ingrese la actividad.';
-    if (!formData.INSTITUCION_DESTINO) nuevosErrores.INSTITUCION_DESTINO = 'Ingrese institución destino.';
-    if (!formData.PAIS) nuevosErrores.PAIS = 'Seleccione país.';
-    if (!formData.ESTADO_REPUBLICA) nuevosErrores.ESTADO_REPUBLICA = 'Seleccione estado.';
-    if (!formData.FECHA_INICIO) nuevosErrores.FECHA_INICIO = 'Ingrese fecha de inicio.';
-    if (!formData.FECHA_FIN) nuevosErrores.FECHA_FIN = 'Ingrese fecha de fin.';
-
-    // Sección 4: Becas
-    if (formData.BECADO_CUSUR && !formData.MONTO_CUSUR) nuevosErrores.MONTO_CUSUR = 'Ingrese monto CUSUR.';
-    if (formData.BECADO_CGCI && !formData.NUMERO_BECAS_CGCI) nuevosErrores.NUMERO_BECAS_CGCI = 'Ingrese número de becas CGCI.';
-    if (formData.BECADO_EXTERNO && !formData.NUMERO_BECAS_EXTERNAS) nuevosErrores.NUMERO_BECAS_EXTERNAS = 'Ingrese número de becas externas.';
-
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
+  const handleRemoveBeca = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      BECAS: prev.BECAS.filter((_, i) => i !== index)
+    }));
   };
 
-  const nextSection = () => setActiveSection(prev => prev + 1);
-  const prevSection = () => setActiveSection(prev => prev - 1);
-  const resetForm = () => { setFormData(initialFormData); setActiveSection(1); setErrores({}); };
+  const validarSeccion = (section) => {
+    const errs = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const intlPhoneRegex = /^\+?[1-9]\d{1,14}$/;
 
-  const handleSubmit = (e) => {
+    switch (section) {
+      case 1:
+        if (!formData.PROGRAMA) errs.PROGRAMA = "Seleccione un programa.";
+        if (!formData.FOLIO) errs.FOLIO = "Ingrese el folio.";
+        break;
+      case 2:
+        if (!formData.CODIGO) errs.CODIGO = "Ingrese el código.";
+        if (!formData.NOMBRE) errs.NOMBRE = "Ingrese el nombre.";
+        if (!formData.APELLIDOS) errs.APELLIDOS = "Ingrese los apellidos.";
+        if (!formData.NIVEL_ACADEMICO) errs.NIVEL_ACADEMICO = "Seleccione nivel académico.";
+        if (formData.NIVEL_ACADEMICO === "LICENCIATURA" && !formData.CARRERA) errs.CARRERA = "Seleccione carrera.";
+        if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
+        if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";
+        if (!formData.PROMEDIO) errs.PROMEDIO = "Ingrese promedio.";
+        if (!formData.SEXO) errs.SEXO = "Seleccione género.";
+        if (!formData.FECHA_NACIMIENTO) errs.FECHA_NACIMIENTO = "Ingrese fecha de nacimiento.";
+        if (!formData.TIPO_SANGRE) errs.TIPO_SANGRE = "Seleccione tipo de sangre.";
+        if (!formData.TELEFONO) errs.TELEFONO = "Ingrese teléfono.";
+        else if (!REGEX.TELEFONO.test(formData.TELEFONO) && !intlPhoneRegex.test(formData.TELEFONO))
+          errs.TELEFONO = "Teléfono inválido.";
+        if (!formData.CORREO) errs.CORREO = "Ingrese correo institucional.";
+        else if (!emailRegex.test(formData.CORREO)) errs.CORREO = "Correo inválido.";
+        if (!formData.CONTACTO_EMERGENCIA) errs.CONTACTO_EMERGENCIA = "Ingrese teléfono de emergencia.";
+        else if (!REGEX.TELEFONO.test(formData.CONTACTO_EMERGENCIA) && !intlPhoneRegex.test(formData.CONTACTO_EMERGENCIA))
+          errs.CONTACTO_EMERGENCIA = "Teléfono inválido.";
+        if (formData.CONTACTO_EMERGENCIA && !formData.NOMBRE_CONTACTO_EMERGENCIA)
+          errs.NOMBRE_CONTACTO_EMERGENCIA = "Ingrese nombre de contacto.";
+        if (!formData.NSS) errs.NSS = "Ingrese NSS.";
+        break;
+      case 3:
+        if (!formData.TIPO_MOVILIDAD) errs.TIPO_MOVILIDAD = "Seleccione tipo de movilidad.";
+        if (!formData.INSTITUCION_DESTINO) errs.INSTITUCION_DESTINO = "Ingrese institución destino.";
+        if (formData.TIPO_DESTINO === "INTERNACIONAL" && !formData.PAIS) errs.PAIS = "Seleccione país.";
+        if (formData.TIPO_DESTINO === "NACIONAL" && (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")) {
+          errs.ESTADO_REPUBLICA = "Seleccione estado.";
+        }
+        if (!formData.FECHA_INICIO) errs.FECHA_INICIO = "Ingrese fecha inicio.";
+        if (!formData.FECHA_FIN) errs.FECHA_FIN = "Ingrese fecha fin.";
+        else if (formData.FECHA_FIN < formData.FECHA_INICIO) errs.FECHA_FIN = "La fecha fin debe ser posterior.";
+        break;
+      case 4:
+        if (!formData.BECAS || formData.BECAS.length === 0) {
+          errs.BECAS = "Debe agregar al menos una beca.";
+        } else {
+          formData.BECAS.forEach((beca, idx) => {
+            if (!beca.tipo) errs[`BECAS_${idx}_tipo`] = "Seleccione tipo de beca.";
+            if (beca.tipo === "CUSUR" && (!beca.monto || isNaN(beca.monto))) errs[`BECAS_${idx}_monto`] = "Monto inválido.";
+            if ((beca.tipo === "CGCI" || beca.tipo === "EXTERNA") && !beca.nombre) errs[`BECAS_${idx}_nombre`] = "Nombre requerido.";
+          });
+        }
+        break;
+      default:
+        break;
+    }
+
+    setErrores(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const validarCampos = () =>
+    validarSeccion(1) &&
+    validarSeccion(2) &&
+    validarSeccion(3) &&
+    validarSeccion(4);
+
+  const nextSection = () => {
+    if (!validarSeccion(activeSection)) {
+      window.scrollTo(0, 0);
+      return;
+    }
+    setActiveSection(prev => prev + 1);
+  };
+
+  const prevSection = () => setActiveSection(prev => prev - 1);
+
+  const resetForm = () => {
+    setFormData({ ...initialFormData, BECAS: [] });
+    setActiveSection(1);
+    setErrores({});
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validarCampos()) { window.scrollTo(0, 0); return; }
-    console.log(formData);
-    alert("Alumno registrado correctamente para programa de movilidad");
-    resetForm();
+    if (!validarCampos()) {
+      window.scrollTo(0, 0);
+      return;
+    }
+    try {
+      const resp = await fetch("http://localhost/basecambios/registro_alumno.php", {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      const text = await resp.text();
+      if (!resp.ok) {
+        alert(`Error HTTP ${resp.status}: ${text}`);
+        return;
+      }
+      const data = JSON.parse(text);
+      if (data.status === "success") {
+        alert("Alumno registrado correctamente");
+        resetForm();
+      } else {
+        alert("Error al registrar: " + data.message);
+      }
+    } catch (err) {
+      alert("Error de conexión: " + err.message);
+    }
   };
 
   return (
     <div className="dashboard-content">
       <div className="content-header">
-        <h1> REGISTRAR ALUMNO </h1>
-        <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO EN EL PROGRAMA DE MOVILIDAD</p>
+        <h1>REGISTRAR ALUMNO</h1>
+        <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>
       </div>
-        
+
       <div className="form-progress">
-        <div 
-          className={`progress-step ${activeSection >= 1 ? 'active' : ''} ${activeSection > 1 ? 'completed' : ''}`}
-          data-title="Programa"
-        >1</div>
-        <div 
-          className={`progress-step ${activeSection >= 2 ? 'active' : ''} ${activeSection > 2 ? 'completed' : ''}`}
-          data-title="Datos del Alumno"
-        >2</div>
-        <div 
-          className={`progress-step ${activeSection >= 3 ? 'active' : ''} ${activeSection > 3 ? 'completed' : ''}`}
-          data-title="Datos de Movilidad"
-        >3</div>
-        <div 
-          className={`progress-step ${activeSection >= 4 ? 'active' : ''} ${activeSection > 4 ? 'completed' : ''}`}
-          data-title="Datos de Beca"
-        >4</div>
-        <div 
-          className={`progress-step ${activeSection >= 5 ? 'active' : ''}`}
-          data-title="Datos Adicionales"
-        >5</div>
+        {[1, 2, 3, 4, 5].map(step => (
+          <div
+            key={step}
+            className={`progress-step ${activeSection >= step ? "active" : ""} ${activeSection > step ? "completed" : ""}`}
+            data-title={["Programa", "Datos del Alumno", "Datos de Movilidad", "Datos de Beca", "Datos Adicionales"][step - 1]}
+          >
+            {step}
+          </div>
+        ))}
       </div>
-      
+
       <form className="registro-form" onSubmit={handleSubmit}>
         {activeSection === 1 && (
           <SeccionPrograma
@@ -121,7 +187,6 @@ const Registro = () => {
             errores={errores}
           />
         )}
-
         {activeSection === 2 && (
           <SeccionDatosAlumno
             formData={formData}
@@ -132,7 +197,6 @@ const Registro = () => {
             errores={errores}
           />
         )}
-
         {activeSection === 3 && (
           <SeccionMovilidad
             formData={formData}
@@ -142,17 +206,18 @@ const Registro = () => {
             errores={errores}
           />
         )}
-
         {activeSection === 4 && (
           <SeccionDatosBeca
             formData={formData}
             handleChange={handleChange}
+            setFormData={setFormData}
             prevSection={prevSection}
             nextSection={nextSection}
             errores={errores}
+            onAddBeca={handleAddBeca}
+            onRemoveBeca={handleRemoveBeca}
           />
         )}
-
         {activeSection === 5 && (
           <SeccionDatosAdicionales
             formData={formData}
