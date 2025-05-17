@@ -154,8 +154,8 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
           <label className="select-label">
             GÉNERO:
             <select
-              name="SEXO"
-              value={formData.SEXO}
+              name="GENERO"
+              value={formData.GENERO}
               onChange={handleChange}
               required
             >
@@ -163,7 +163,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
               <option value="M">MASCULINO</option>
               <option value="F">FEMENINO</option>
             </select>
-            {errores.SEXO && <span className="error-message">{errores.SEXO}</span>}
+            {errores.GENERO && <span className="error-message">{errores.GENERO}</span>}
           </label>
           <label>
             FECHA DE NACIMIENTO:

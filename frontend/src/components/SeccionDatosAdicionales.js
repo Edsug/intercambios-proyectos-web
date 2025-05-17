@@ -1,148 +1,189 @@
 // components/SeccionDatosAdicionales.js
 import React from 'react';
 
-export default function SeccionDatosAdicionales({ formData, handleChange, prevSection, handleSubmit, errores }) {
+export default function SeccionDatosAdicionales({ formData, setFormData, handleChange, prevSection, handleSubmit, errores }) {
   return (
     <div className="form-section">
       <h2 className="section-title">Datos Adicionales</h2>
       <div className="section-content">
-        <div className="form-row">
-          <label>
+        {/* Revalidación de materias */}
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               name="REVALIDACION_MATERIAS"
               checked={formData.REVALIDACION_MATERIAS}
               onChange={handleChange}
-            /> Revalidación de Materias
+            /> 
+            Revalidación de Materias
           </label>
-          {formData.REVALIDACION_MATERIAS && (
+        </div>
+        {formData.REVALIDACION_MATERIAS && (
+          <div className="form-row">
             <label>
               DATOS REVALIDACIÓN:
               <textarea
                 name="DATOS_REVALIDACION"
                 value={formData.DATOS_REVALIDACION}
                 onChange={handleChange}
+                placeholder="Ingrese detalles sobre la revalidación"
+                rows="3"
               />
             </label>
-          )}
-        </div>
-        <div className="form-row">
-          <label>
-            <input
-              type="checkbox"
-              name="CERTIFICADO_CALIFICACIONES"
-              checked={!!formData.CERTIFICADO_CALIFICACIONES}
-              onChange={handleChange}
-            /> Certificado de Calificaciones
-          </label>
-        </div>
-        <div className="form-row">
-          <label>
+            <label>
+              CERTIFICADO DE CALIFICACIONES:
+              <input
+                type="file"
+                name="CERTIFICADO_CALIFICACIONES"
+                accept=".pdf, .jpg, .jpeg, .png"
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  CERTIFICADO_CALIFICACIONES: e.target.files[0] 
+                })} 
+              />
+            </label>
+          </div>
+        )}
+
+        {/* Discapacidad */}
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               name="CUENTA_CON_ALGUNA_DISCAPACIDAD"
               checked={formData.CUENTA_CON_ALGUNA_DISCAPACIDAD}
               onChange={handleChange}
-            /> ¿Cuenta con alguna Discapacidad?
+            /> 
+            Cuenta con alguna Discapacidad
           </label>
-          {formData.CUENTA_CON_ALGUNA_DISCAPACIDAD && (
+        </div>
+        {formData.CUENTA_CON_ALGUNA_DISCAPACIDAD && (
+          <div className="form-row">
             <label>
               DATOS DISCAPACIDAD:
               <textarea
                 name="DATOS_DISCAPACIDAD"
                 value={formData.DATOS_DISCAPACIDAD}
                 onChange={handleChange}
+                placeholder="Ingrese detalles sobre la discapacidad"
+                rows="3"
               />
             </label>
-          )}
-        </div>
-        <div className="form-row">
-          <label>
+          </div>
+        )}
+        {/* Seguro de Viaje */}
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               name="SEGURO_VIAJE"
               checked={formData.SEGURO_VIAJE}
               onChange={handleChange}
-            /> Seguro de Viaje
+            /> 
+            Seguro de Viaje
           </label>
-          {formData.SEGURO_VIAJE && (
-            <>
-              <label>
-                ASEGURADORA:
-                <input
-                  type="text"
-                  name="NOMBRE_ASEGURADORA"
-                  value={formData.NOMBRE_ASEGURADORA}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                PÓLIZA:
-                <input
-                  type="text"
-                  name="NUMERO_POLIZA"
-                  value={formData.NUMERO_POLIZA}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                INICIO SEGURO:
-                <input
-                  type="date"
-                  name="FECHA_INICIO_SEGURO"
-                  value={formData.FECHA_INICIO_SEGURO}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                FIN SEGURO:
-                <input
-                  type="date"
-                  name="FECHA_FIN_SEGURO"
-                  value={formData.FECHA_FIN_SEGURO}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                CONTACTO ASEGURADORA:
-                <input
-                  type="text"
-                  name="CONTACTO_ASEGURADORA"
-                  value={formData.CONTACTO_ASEGURADORA}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                OBSERVACIONES SEGURO:
-                <textarea
-                  name="OBSERVACIONES_SEGURO"
-                  value={formData.OBSERVACIONES_SEGURO}
-                  onChange={handleChange}
-                />
-              </label>
-            </>
-          )}
         </div>
-        <div className="form-row">
-          <label>
+        {formData.SEGURO_VIAJE && (
+          <div className="form-row">
+            <label>
+              ASEGURADORA:
+              <input
+                type="text"
+                name="NOMBRE_ASEGURADORA"
+                value={formData.NOMBRE_ASEGURADORA}
+                onChange={handleChange}
+                placeholder="Nombre de la aseguradora"
+                required
+              />
+            </label>
+            <label>
+              PÓLIZA:
+              <input
+                type="text"
+                name="NUMERO_POLIZA"
+                value={formData.NUMERO_POLIZA}
+                onChange={handleChange}
+                placeholder="Número de póliza"
+                required
+              />
+            </label>
+          </div>
+        )}
+        {formData.SEGURO_VIAJE && (
+          <div className="form-row">
+            <label>
+              INICIO SEGURO:
+              <input
+                type="date"
+                name="FECHA_INICIO_SEGURO"
+                value={formData.FECHA_INICIO_SEGURO}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              FIN SEGURO:
+              <input
+                type="date"
+                name="FECHA_FIN_SEGURO"
+                value={formData.FECHA_FIN_SEGURO}
+                onChange={handleChange}
+              />
+            </label>
+          </div>
+        )}
+        {formData.SEGURO_VIAJE && (
+          <div className="form-row">
+            <label>
+              CONTACTO ASEGURADORA:
+              <input
+                type="tel"
+                name="CONTACTO_ASEGURADORA"
+                value={formData.CONTACTO_ASEGURADORA}
+                onChange={handleChange}
+                placeholder="Teléfono de emergencias"
+                required
+              />
+            </label>
+            <label>
+              OBSERVACIONES SEGURO:
+              <textarea
+                name="OBSERVACIONES_SEGURO"
+                value={formData.OBSERVACIONES_SEGURO}
+                onChange={handleChange}
+                placeholder="Observaciones sobre el seguro"
+                rows="3"
+              />
+            </label>
+          </div>
+        )}
+
+        {/* Compartir experiencia */}
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               name="EXPERIENCIA_COMPARTIDA"
               checked={formData.EXPERIENCIA_COMPARTIDA}
               onChange={handleChange}
-            /> Compartir Experiencia
+            /> 
+            Compartir Experiencia
           </label>
-          {formData.EXPERIENCIA_COMPARTIDA && (
+        </div>
+        {formData.EXPERIENCIA_COMPARTIDA && (
+          <div className="form-row">
             <label>
               DETALLES:
               <textarea
                 name="DETALLES_EXPERIENCIA"
                 value={formData.DETALLES_EXPERIENCIA}
                 onChange={handleChange}
+                placeholder="Ingrese detalles sobre la experiencia"
+                rows="3"
               />
             </label>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <div className="form-navigation">
         <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
