@@ -1,423 +1,358 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Busqueda.css";
+// Librerías para exportar Excel y PDF
+import { utils, writeFile } from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
-const Busqueda = () => {
-  // Estado para el tipo de búsqueda
+const BASE_URL = "http://localhost/basecambios";
+
+export default function Busqueda() {
   const [searchType, setSearchType] = useState("nombre");
   const [searchValue, setSearchValue] = useState("");
-  
-  // Estados para los filtros
   const [filtros, setFiltros] = useState({
-    carrera: "",
-    programa: "",
-    estado: "",
-    actividad: "",
-    semestre: "",
-    pais: "",
-    institucion: "",
-    becado: "",
-    anio: ""
+    carrera: "", programa: "", estado: "",
+    actividad: "", semestre: "", pais: "",
+    institucion: "", becado: "", anio: ""
   });
-  
-  // Estados para control de UI okikiki
   const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
-  const [resultadosVisibles, setResultadosVisibles] = useState(true);
-  
-  // Datos para las opciones de filtros (normalmente vendrían de una API)
-  const carreras = [
-    "ABOGADO", "AGROBIOTECNOLOGÍA", "AGRONEGOCIOS", "CIRUJANO DENTISTA", 
-    "CULTURA FISICA Y DEPORTES", "DESARROLLO TURISTICO SUSTENTABLE", 
-    "ENFERMERÍA", "INGENIERIA EN GEOFISICA", "INGENIERIA EN SISTEMAS BIOLOGICOS", 
-    "INGENIERIA EN TELEMATICA", "LETRAS HISPANICAS", "MEDICO CIRUJANO Y PARTERO", 
-    "MEDICO VETERINARIO Y ZOOTECNISTA", "NEGOCIOS INTERNACIONALES", 
-    "ENFERMERIA MODALIDAD NO ESCOLARIZADA", "NUTRICION", "PERIODISMO", 
-    "PSICOLOGIA", "SEGURIDAD LABORAL, PROTECCION CIVIL Y EMERGENCIAS", "TRABAJO SOCIAL"
-  ];
-  
-  const programas = [
-    "PROGRAMA DE ESTANCIAS ACADÉMICAS (PEA)",
-    "PROGRAMA DE MOVILIDAD INTERNACIONAL",
-    "PROGRAMA DE MOVILIDAD NACIONAL",
-    "VERANO DE INVESTIGACIÓN CIENTÍFICA",
-    "PROGRAMA DELFÍN"
-  ];
-  
-  const actividades = [
-    "MOVILIDAD ESTUDIANTIL",
-    "ESTANCIA DE INVESTIGACIÓN",
-    "PRÁCTICAS PROFESIONALES",
-    "ESTANCIA CORTA"
-  ];
-  
-  const estados = ["ACTIVO", "CANCELADO", "RECHAZADO", "CONCLUIDO", "EN PROCESO"];
-  
-  const paises = [
-    "MÉXICO", "ESPAÑA", "ESTADOS UNIDOS", "CANADÁ", "ALEMANIA", 
-    "FRANCIA", "REINO UNIDO", "ITALIA", "BRASIL", "ARGENTINA", 
-    "CHILE", "COLOMBIA", "AUSTRALIA", "JAPÓN", "CHINA", "OTRO"
-  ];
-  
-  const instituciones = [
-    "UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO",
-    "UNIVERSIDAD DE GUADALAJARA",
-    "INSTITUTO POLITÉCNICO NACIONAL",
-    "UNIVERSIDAD DE BARCELONA",
-    "UNIVERSIDAD COMPLUTENSE DE MADRID",
-    "UNIVERSIDAD DE CALIFORNIA",
-    "UNIVERSIDAD DE BUENOS AIRES",
-    "UNIVERSIDAD DE SAO PAULO",
-    "OTRO"
-  ];
-  
-  const semestres = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-  const anios = ["2025", "2024", "2023", "2022", "2021", "2020"];
-  
-  // Función para manejar cambios en los filtros
-  const handleFilterChange = (e) => {
+  const [hasSearched, setHasSearched] = useState(false);
+  const [catalogos, setCatalogos] = useState({
+    carreras: [], programas: [], estados: [],
+    actividades: [], paises: [], instituciones: [],
+    semestres: [], anios: [], becado: []
+  });
+  const [alumnos, setAlumnos] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/get_catalogos.php`)
+      .then(res => res.json())
+      .then(data => setCatalogos(data))
+      .catch(console.error);
+  }, []);
+
+  const handleFilterChange = e => {
     const { name, value } = e.target;
-    setFiltros({
-      ...filtros,
-      [name]: value
-    });
+    setFiltros(prev => ({ ...prev, [name]: value }));
   };
-  
-  // Función para resetear los filtros
+
   const resetFiltros = () => {
     setFiltros({
-      carrera: "",
-      programa: "",
-      estado: "",
-      actividad: "",
-      semestre: "",
-      pais: "",
-      institucion: "",
-      becado: "",
-      anio: ""
+      carrera: "", programa: "", estado: "",
+      actividad: "", semestre: "", pais: "",
+      institucion: "", becado: "", anio: ""
     });
     setSearchValue("");
+    setHasSearched(false);
+    setAlumnos([]);
   };
-  
-  // Función para manejar la búsqueda
+
   const handleSearch = () => {
-    // Aquí implementarías la lógica de búsqueda con todos los filtros
-    console.log("Buscando con:", { 
-      searchType, 
-      searchValue, 
-      filtros 
-    });
-    
-    // Simulación de actualización de resultados
-    setResultadosVisibles(true);
+    setLoading(true);
+    setHasSearched(false);
+    setAlumnos([]);
+
+    const params = new URLSearchParams({ searchType, searchValue, ...filtros });
+
+    fetch(`${BASE_URL}/get_alumnos.php?${params}`)
+      .then(res => res.json())
+      .then(data => {
+        setAlumnos(data);
+        setHasSearched(true);
+      })
+      .catch(error => {
+        console.error('Error al buscar:', error);
+        setAlumnos([]);
+        setHasSearched(true);
+      })
+      .finally(() => setLoading(false));
   };
-  
-  // Datos de ejemplo para mostrar en los resultados
-  const alumnosEjemplo = [
-    {
-      codigo: "A12345",
-      nombre: "JUAN PÉREZ GARCÍA",
-      carrera: "INGENIERIA EN TELEMATICA",
-      programa: "PROGRAMA DE ESTANCIAS ACADÉMICAS (PEA)",
-      actividad: "MOVILIDAD ESTUDIANTIL",
-      semestre: "6",
-      promedio: 95.5,
-      pais: "ESPAÑA",
-      institucion: "UNIVERSIDAD DE BARCELONA",
-      estado: "ACTIVO",
-      becado: "SÍ",
-      becadoPor: "CUSUR"
-    },
-    {
-      codigo: "B67890",
-      nombre: "MARÍA LÓPEZ FERNÁNDEZ",
-      carrera: "PSICOLOGIA",
-      programa: "PROGRAMA DE MOVILIDAD INTERNACIONAL",
-      actividad: "ESTANCIA DE INVESTIGACIÓN",
-      semestre: "8",
-      promedio: 88.7,
-      pais: "ESTADOS UNIDOS",
-      institucion: "UNIVERSIDAD DE CALIFORNIA",
-      estado: "CONCLUIDO",
-      becado: "SÍ",
-      becadoPor: "SEP"
-    },
-    {
-      codigo: "C24680",
-      nombre: "CARLOS RODRÍGUEZ SÁNCHEZ",
-      carrera: "MEDICO CIRUJANO Y PARTERO",
-      programa: "VERANO DE INVESTIGACIÓN CIENTÍFICA",
-      actividad: "ESTANCIA CORTA",
-      semestre: "7",
-      promedio: 92.3,
-      pais: "MÉXICO",
-      institucion: "UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO",
-      estado: "ACTIVO",
-      becado: "NO",
-      becadoPor: ""
+
+  // Máximo de becas para columnas dinámicas
+  const maxBecas = alumnos.reduce((max, a) => {
+    if (!a.detalle_becas) return max;
+    const count = a.detalle_becas.split('; ').length;
+    return count > max ? count : max;
+  }, 0);
+
+  // Exportar a Excel
+  const handleExportExcel = () => {
+    const header = [
+      "Código", "Nombre", "Apellidos", "Carrera", "Nivel", "Maestría", "Semestre", "Promedio",
+      "Sexo", "F. Nac.", "Sangre", "Teléfono", "Correo", "Cont. Emerg.",
+      "Nom. Cont.", "NSS", "Programa", "Folio", "Est. Programa", "Actividad",
+      "Tipo Dest.", "País", "Institución", "F. Inicio", "F. Fin", "Obs. Mov.",
+      "Becado", ...Array.from({ length: maxBecas }).flatMap((_, i) => [
+        `Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`
+      ]),
+      "Reval. Mat", "Datos Reval.", "Certif. Calif.", "Disp.", "Datos Disp.",
+      "Seguro", "Aseguradora", "Póliza", "F. Ini Seg.", "F. Fin Seg.", "Obs. Seg.",
+      "Exp. Compart.", "Det. Exp."
+    ];
+
+    const data = alumnos.map(a => {
+      const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
+      const parsed = becas.map(str => {
+        const [typeName, amount] = str.split(' ($');
+        const [tipo, nombre] = typeName.split(': ');
+        return [tipo, nombre, amount ? amount.replace(')', '') : ''];
+      }).flat();
+      const blank = Array((maxBecas*3) - parsed.length).fill('');
+      return [
+        a.codigo, a.nombre, a.apellidos, a.carrera, a.nivel_academico, a.maestria, a.semestre, a.promedio,
+        a.sexo, a.fecha_nacimiento, a.tipo_sangre, a.telefono, a.correo, a.contacto_emergencia,
+        a.nombre_contacto_emergencia, a.nss, a.programa, a.folio, a.estado_programa, a.actividad,
+        a.tipo_destino, a.pais, a.institucion, a.fecha_inicio, a.fecha_fin, a.movilidades_observaciones,
+        a.tiene_beca, ...parsed, ...blank,
+        a.revalidacion_materias ? 'Sí' : 'No', a.datos_revalidacion,
+        a.certificado_calificaciones ? 'Sí' : 'No',
+        a.cuenta_discapacidad ? 'Sí' : 'No', a.datos_discapacidad,
+        a.seguro_viaje ? 'Sí' : 'No', a.aseguradora, a.poliza,
+        a.seguro_inicio, a.seguro_fin, a.obs_seguro,
+        a.exp_compartida ? 'Sí' : 'No', a.detalles_experiencia
+      ];
+    });
+
+    const wb = utils.book_new();
+    const ws = utils.aoa_to_sheet([header, ...data]);
+    utils.book_append_sheet(wb, ws, 'Alumnos');
+
+    // Estilizar cabecera
+    const range = utils.decode_range(ws['!ref']);
+    for (let C=range.s.c; C<=range.e.c; ++C) {
+      const cell = ws[utils.encode_cell({r:0, c:C})];
+      if (cell) cell.s = { fill: { fgColor:{rgb:'DDEBF7'} }, font:{bold:true} };
     }
-  ];
+    writeFile(wb, 'alumnos.xlsx', { cellStyles: true });
+  };
+
+  // Exportar a PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF({orientation:'landscape', unit:'pt', format:'A4'});
+    const ths = [...document.querySelectorAll('#alumnos-table thead th')].map(el=>el.textContent);
+    const trs = [...document.querySelectorAll('#alumnos-table tbody tr')].map(row=>
+      [...row.children].map(td=>td.textContent)
+    );
+    autoTable(doc, {
+      head:[ths], body:trs,
+      startY:40, theme:'grid',
+      headStyles:{fillColor:[40,167,69], textColor:255, fontSize:8, halign:'center'},
+      bodyStyles:{fontSize:7, valign:'top'},
+      styles:{overflow:'linebreak', cellPadding:2, halign:'left'},
+      margin:{top:40, left:10, right:10},
+      didDrawPage: (data)=>{
+        doc.setFontSize(12);
+        doc.text('Listado de Alumnos', data.settings.margin.left, 30);
+      }
+    });
+    doc.save('alumnos.pdf');
+  };
 
   return (
     <div className="dashboard-content">
       <div className="content-header">
-        <h1> Buscar Alumno</h1>
+        <h1>Buscar Alumno</h1>
         <p>Encuentra y filtra alumnos registrados en programas de movilidad.</p>
       </div>
-
-      {/* Sección de búsqueda principal */}
+      {/* Búsqueda simple */}
       <div className="search-container">
         <div className="search-box">
-          <select 
-            className="search-type-select" 
-            value={searchType} 
-            onChange={(e) => setSearchType(e.target.value)}
-          >
+          <select value={searchType} onChange={e => setSearchType(e.target.value)}>
             <option value="nombre">Nombre</option>
             <option value="codigo">Código</option>
             <option value="folio">Folio</option>
           </select>
-
-          <input 
-            type="text" 
-            placeholder={`Buscar por ${searchType}...`} 
-            className="search-input"
+          <input
+            type="text"
+            placeholder={`Buscar por ${searchType}...`}
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={e => setSearchValue(e.target.value)}
           />
-          <button className="search-button" onClick={handleSearch}>Buscar</button>
-          
-          <button 
-            className="filter-toggle-button"
-            onClick={() => setFiltrosAvanzados(!filtrosAvanzados)}
-          >
-            {filtrosAvanzados ? "Ocultar filtros" : "Mostrar filtros avanzados"}
+          <button onClick={handleSearch} disabled={loading}> {loading ? 'Buscando…' : 'Buscar'} </button>
+          <button onClick={() => setFiltrosAvanzados(!filtrosAvanzados)}>
+            {filtrosAvanzados ? 'Ocultar filtros' : 'Mostrar filtros avanzados'}
           </button>
         </div>
-
-        {/* Filtros avanzados colapsables */}
+        {/* Filtros avanzados */}
         {filtrosAvanzados && (
           <div className="advanced-filters">
             <h3>Filtros Avanzados</h3>
-            
             <div className="filter-grid">
-              <div className="filter-item">
-                <label>Carrera:</label>
-                <select 
-                  name="carrera" 
-                  value={filtros.carrera} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todas las carreras</option>
-                  {carreras.map((carrera, index) => (
-                    <option key={index} value={carrera}>{carrera}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Programa:</label>
-                <select 
-                  name="programa" 
-                  value={filtros.programa} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todos los programas</option>
-                  {programas.map((programa, index) => (
-                    <option key={index} value={programa}>{programa}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Estado:</label>
-                <select 
-                  name="estado" 
-                  value={filtros.estado} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todos los estados</option>
-                  {estados.map((estado, index) => (
-                    <option key={index} value={estado}>{estado}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Actividad:</label>
-                <select 
-                  name="actividad" 
-                  value={filtros.actividad} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todas las actividades</option>
-                  {actividades.map((actividad, index) => (
-                    <option key={index} value={actividad}>{actividad}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Semestre:</label>
-                <select 
-                  name="semestre" 
-                  value={filtros.semestre} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todos los semestres</option>
-                  {semestres.map((semestre, index) => (
-                    <option key={index} value={semestre}>{semestre}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>País:</label>
-                <select 
-                  name="pais" 
-                  value={filtros.pais} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todos los países</option>
-                  {paises.map((pais, index) => (
-                    <option key={index} value={pais}>{pais}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Institución:</label>
-                <select 
-                  name="institucion" 
-                  value={filtros.institucion} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todas las instituciones</option>
-                  {instituciones.map((institucion, index) => (
-                    <option key={index} value={institucion}>{institucion}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Becado:</label>
-                <select 
-                  name="becado" 
-                  value={filtros.becado} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todos</option>
-                  <option value="SI">Con Beca</option>
-                  <option value="NO">Sin Beca</option>
-                </select>
-              </div>
-              
-              <div className="filter-item">
-                <label>Año:</label>
-                <select 
-                  name="anio" 
-                  value={filtros.anio} 
-                  onChange={handleFilterChange}
-                  className="filter-select"
-                >
-                  <option value="">Todos los años</option>
-                  {anios.map((anio, index) => (
-                    <option key={index} value={anio}>{anio}</option>
-                  ))}
-                </select>
-              </div>
+              {[
+                { label:'Carrera', name:'carrera', options:catalogos.carreras },
+                { label:'Programa', name:'programa', options:catalogos.programas },
+                { label:'Estado', name:'estado', options:catalogos.estados },
+                { label:'Actividad', name:'actividad', options:catalogos.actividades },
+                { label:'Semestre', name:'semestre', options:catalogos.semestres },
+                { label:'País', name:'pais', options:catalogos.paises },
+                { label:'Institución', name:'institucion', options:catalogos.instituciones },
+                { label:'Becado', name:'becado', options:catalogos.becado },
+                { label:'Año', name:'anio', options:catalogos.anios }
+              ].map(({label,name,options},i)=>(
+                <div className="filter-item" key={i}>
+                  <label>{label}:</label>
+                  <select name={name} value={filtros[name]} onChange={handleFilterChange}>
+                    <option value="">Todos</option>
+                    {options.map((opt,j)=><option key={j} value={opt}>{opt}</option>)}
+                  </select>
+                </div>
+              ))}
             </div>
-            
             <div className="filter-buttons">
-              <button className="filter-apply" onClick={handleSearch}>Aplicar Filtros</button>
-              <button className="filter-reset" onClick={resetFiltros}>Limpiar Filtros</button>
+              <button onClick={handleSearch} disabled={loading}>Aplicar Filtros</button>
+              <button onClick={resetFiltros}>Limpiar Filtros</button>
             </div>
           </div>
         )}
       </div>
+      {/* Exportación */}
+      {alumnos.length>0 && (
+        <div className="export-buttons">
+          <button onClick={handleExportExcel}>Exportar a Excel</button>
+          <button onClick={handleExportPDF}>Exportar a PDF</button>
+        </div>
+      )}
 
-      {/* Sección de resultados */}
-      {resultadosVisibles && (
-        <div className="results-container">
-          <div className="results-header">
-            <h3>Resultados de la búsqueda</h3>
-            <div className="results-summary">
-              <span>Total encontrados: {alumnosEjemplo.length}</span>
-              <button className="export-button">
-                <i className="fa fa-download"></i> Exportar a Excel
-              </button>
-            </div>
-          </div>
-          
+      {/* Resultados */}
+      <div className="results-container">
+        <div className="results-header">
+          <h3>Resultados ({alumnos.length})</h3>
+        </div>
+        {loading && <p className="loading-msg">Cargando resultados...</p>}
+        {!loading && hasSearched && alumnos.length === 0 && (
+          <p className="no-results">No se encontraron alumnos con los criterios especificados.</p>
+        )}
+        {alumnos.length > 0 && (
           <div className="table-responsive">
-            <table className="data-table">
+            <table id="alumnos-table" className="data-table">
               <thead>
                 <tr>
                   <th>Código</th>
                   <th>Nombre</th>
-                  <th>Carrera</th>
+                  <th>Apellidos</th>
+                  <th>Nivel</th>
+                  <th>Maestría</th>
+                  <th>Semestre</th>
+                  <th>Promedio</th>
+                  <th>Sexo</th>
+                  <th>F. Nac.</th>
+                  <th>Sangre</th>
+                  <th>Teléfono</th>
+                  <th>Correo</th>
+                  <th>Cont. Emerg.</th>
+                  <th>Nom. Cont.</th>
+                  <th>NSS</th>
                   <th>Programa</th>
+                  <th>Folio</th>
+                  <th>Est. Programa</th>
                   <th>Actividad</th>
+                  <th>Tipo Dest.</th>
                   <th>País</th>
                   <th>Institución</th>
-                  <th>Estado</th>
+                  <th>F. Inicio</th>
+                  <th>F. Fin</th>
+                  <th>Obs. Mov.</th>
                   <th>Becado</th>
-                  <th>Acciones</th>
+                  {Array.from({ length: maxBecas }).flatMap((_, idx) => [
+                    <th key={`tipo-${idx}`}>{`Beca ${idx+1} Tipo`}</th>,
+                    <th key={`nom-${idx}`}>{`Beca ${idx+1} Nombre`}</th>,
+                    <th key={`mont-${idx}`}>{`Beca ${idx+1} Monto`}</th>
+                  ])}
+                  <th>Reval. Mat</th>
+                  <th>Datos Reval.</th>
+                  <th>Certif. Calif.</th>
+                  <th>Disp.</th>
+                  <th>Datos Disp.</th>
+                  <th>Seguro</th>
+                  <th>Aseguradora</th>
+                  <th>Póliza</th>
+                  <th>F. Ini Seg.</th>
+                  <th>F. Fin Seg.</th>
+                  <th>Obs. Seg.</th>
+                  <th>Exp. Compart.</th>
+                  <th>Det. Exp.</th>
+                  <th>Ver Alumno</th>
                 </tr>
               </thead>
               <tbody>
-                {alumnosEjemplo.map((alumno, index) => (
-                  <tr key={index} className={alumno.estado === "ACTIVO" ? "row-active" : alumno.estado === "CANCELADO" ? "row-canceled" : ""}>
-                    <td>{alumno.codigo}</td>
-                    <td>{alumno.nombre}</td>
-                    <td>{alumno.carrera}</td>
-                    <td>{alumno.programa}</td>
-                    <td>{alumno.actividad}</td>
-                    <td>{alumno.pais}</td>
-                    <td>{alumno.institucion}</td>
-                    <td>
-                      <span className={`status-badge status-${alumno.estado.toLowerCase()}`}>
-                        {alumno.estado}
-                      </span>
-                    </td>
-                    <td>{alumno.becado}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button className="action-button view" title="Ver detalles">
-                          <i className="fa fa-eye"></i>
-                        </button>
-                        <button className="action-button edit" title="Editar">
-                          <i className="fa fa-pencil"></i>
-                        </button>
-                        <button className="action-button export" title="Generar reporte">
-                          <i className="fa fa-file-pdf-o"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {alumnos.map((a, i) => {
+                  const becasArray = a.detalle_becas ? a.detalle_becas.split('; ') : [];
+                  const parsed = becasArray.map(str => {
+                    const [typeName, amountPart] = str.split(' ($');
+                    const [tipo, nombre] = typeName.split(': ');
+                    const monto = amountPart ? amountPart.replace(')', '') : '';
+                    return { tipo, nombre, monto };
+                  });
+                  return (
+                    <tr key={i}>
+                      <td>{a.codigo}</td>
+                      <td>{a.nombre}</td>
+                      <td>{a.apellidos}</td>
+                      <td>{a.nivel_academico}</td>
+                      <td>{a.maestria}</td>
+                      <td>{a.semestre}</td>
+                      <td>{a.promedio}</td>
+                      <td>{a.sexo}</td>
+                      <td>{a.fecha_nacimiento}</td>
+                      <td>{a.tipo_sangre}</td>
+                      <td>{a.telefono}</td>
+                      <td>{a.correo}</td>
+                      <td>{a.contacto_emergencia}</td>
+                      <td>{a.nombre_contacto_emergencia}</td>
+                      <td>{a.nss}</td>
+                      <td>{a.programa}</td>
+                      <td>{a.folio}</td>
+                      <td>{a.estado_programa}</td>
+                      <td>{a.actividad}</td>
+                      <td>{a.tipo_destino}</td>
+                      <td>{a.pais}</td>
+                      <td>{a.institucion}</td>
+                      <td>{a.fecha_inicio}</td>
+                      <td>{a.fecha_fin}</td>
+                      <td>{a.movilidades_observaciones}</td>
+                      <td>{a.tiene_beca}</td>
+                      {parsed.map((b, idx) => (
+                        <React.Fragment key={`becaVal-${i}-${idx}`}>
+                          <td>{b.tipo}</td>
+                          <td>{b.nombre}</td>
+                          <td>{b.monto}</td>
+                        </React.Fragment>
+                      ))}
+                      {/* Rellenar celdas vacías si hay menos becas que el máximo */}
+                      {Array.from({ length: maxBecas - parsed.length }).map((_, idx) => (
+                        <React.Fragment key={`empty-${i}-${idx}`}>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </React.Fragment>
+                      ))}
+                      <td>{a.revalidacion_materias ? 'Sí' : 'No'}</td>
+                      <td>{a.datos_revalidacion}</td>
+                      <td>{a.certificado_calificaciones ? 'Sí' : 'No'}</td>
+                      <td>{a.cuenta_discapacidad ? 'Sí' : 'No'}</td>
+                      <td>{a.datos_discapacidad}</td>
+                      <td>{a.seguro_viaje ? 'Sí' : 'No'}</td>
+                      <td>{a.aseguradora}</td>
+                      <td>{a.poliza}</td>
+                      <td>{a.seguro_inicio}</td>
+                      <td>{a.seguro_fin}</td>
+                      <td>{a.obs_seguro}</td>
+                      <td>{a.exp_compartida ? 'Sí' : 'No'}</td>
+                      <td>{a.detalles_experiencia}</td>
+                      <td>
+                        <a href={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
+                          Ver Alumno
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          
-          {/* Paginación */}
-          <div className="pagination">
-            <button className="page-button">&laquo;</button>
-            <button className="page-button active">1</button>
-            <button className="page-button">2</button>
-            <button className="page-button">3</button>
-            <button className="page-button">&raquo;</button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-};
-
-export default Busqueda;
+}

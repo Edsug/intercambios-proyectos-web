@@ -103,6 +103,7 @@ const Registro = () => {
         break;
     }
 
+    console.log("Errores detectados en sección", section, errs); // <- línea agregada
     setErrores(errs);
     return Object.keys(errs).length === 0;
   };

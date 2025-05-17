@@ -30,18 +30,6 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                 rows="3"
               />
             </label>
-            <label>
-              CERTIFICADO DE CALIFICACIONES:
-              <input
-                type="file"
-                name="CERTIFICADO_CALIFICACIONES"
-                accept=".pdf, .jpg, .jpeg, .png"
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  CERTIFICADO_CALIFICACIONES: e.target.files[0] 
-                })} 
-              />
-            </label>
           </div>
         )}
 
@@ -84,78 +72,76 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
           </label>
         </div>
         {formData.SEGURO_VIAJE && (
-          <div className="form-row">
-            <label>
-              ASEGURADORA:
-              <input
-                type="text"
-                name="NOMBRE_ASEGURADORA"
-                value={formData.NOMBRE_ASEGURADORA}
-                onChange={handleChange}
-                placeholder="Nombre de la aseguradora"
-                required
-              />
-            </label>
-            <label>
-              PÓLIZA:
-              <input
-                type="text"
-                name="NUMERO_POLIZA"
-                value={formData.NUMERO_POLIZA}
-                onChange={handleChange}
-                placeholder="Número de póliza"
-                required
-              />
-            </label>
-          </div>
-        )}
-        {formData.SEGURO_VIAJE && (
-          <div className="form-row">
-            <label>
-              INICIO SEGURO:
-              <input
-                type="date"
-                name="FECHA_INICIO_SEGURO"
-                value={formData.FECHA_INICIO_SEGURO}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              FIN SEGURO:
-              <input
-                type="date"
-                name="FECHA_FIN_SEGURO"
-                value={formData.FECHA_FIN_SEGURO}
-                onChange={handleChange}
-              />
-            </label>
-          </div>
-        )}
-        {formData.SEGURO_VIAJE && (
-          <div className="form-row">
-            <label>
-              CONTACTO ASEGURADORA:
-              <input
-                type="tel"
-                name="CONTACTO_ASEGURADORA"
-                value={formData.CONTACTO_ASEGURADORA}
-                onChange={handleChange}
-                placeholder="Teléfono de emergencias"
-                required
-              />
-            </label>
-            <label>
-              OBSERVACIONES SEGURO:
-              <textarea
-                name="OBSERVACIONES_SEGURO"
-                value={formData.OBSERVACIONES_SEGURO}
-                onChange={handleChange}
-                placeholder="Observaciones sobre el seguro"
-                rows="3"
-              />
-            </label>
-          </div>
+          <>
+            <div className="form-row">
+              <label>
+                ASEGURADORA:
+                <input
+                  type="text"
+                  name="NOMBRE_ASEGURADORA"
+                  value={formData.NOMBRE_ASEGURADORA}
+                  onChange={handleChange}
+                  placeholder="Nombre de la aseguradora"
+                  required
+                />
+              </label>
+              <label>
+                PÓLIZA:
+                <input
+                  type="text"
+                  name="NUMERO_POLIZA"
+                  value={formData.NUMERO_POLIZA}
+                  onChange={handleChange}
+                  placeholder="Número de póliza"
+                  required
+                />
+              </label>
+            </div>
+            <div className="form-row">
+              <label>
+                INICIO SEGURO:
+                <input
+                  type="date"
+                  name="FECHA_INICIO_SEGURO"
+                  value={formData.FECHA_INICIO_SEGURO}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                FIN SEGURO:
+                <input
+                  type="date"
+                  name="FECHA_FIN_SEGURO"
+                  value={formData.FECHA_FIN_SEGURO}
+                  onChange={handleChange}
+                />
+              </label>
+            </div>
+            <div className="form-row">
+              <label>
+                CONTACTO ASEGURADORA:
+                <input
+                  type="tel"
+                  name="CONTACTO_ASEGURADORA"
+                  value={formData.CONTACTO_ASEGURADORA}
+                  onChange={handleChange}
+                  placeholder="Teléfono de emergencias"
+                  required
+                />
+              </label>
+              <label>
+                OBSERVACIONES SEGURO:
+                <textarea
+                  name="OBSERVACIONES_SEGURO"
+                  value={formData.OBSERVACIONES_SEGURO}
+                  onChange={handleChange}
+                  placeholder="Observaciones sobre el seguro"
+                  rows="3"
+                />
+              </label>
+            </div>
+          </>
         )}
 
         {/* Compartir experiencia */}
