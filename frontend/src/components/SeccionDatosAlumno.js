@@ -1,22 +1,22 @@
 // components/SeccionDatosAlumno.js
-import React from 'react';
-import { carreras } from '../config/config';
+import React, { useState, useEffect } from 'react';
 
 export default function SeccionDatosAlumno({ formData, handleChange, handleChangeDynamic, setFormData, errores, prevSection, nextSection }) {
-  // Lista de maestrías inline
-  const opcionesMaestria = [
-    "ADMINISTRACIÓN DE NEGOCIOS",
-    "CIENCIAS EN PRODUCCIÓN APÍCOLA",
-    "CIENCIA DEL COMPORTAMIENTO CON ORIENTACIÓN EN ALIMENTACIÓN Y NUTRICIÓN",
-    "DERECHO",
-    "DESARROLLO HUMANO",
-    "EDUCACIÓN E INTERCULTURALIDAD",
-    "ESTUDIOS RURALES",
-    "PSICOLOGÍA CON ORIENTACIÓN EN CALIDAD DE VIDA Y SALUD",
-    "MAESTRÍA EN SALUD PÚBLICA",
-    "TECNOLOGÍAS PARA EL APRENDIZAJE",
-    "GESTIÓN PÚBLICA"
-  ];
+  const [carreras, setCarreras] = useState([]);
+  const [maestrias, setMaestrias] = useState([]);
+
+  // Obtener datos de la BD
+  useEffect(() => {
+    fetch('http://localhost/basecambios/get_carreras.php')
+      .then(res => res.json())
+      .then(data => setCarreras(data))
+      .catch(console.error);
+
+    fetch('http://localhost/basecambios/get_maestrias.php')
+      .then(res => res.json())
+      .then(data => setMaestrias(data))
+      .catch(console.error);
+  }, []);
 
   return (
     <div className="form-section">
@@ -49,6 +49,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
             {errores.NOMBRE && <span className="error-message">{errores.NOMBRE}</span>}
           </label>
         </div>
+
         <div className="form-row">
           <label>
             APELLIDOS:
@@ -69,7 +70,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
               value={formData.NIVEL_ACADEMICO || ''}
               onChange={(e) => {
                 const v = e.target.value;
-                setFormData({ ...formData, NIVEL_ACADEMICO: v, CARRERA: '' });
+                setFormData({ ...formData, NIVEL_ACADEMICO: v, CARRERA: '', MAESTRIA: '' });
               }}
               required
             >
@@ -110,7 +111,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
                 required
               >
                 <option value="">SELECCIONE UNA MAESTRÍA</option>
-                {opcionesMaestria.map((m, i) => <option key={i} value={m}>{m}</option>)}
+                {maestrias.map((m, i) => <option key={i} value={m}>{m}</option>)}
               </select>
               {errores.MAESTRIA && <span className="error-message">{errores.MAESTRIA}</span>}
             </label>
@@ -148,6 +149,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
             {errores.PROMEDIO && <span className="error-message">{errores.PROMEDIO}</span>}
           </label>
         </div>
+
         <div className="form-row">
           <label className="select-label">
             GÉNERO:
@@ -175,6 +177,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
             {errores.FECHA_NACIMIENTO && <span className="error-message">{errores.FECHA_NACIMIENTO}</span>}
           </label>
         </div>
+
         <div className="form-row">
           <label className="select-label">
             TIPO DE SANGRE:
@@ -209,6 +212,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
             {errores.TELEFONO && <span className="error-message">{errores.TELEFONO}</span>}
           </label>
         </div>
+
         <div className="form-row">
           <label>
             CORREO INSTITUCIONAL:
@@ -236,6 +240,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
             {errores.CONTACTO_EMERGENCIA && <span className="error-message">{errores.CONTACTO_EMERGENCIA}</span>}
           </label>
         </div>
+
         {formData.CONTACTO_EMERGENCIA && (
           <div className="form-row">
             <label>
@@ -252,6 +257,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
             </label>
           </div>
         )}
+
         <div className="form-row">
           <label>
             NÚMERO DE SEGURO SOCIAL (NSS):
@@ -268,6 +274,7 @@ export default function SeccionDatosAlumno({ formData, handleChange, handleChang
           </label>
         </div>
       </div>
+
       <div className="form-navigation">
         <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
         <button type="button" onClick={nextSection} className="next-button">Siguiente</button>
