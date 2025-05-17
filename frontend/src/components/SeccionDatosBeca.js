@@ -1,43 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function SeccionDatosBeca({
-  formData, 
-  prevSection, 
-  nextSection, 
+  formData,
+  prevSection,
+  nextSection,
   errores,
   onAddBeca,
   onRemoveBeca
 }) {
+  const [catalogoBecas, setCatalogoBecas] = useState([]);
   const [newBeca, setNewBeca] = useState({
-    tipo: 'CUSUR',
+    tipo: '',
     monto: '',
     nombre: '',
     detalles: ''
   });
 
-  const handleNewBecaChange = e => {
+  // Cargar catálogo desde PHP
+  useEffect(() => {
+    fetch('http://localhost/basecambios/get_becas.php')
+      .then(res => res.json())
+      .then(data => {
+        setCatalogoBecas(data);
+        if (data.length > 0) {
+          setNewBeca(prev => ({
+            ...prev,
+            tipo: data[0].tipo
+          }));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  const tiposDisponibles = [...new Set(catalogoBecas.map(b => b.tipo))];
+  const nombresPorTipo = catalogoBecas
+    .filter(b => b.tipo === newBeca.tipo)
+    .map(b => b.nombre);
+
+  const handleNewBecaChange = (e) => {
     const { name, value } = e.target;
-    setNewBeca(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'tipo') {
+      setNewBeca({
+        tipo: value,
+        monto: '',
+        nombre: '',
+        detalles: ''
+      });
+    } else {
+      setNewBeca(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const agregarBeca = () => {
-    if (!newBeca.tipo) {
-      alert('Seleccione el tipo de beca');
-      return;
-    }
-
-    if (!newBeca.monto || isNaN(newBeca.monto) || Number(newBeca.monto) < 0) {
-      alert('Ingrese un monto válido (mayor o igual a 0)');
-      return;
-    }
-
-    if ((newBeca.tipo === 'CGCI' || newBeca.tipo === 'EXTERNA') && !newBeca.nombre) {
-      alert('Ingrese el nombre de la beca');
+    if (!newBeca.tipo || !newBeca.nombre || !newBeca.monto || isNaN(newBeca.monto)) {
+      alert('Complete todos los campos correctamente.');
       return;
     }
 
     onAddBeca(newBeca);
-    setNewBeca({ tipo: 'CUSUR', monto: '', nombre: '', detalles: '' });
+    setNewBeca({
+      tipo: tiposDisponibles[0] || '',
+      monto: '',
+      nombre: '',
+      detalles: ''
+    });
   };
 
   return (
@@ -46,19 +73,16 @@ export default function SeccionDatosBeca({
       <div className="section-content">
         <div className="form-row">
           <h3>Agregar Beca</h3>
+
           <label>
             Tipo:
-            <select 
-              name="tipo" 
-              value={newBeca.tipo} 
-              onChange={handleNewBecaChange}
-            >
-              <option value="CUSUR">CUSUR</option>
-              <option value="CGCI">CGCI</option>
-              <option value="PROGRAMA">PROGRAMA</option>
-              <option value="EXTERNA">EXTERNA</option>
+            <select name="tipo" value={newBeca.tipo} onChange={handleNewBecaChange}>
+              {tiposDisponibles.map((tipo, i) => (
+                <option key={i} value={tipo}>{tipo}</option>
+              ))}
             </select>
           </label>
+
           <label>
             Monto:
             <input
@@ -66,35 +90,37 @@ export default function SeccionDatosBeca({
               name="monto"
               value={newBeca.monto}
               onChange={handleNewBecaChange}
-              placeholder="Monto de la beca"
+              placeholder="Monto"
               min="0"
             />
           </label>
+
           <label>
             Nombre de Beca:
-            <input
-              type="text"
-              name="nombre"
-              value={newBeca.nombre}
-              onChange={handleNewBecaChange}
-              placeholder="Nombre de la beca"
-            />
+            <select name="nombre" value={newBeca.nombre} onChange={handleNewBecaChange}>
+              <option value="">Seleccione una beca</option>
+              {nombresPorTipo.map((nombre, i) => (
+                <option key={i} value={nombre}>{nombre}</option>
+              ))}
+            </select>
           </label>
+
           <label>
             Detalles:
             <textarea
               name="detalles"
               value={newBeca.detalles}
               onChange={handleNewBecaChange}
-              placeholder="Detalles adicionales"
+              placeholder="Detalles (opcional)"
             />
           </label>
+
           <button type="button" onClick={agregarBeca} className="add-button">
             + Agregar Beca
           </button>
         </div>
 
-        {formData.BECAS && formData.BECAS.length > 0 ? (
+        {formData.BECAS?.length > 0 ? (
           <div className="form-row">
             <h3>Becas Registradas</h3>
             <ul className="becas-list">
@@ -104,9 +130,7 @@ export default function SeccionDatosBeca({
                   {beca.monto && ` - Monto: $${beca.monto}`}
                   {beca.nombre && ` - Nombre: ${beca.nombre}`}
                   {beca.detalles && ` - Detalles: ${beca.detalles}`}
-                  <button type="button" onClick={() => onRemoveBeca(i)} className="delete-button">
-                    Eliminar
-                  </button>
+                  <button onClick={() => onRemoveBeca(i)} className="delete-button">Eliminar</button>
                 </li>
               ))}
             </ul>
@@ -117,13 +141,10 @@ export default function SeccionDatosBeca({
           </div>
         )}
       </div>
+
       <div className="form-navigation">
-        <button type="button" onClick={prevSection} className="prev-button">
-          Anterior
-        </button>
-        <button type="button" onClick={nextSection} className="next-button">
-          Siguiente
-        </button>
+        <button onClick={prevSection} className="prev-button">Anterior</button>
+        <button onClick={nextSection} className="next-button">Siguiente</button>
       </div>
     </div>
   );

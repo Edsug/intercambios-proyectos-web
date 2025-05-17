@@ -1,8 +1,22 @@
 // components/SeccionMovilidad.js
-import React from 'react';
-import { paises, estadosRepublica } from '../config/config';
+import React, { useEffect, useState } from 'react';
 
 export default function SeccionMovilidad({ formData, handleChange, prevSection, nextSection, errores }) {
+  const [paises, setPaises] = useState([]);
+  const [estadosRepublica, setEstadosRepublica] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost/basecambios/get_paises.php')
+      .then(res => res.json())
+      .then(setPaises)
+      .catch(console.error);
+
+    fetch('http://localhost/basecambios/get_estados.php')
+      .then(res => res.json())
+      .then(setEstadosRepublica)
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="form-section">
       <h2 className="section-title">Datos de Movilidad</h2>
@@ -17,15 +31,16 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
               required
             >
               <option value="">SELECCIONE EL TIPO DE MOVILIDAD</option>
-                <option value="ESTACIA ACADEMICA">ESTACIA ACADEMICA</option>
-                <option value="ESTANCIA DE INVESTIGACION">ESTANCIA DE INVESTIGACION</option>  
-                <option value="ESTANCIA PARA PRACTICAS PROFESIONALES">ESTANCIA PARA PRACTICAS PROFESIONALES</option>
-                <option value="ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)">ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)</option>
-                <option value="ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS">ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS</option>
+              <option value="ESTANCIA ACADEMICA">ESTANCIA ACADEMICA</option>
+              <option value="ESTANCIA DE INVESTIGACION">ESTANCIA DE INVESTIGACION</option>
+              <option value="ESTANCIA PARA PRACTICAS PROFESIONALES">ESTANCIA PARA PRACTICAS PROFESIONALES</option>
+              <option value="ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)">ESTANCIAS CORTAS (CURSO DE VERANO O INVIERNO)</option>
+              <option value="ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS">ESTANCIAS CORTAS PARA INVESTIGACION DE POSGRADOS</option>
             </select>
             {errores.TIPO_MOVILIDAD && <span className="error-message">{errores.TIPO_MOVILIDAD}</span>}
-          </label> 
+          </label>
         </div>
+
         <div className="form-row">
           <label className="checkbox-label">
             <input
@@ -44,10 +59,10 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
               value="INTERNACIONAL"
               checked={formData.TIPO_DESTINO === "INTERNACIONAL"}
               onChange={handleChange}
-              />
-              MOVILIDAD INTERNACIONAL
-              </label>
-          </div>
+            />
+            MOVILIDAD INTERNACIONAL
+          </label>
+        </div>
 
         <div className="form-row">
           <label>
@@ -62,37 +77,41 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
             {errores.INSTITUCION_DESTINO && <span className="error-message">{errores.INSTITUCION_DESTINO}</span>}
           </label>
 
-        {formData.TIPO_DESTINO === "INTERNACIONAL" ? (
-          <label className="select-label">
-            PAÍS:
-            <select
-              name="PAIS"
-              value={formData.PAIS}
-              onChange={handleChange}
-              required
-            >
-              <option value="">SELECCIONE PAÍS</option>
-              {paises.map((p, i) => <option key={i} value={p}>{p}</option>)}
-            </select>
-            {errores.PAIS && <span className="error-message">{errores.PAIS}</span>}
-          </label>
-        ) : (
-          <label className="select-label">
-            ESTADO:
-            <select
-              name="ESTADO_REPUBLICA"
-              value={formData.ESTADO_REPUBLICA}
-              onChange={handleChange}
-              required
-            >
-              <option value="">SELECCIONE ESTADO</option>
-              {estadosRepublica.map((e, i) => <option key={i} value={e}>{e}</option>)}
-            </select>
-            {errores.ESTADO_REPUBLICA && <span className="error-message">{errores.ESTADO_REPUBLICA}</span>}
-          </label>
-        )}
+          {formData.TIPO_DESTINO === "INTERNACIONAL" ? (
+            <label className="select-label">
+              PAÍS:
+              <select
+                name="PAIS"
+                value={formData.PAIS}
+                onChange={handleChange}
+                required
+              >
+                <option value="">SELECCIONE PAÍS</option>
+                {paises.map((p, i) => (
+                  <option key={i} value={p}>{p}</option>
+                ))}
+              </select>
+              {errores.PAIS && <span className="error-message">{errores.PAIS}</span>}
+            </label>
+          ) : (
+            <label className="select-label">
+              ESTADO:
+              <select
+                name="ESTADO_REPUBLICA"
+                value={formData.ESTADO_REPUBLICA}
+                onChange={handleChange}
+                required
+              >
+                <option value="">SELECCIONE ESTADO</option>
+                {estadosRepublica.map((e, i) => (
+                  <option key={i} value={e}>{e}</option>
+                ))}
+              </select>
+              {errores.ESTADO_REPUBLICA && <span className="error-message">{errores.ESTADO_REPUBLICA}</span>}
+            </label>
+          )}
         </div>
-        
+
         <div className="form-row">
           <label>
             FECHA INICIO:
@@ -117,6 +136,7 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
             {errores.FECHA_FIN && <span className="error-message">{errores.FECHA_FIN}</span>}
           </label>
         </div>
+
         <div className="form-row">
           <label>
             OBSERVACIONES:
@@ -128,6 +148,7 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
           </label>
         </div>
       </div>
+
       <div className="form-navigation">
         <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
         <button type="button" onClick={nextSection} className="next-button">Siguiente</button>
@@ -135,4 +156,3 @@ export default function SeccionMovilidad({ formData, handleChange, prevSection, 
     </div>
   );
 }
-

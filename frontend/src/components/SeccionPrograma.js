@@ -1,8 +1,15 @@
-// components/SeccionPrograma.js
-import React from 'react';
-import { programasPredefinidos } from '../config/config';
+import React, { useState, useEffect } from 'react';
 
 export default function SeccionPrograma({ formData, handleChange, nextSection, errores }) {
+  const [programas, setProgramas] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost/basecambios/get_programas.php')
+      .then(res => res.json())
+      .then(data => setProgramas(data))
+      .catch(err => console.error("Error al cargar programas:", err));
+  }, []);
+
   return (
     <div className="form-section">
       <h2 className="section-title">Programa</h2>
@@ -17,12 +24,13 @@ export default function SeccionPrograma({ formData, handleChange, nextSection, e
               required
             >
               <option value="">SELECCIONE UN PROGRAMA</option>
-              {programasPredefinidos.map((programa, i) => (
-                <option key={i} value={programa}>{programa}</option>
+              {programas.map((nombre, i) => (
+                <option key={i} value={nombre}>{nombre}</option>
               ))}
             </select>
             {errores.PROGRAMA && <span className="error-message">{errores.PROGRAMA}</span>}
           </label>
+
           <label>
             FOLIO:
             <input
@@ -36,6 +44,7 @@ export default function SeccionPrograma({ formData, handleChange, nextSection, e
             {errores.FOLIO && <span className="error-message">{errores.FOLIO}</span>}
           </label>
         </div>
+
         <div className="form-row">
           <label className="select-label">
             ESTADO:
@@ -51,6 +60,7 @@ export default function SeccionPrograma({ formData, handleChange, nextSection, e
           </label>
         </div>
       </div>
+
       <div className="form-navigation">
         <button type="button" onClick={nextSection} className="next-button">Siguiente</button>
       </div>
