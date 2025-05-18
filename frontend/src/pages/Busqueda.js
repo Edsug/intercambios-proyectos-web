@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Busqueda.css";
-import { exportPDF } from '../utils/pdfExporter';
-import { exportExcel } from '../utils/excelExporter';
-
+// Librerías para exportar Excel y PDF
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const BASE_URL = "http://localhost/basecambios";
 
@@ -20,17 +22,6 @@ export default function Busqueda() {
     discapacidades: ["Sí","No"], seguros: ["Sí","No"],
     experiencias: ["Sí","No"], nacionalidades: ["Nacional","Extranjero"] // Nueva categoría nacionalidad
   });
-
-
-  const handleExportExcel = () => {
-    exportExcel(alumnos, columnasPDF, maxBecas);
-  };
-
-  const handleExportPDF = () => {
-  exportPDF(alumnos, columnasPDF, maxBecas);
-};
-
-  
 
   const [filtros, setFiltros] = useState({
     carrera: "", programa: "", estado: "", estado_geo: "", actividad: "",
@@ -203,8 +194,145 @@ export default function Busqueda() {
     return count > max ? count : max;
   }, 0);
 
-
- 
+  //generar excel
+  const handleExportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Alumnos');
+  
+    const columnasVisibles = columnasPDF.filter(c => c.visible);
+    const header = columnasVisibles.map(col => col.label);
+  
+    for (let i = 0; i < maxBecas; i++) {
+      header.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+    }
+  
+    worksheet.addRow(header);
+  
+    const rows = alumnos.map(a => {
+      const seleccionados = columnasVisibles.map(c => a[c.id] ?? '');
+  
+      const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
+      const parsed = becas.map(str => {
+        const [typeName, amount] = str.split(' ($');
+        const [tipo, nombre] = typeName.split(': ');
+        return [tipo, nombre, amount ? amount.replace(')', '') : ''];
+      }).flat();
+  
+      const blank = Array((maxBecas * 3) - parsed.length).fill('');
+      return [...seleccionados, ...parsed, ...blank];
+    });
+  
+    const headerRow = worksheet.getRow(1);
+    headerRow.height = 24;
+    headerRow.eachCell(cell => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '305496' }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      cell.border = {
+        top:    { style: 'thin' },
+        left:   { style: 'thin' },
+        bottom: { style: 'thin' },
+        right:  { style: 'thin' }
+      };
+    });
+  
+    rows.forEach((row, i) => {
+      const newRow = worksheet.addRow(row);
+      const fillColor = i % 2 === 0 ? 'F2F2F2' : 'FFFFFF';
+      newRow.eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: fillColor }
+        };
+        cell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
+        cell.border = {
+          top:    { style: 'thin' },
+          left:   { style: 'thin' },
+          bottom: { style: 'thin' },
+          right:  { style: 'thin' }
+        };
+      });
+    });
+  
+    worksheet.columns.forEach((col, i) => {
+      let maxLength = header[i].length;
+      rows.forEach(row => {
+        const val = row[i];
+        if (val && val.toString().length > maxLength) {
+          maxLength = val.toString().length;
+        }
+      });
+      col.width = maxLength + 2;
+    });
+  
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), 'alumnos.xlsx');
+  };
+  
+  //Generar pdf
+  const handleExportPDF = () => {
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+  
+    const columnasVisibles = columnasPDF.filter(c => c.visible);
+    const headers = columnasVisibles.map(c => c.label);
+  
+    const becaHeaders = [];
+    for (let i = 0; i < maxBecas; i++) {
+      becaHeaders.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+    }
+  
+    const fullHeaders = [...headers, ...becaHeaders];
+  
+    const rows = alumnos.map(alumno => {
+      const row = columnasVisibles.map(c => alumno[c.id] ?? '');
+  
+      const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
+      const parsed = becas.map(str => {
+        const [typeName, amountPart] = str.split(' ($');
+        const [tipo, nombre] = typeName.split(': ');
+        const monto = amountPart ? amountPart.replace(')', '') : '';
+        return [tipo, nombre, monto];
+      }).flat();
+  
+      const blank = Array((maxBecas * 3) - parsed.length).fill('');
+      return [...row, ...parsed, ...blank];
+    });
+  
+    const maxColsPerPage = 15;
+    const totalPages = Math.ceil(fullHeaders.length / maxColsPerPage);
+  
+    for (let p = 0; p < totalPages; p++) {
+      const start = p * maxColsPerPage;
+      const end = start + maxColsPerPage;
+  
+      const slicedHeaders = fullHeaders.slice(start, end);
+      const slicedRows = rows.map(row => row.slice(start, end));
+  
+      autoTable(doc, {
+        head: [slicedHeaders],
+        body: slicedRows,
+        startY: 40,
+        theme: 'grid',
+        headStyles: { fillColor: [33, 37, 41], textColor: 255, fontSize: 8 },
+        bodyStyles: { fontSize: 7, valign: 'top' },
+        styles: { overflow: 'linebreak', cellPadding: 2, halign: 'left' },
+        margin: { top: 40, left: 10, right: 10 },
+        didDrawPage: data => {
+          doc.setFontSize(12);
+          doc.text(`Listado de Alumnos - Página ${p + 1}`, data.settings.margin.left, 30);
+        }
+      });
+  
+      if (p < totalPages - 1) doc.addPage();
+    }
+  
+    doc.save('alumnos.pdf');
+  };
 
   return (
     <div className="dashboard-content">
