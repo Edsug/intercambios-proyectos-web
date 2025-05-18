@@ -1,37 +1,143 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Busqueda.css";
-// Librerías para exportar Excel y PDF
-import { utils, writeFile } from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { exportPDF } from '../utils/pdfExporter';
+import { exportExcel } from '../utils/excelExporter';
+
 
 const BASE_URL = "http://localhost/basecambios";
 
 export default function Busqueda() {
   const [searchType, setSearchType] = useState("nombre");
   const [searchValue, setSearchValue] = useState("");
-  const [filtros, setFiltros] = useState({
-    carrera: "", programa: "", estado: "",
-    actividad: "", semestre: "", pais: "",
-    institucion: "", becado: "", anio: ""
-  });
   const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [catalogos, setCatalogos] = useState({
-    carreras: [], programas: [], estados: [],
-    actividades: [], paises: [], instituciones: [],
-    semestres: [], anios: [], becado: []
+    carreras: [], programas: [], estados: [], actividades: [],
+    paises: [], instituciones: [], semestres: [], anios: [],
+    estados_geo: [],           // Nueva categoría estado geográfico
+    niveles: [], maestrias: [], sexos: [], destinos: [],
+    becado: ["SI","NO"], revalidaciones: ["Sí","No"],
+    discapacidades: ["Sí","No"], seguros: ["Sí","No"],
+    experiencias: ["Sí","No"], nacionalidades: ["Nacional","Extranjero"] // Nueva categoría nacionalidad
   });
+
+
+  const handleExportExcel = () => {
+    exportExcel(alumnos, columnasPDF, maxBecas);
+  };
+
+  const handleExportPDF = () => {
+  exportPDF(alumnos, columnasPDF, maxBecas);
+};
+
+  
+
+  const [filtros, setFiltros] = useState({
+    carrera: "", programa: "", estado: "", estado_geo: "", actividad: "",
+    semestre: "", pais: "", institucion: "", becado: "", anio: "",
+    nivel_academico: "", maestria: "", sexo: "", tipo_destino: "",
+    revalidacion: "", discapacidad: "", seguro: "", expCompartida: "",
+    nacionalidad: "", promedioMin: "", promedioMax: "",
+    fechaInicioDesde: "", fechaInicioHasta: "",
+    fechaFinDesde: "", fechaFinHasta: ""
+  });
+
   const [alumnos, setAlumnos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [mostrarColumnas, setMostrarColumnas] = useState(false);
+
+  const [columnasPDF, setColumnasPDF] = useState([
+    { id: 'codigo', label: 'Código', visible: true },
+    { id: 'nombre', label: 'Nombre', visible: true },
+    { id: 'apellidos', label: 'Apellidos', visible: true },
+    { id: 'nivel_academico', label: 'Nivel', visible: true },
+    { id: 'carrera', label: 'Carrera', visible: true },
+    { id: 'maestria', label: 'Maestría', visible: true },
+    { id: 'semestre', label: 'Semestre', visible: true },
+    { id: 'promedio', label: 'Promedio', visible: true },
+    { id: 'sexo', label: 'Sexo', visible: true },
+    { id: 'fecha_nacimiento', label: 'F. Nac.', visible: true },
+    { id: 'tipo_sangre', label: 'Sangre', visible: true },
+    { id: 'telefono', label: 'Teléfono', visible: true },
+    { id: 'correo', label: 'Correo', visible: true },
+    { id: 'contacto_emergencia', label: 'Cont. Emerg.', visible: true },
+    { id: 'nombre_contacto_emergencia', label: 'Nom. Cont.', visible: true },
+    { id: 'nss', label: 'NSS', visible: true },
+    { id: 'programa', label: 'Programa', visible: true },
+    { id: 'folio', label: 'Folio', visible: true },
+    { id: 'estado_programa', label: 'Est. Programa', visible: true },
+    { id: 'actividad', label: 'Actividad', visible: true },
+    { id: 'tipo_destino', label: 'Tipo Dest.', visible: true },
+    { id: 'pais', label: 'País', visible: true },
+    { id: 'institucion', label: 'Institución', visible: true },
+    { id: 'fecha_inicio', label: 'F. Inicio', visible: true },
+    { id: 'fecha_fin', label: 'F. Fin', visible: true },
+    { id: 'movilidades_observaciones', label: 'Obs. Mov.', visible: true },
+    { id: 'tiene_beca', label: 'Becado', visible: true },
+    // Nuevas columnas añadidas
+    { id: 'estado_geo', label: 'Estado (Geo)', visible: true },
+    { id: 'nacionalidad', label: 'Nacionalidad', visible: true },
+    // Columnas restantes
+    { id: 'revalidacion_materias', label: 'Reval. Mat', visible: true },
+    { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
+    { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
+    { id: 'cuenta_discapacidad', label: 'Disp.', visible: true },
+    { id: 'datos_discapacidad', label: 'Datos Disp.', visible: true },
+    { id: 'seguro_viaje', label: 'Seguro', visible: true },
+    { id: 'aseguradora', label: 'Aseguradora', visible: true },
+    { id: 'poliza', label: 'Póliza', visible: true },
+    { id: 'seguro_inicio', label: 'F. Ini Seg.', visible: true },
+    { id: 'seguro_fin', label: 'F. Fin Seg.', visible: true },
+    { id: 'obs_seguro', label: 'Obs. Seg.', visible: true },
+    { id: 'exp_compartida', label: 'Exp. Compart.', visible: true },
+    { id: 'detalles_experiencia', label: 'Det. Exp.', visible: true }
+  ]);
+
+  // Define selectFields para las opciones de filtros
+  const selectFields = [
+    { l: 'Carrera', n: 'carrera', opts: catalogos.carreras },
+    { l: 'Programa', n: 'programa', opts: catalogos.programas },
+    { l: 'Estado', n: 'estado', opts: catalogos.estados },
+    { l: 'Actividad', n: 'actividad', opts: catalogos.actividades },
+    { l: 'Semestre', n: 'semestre', opts: catalogos.semestres },
+    { l: 'País', n: 'pais', opts: catalogos.paises },
+    { l: 'Institución', n: 'institucion', opts: catalogos.instituciones },
+    { l: 'Becado', n: 'becado', opts: catalogos.becado },
+    { l: 'Año', n: 'anio', opts: catalogos.anios },
+    { l: 'Nivel Académico', n: 'nivel_academico', opts: catalogos.niveles },
+    { l: 'Maestría', n: 'maestria', opts: catalogos.maestrias },
+    { l: 'Sexo', n: 'sexo', opts: catalogos.sexos },
+    { l: 'Tipo Destino', n: 'tipo_destino', opts: catalogos.destinos },
+    { l: 'Revalidación', n: 'revalidacion', opts: catalogos.revalidaciones },
+    { l: 'Discapacidad', n: 'discapacidad', opts: catalogos.discapacidades },
+    { l: 'Estado (Geo)', n: 'estado_geo', opts: catalogos.estados_geo },
+    { l: 'Seguro', n: 'seguro', opts: catalogos.seguros },
+    { l: 'Exp. Compartida', n: 'expCompartida', opts: catalogos.experiencias },
+    { l: 'Nacionalidad', n: 'nacionalidad', opts: catalogos.nacionalidades },
+  ];
 
   useEffect(() => {
     fetch(`${BASE_URL}/get_catalogos.php`)
-      .then(res => res.json())
-      .then(data => setCatalogos(data))
+      .then(r => r.json())
+      .then(data => setCatalogos(prev => ({
+        ...prev,
+        carreras:      data.carreras      || prev.carreras,
+        programas:     data.programas     || prev.programas,
+        estados:       data.estados       || prev.estados,
+        actividades:   data.actividades   || prev.actividades,
+        paises:        data.paises        || prev.paises,
+        instituciones: data.instituciones || prev.instituciones,
+        semestres:     data.semestres     || prev.semestres,
+        anios:         data.anios         || prev.anios,
+        estados_geo:   data.estados_geo   || prev.estados_geo,
+        niveles:       data.niveles       || prev.niveles,
+        maestrias:     data.maestrias     || prev.maestrias,
+        sexos:         data.sexos         || prev.sexos,
+        destinos:      data.destinos      || prev.destinos
+      })))
       .catch(console.error);
   }, []);
-
+  
   const handleFilterChange = e => {
     const { name, value } = e.target;
     setFiltros(prev => ({ ...prev, [name]: value }));
@@ -39,15 +145,37 @@ export default function Busqueda() {
 
   const resetFiltros = () => {
     setFiltros({
-      carrera: "", programa: "", estado: "",
-      actividad: "", semestre: "", pais: "",
-      institucion: "", becado: "", anio: ""
+      carrera: "",
+      programa: "",
+      estado: "",
+      estado_geo: "",
+      actividad: "",
+      semestre: "",
+      pais: "",
+      institucion: "",
+      becado: "",
+      anio: "",
+      nivel_academico: "",
+      maestria: "",
+      sexo: "",
+      tipo_destino: "",
+      revalidacion: "",
+      discapacidad: "",
+      seguro: "",
+      expCompartida: "",
+      nacionalidad: "",
+      promedioMin: "",
+      promedioMax: "",
+      fechaInicioDesde: "",
+      fechaInicioHasta: "",
+      fechaFinDesde: "",
+      fechaFinHasta: ""
     });
     setSearchValue("");
     setHasSearched(false);
     setAlumnos([]);
   };
-
+  
   const handleSearch = () => {
     setLoading(true);
     setHasSearched(false);
@@ -69,85 +197,14 @@ export default function Busqueda() {
       .finally(() => setLoading(false));
   };
 
-  // Máximo de becas para columnas dinámicas
   const maxBecas = alumnos.reduce((max, a) => {
     if (!a.detalle_becas) return max;
     const count = a.detalle_becas.split('; ').length;
     return count > max ? count : max;
   }, 0);
 
-  // Exportar a Excel
-  const handleExportExcel = () => {
-    const header = [
-      "Código", "Nombre", "Apellidos", "Carrera", "Nivel", "Maestría", "Semestre", "Promedio",
-      "Sexo", "F. Nac.", "Sangre", "Teléfono", "Correo", "Cont. Emerg.",
-      "Nom. Cont.", "NSS", "Programa", "Folio", "Est. Programa", "Actividad",
-      "Tipo Dest.", "País", "Institución", "F. Inicio", "F. Fin", "Obs. Mov.",
-      "Becado", ...Array.from({ length: maxBecas }).flatMap((_, i) => [
-        `Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`
-      ]),
-      "Reval. Mat", "Datos Reval.", "Certif. Calif.", "Disp.", "Datos Disp.",
-      "Seguro", "Aseguradora", "Póliza", "F. Ini Seg.", "F. Fin Seg.", "Obs. Seg.",
-      "Exp. Compart.", "Det. Exp."
-    ];
 
-    const data = alumnos.map(a => {
-      const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
-      const parsed = becas.map(str => {
-        const [typeName, amount] = str.split(' ($');
-        const [tipo, nombre] = typeName.split(': ');
-        return [tipo, nombre, amount ? amount.replace(')', '') : ''];
-      }).flat();
-      const blank = Array((maxBecas*3) - parsed.length).fill('');
-      return [
-        a.codigo, a.nombre, a.apellidos, a.carrera, a.nivel_academico, a.maestria, a.semestre, a.promedio,
-        a.sexo, a.fecha_nacimiento, a.tipo_sangre, a.telefono, a.correo, a.contacto_emergencia,
-        a.nombre_contacto_emergencia, a.nss, a.programa, a.folio, a.estado_programa, a.actividad,
-        a.tipo_destino, a.pais, a.institucion, a.fecha_inicio, a.fecha_fin, a.movilidades_observaciones,
-        a.tiene_beca, ...parsed, ...blank,
-        a.revalidacion_materias ? 'Sí' : 'No', a.datos_revalidacion,
-        a.certificado_calificaciones ? 'Sí' : 'No',
-        a.cuenta_discapacidad ? 'Sí' : 'No', a.datos_discapacidad,
-        a.seguro_viaje ? 'Sí' : 'No', a.aseguradora, a.poliza,
-        a.seguro_inicio, a.seguro_fin, a.obs_seguro,
-        a.exp_compartida ? 'Sí' : 'No', a.detalles_experiencia
-      ];
-    });
-
-    const wb = utils.book_new();
-    const ws = utils.aoa_to_sheet([header, ...data]);
-    utils.book_append_sheet(wb, ws, 'Alumnos');
-
-    // Estilizar cabecera
-    const range = utils.decode_range(ws['!ref']);
-    for (let C=range.s.c; C<=range.e.c; ++C) {
-      const cell = ws[utils.encode_cell({r:0, c:C})];
-      if (cell) cell.s = { fill: { fgColor:{rgb:'DDEBF7'} }, font:{bold:true} };
-    }
-    writeFile(wb, 'alumnos.xlsx', { cellStyles: true });
-  };
-
-  // Exportar a PDF
-  const handleExportPDF = () => {
-    const doc = new jsPDF({orientation:'landscape', unit:'pt', format:'A4'});
-    const ths = [...document.querySelectorAll('#alumnos-table thead th')].map(el=>el.textContent);
-    const trs = [...document.querySelectorAll('#alumnos-table tbody tr')].map(row=>
-      [...row.children].map(td=>td.textContent)
-    );
-    autoTable(doc, {
-      head:[ths], body:trs,
-      startY:40, theme:'grid',
-      headStyles:{fillColor:[40,167,69], textColor:255, fontSize:8, halign:'center'},
-      bodyStyles:{fontSize:7, valign:'top'},
-      styles:{overflow:'linebreak', cellPadding:2, halign:'left'},
-      margin:{top:40, left:10, right:10},
-      didDrawPage: (data)=>{
-        doc.setFontSize(12);
-        doc.text('Listado de Alumnos', data.settings.margin.left, 30);
-      }
-    });
-    doc.save('alumnos.pdf');
-  };
+ 
 
   return (
     <div className="dashboard-content">
@@ -155,7 +212,7 @@ export default function Busqueda() {
         <h1>Buscar Alumno</h1>
         <p>Encuentra y filtra alumnos registrados en programas de movilidad.</p>
       </div>
-      {/* Búsqueda simple */}
+      
       <div className="search-container">
         <div className="search-box">
           <select value={searchType} onChange={e => setSearchType(e.target.value)}>
@@ -169,48 +226,110 @@ export default function Busqueda() {
             value={searchValue}
             onChange={e => setSearchValue(e.target.value)}
           />
-          <button onClick={handleSearch} disabled={loading}> {loading ? 'Buscando…' : 'Buscar'} </button>
+          <button onClick={handleSearch} disabled={loading}> 
+            {loading ? 'Buscando…' : 'Buscar'} 
+          </button>
+
           <button onClick={() => setFiltrosAvanzados(!filtrosAvanzados)}>
             {filtrosAvanzados ? 'Ocultar filtros' : 'Mostrar filtros avanzados'}
           </button>
         </div>
-        {/* Filtros avanzados */}
+
         {filtrosAvanzados && (
           <div className="advanced-filters">
             <h3>Filtros Avanzados</h3>
             <div className="filter-grid">
-              {[
-                { label:'Carrera', name:'carrera', options:catalogos.carreras },
-                { label:'Programa', name:'programa', options:catalogos.programas },
-                { label:'Estado', name:'estado', options:catalogos.estados },
-                { label:'Actividad', name:'actividad', options:catalogos.actividades },
-                { label:'Semestre', name:'semestre', options:catalogos.semestres },
-                { label:'País', name:'pais', options:catalogos.paises },
-                { label:'Institución', name:'institucion', options:catalogos.instituciones },
-                { label:'Becado', name:'becado', options:catalogos.becado },
-                { label:'Año', name:'anio', options:catalogos.anios }
-              ].map(({label,name,options},i)=>(
-                <div className="filter-item" key={i}>
-                  <label>{label}:</label>
-                  <select name={name} value={filtros[name]} onChange={handleFilterChange}>
+              {/* Selects dinámicos */}
+              {selectFields.map(({l,n,opts}) => (
+                <div className="filter-item" key={n}>
+                  <label>{l}:</label>
+                  <select name={n} value={filtros[n]} onChange={handleFilterChange}>
                     <option value="">Todos</option>
-                    {options.map((opt,j)=><option key={j} value={opt}>{opt}</option>)}
+                    {opts.map(o => (<option key={o} value={o}>{o}</option>))}
                   </select>
                 </div>
               ))}
+              {/* Rangos */}
+              <div className="filter-item">
+                <label>Promedio ≥</label>
+                <input type="number" step="0.01" name="promedioMin"
+                       value={filtros.promedioMin} onChange={handleFilterChange}/>
+              </div>
+              <div className="filter-item">
+                <label>Promedio ≤</label>
+                <input type="number" step="0.01" name="promedioMax"
+                       value={filtros.promedioMax} onChange={handleFilterChange}/>
+              </div>
+
+              {/* Rango de fechas de inicio de movilidad */}
+              <div className="filter-item">
+                <label>Fecha inicio movilidad ≥</label>
+                <input type="date" name="fechaInicioDesde"
+                      value={filtros.fechaInicioDesde}
+                      onChange={handleFilterChange}/>
+              </div>
+              <div className="filter-item">
+                <label>Fecha inicio movilidad ≤</label>
+                <input type="date" name="fechaInicioHasta"
+                      value={filtros.fechaInicioHasta}
+                      onChange={handleFilterChange}/>
+              </div>
             </div>
             <div className="filter-buttons">
-              <button onClick={handleSearch} disabled={loading}>Aplicar Filtros</button>
-              <button onClick={resetFiltros}>Limpiar Filtros</button>
+              <button onClick={handleSearch} disabled={loading}>Aplicar filtros</button>
+              <button onClick={resetFiltros}>Limpiar filtros</button>
             </div>
           </div>
         )}
       </div>
-      {/* Exportación */}
-      {alumnos.length>0 && (
-        <div className="export-buttons">
-          <button onClick={handleExportExcel}>Exportar a Excel</button>
-          <button onClick={handleExportPDF}>Exportar a PDF</button>
+
+      {/* Sección de exportación */}
+      {alumnos.length > 0 && (
+        <div className="export-section">
+          <div className="export-section-title">
+            Generación de reporte
+          </div>
+
+          <div className="export-actions">
+            <button 
+              onClick={() => setMostrarColumnas(prev => !prev)} 
+              className="column-toggle-button"
+            >
+              <i className={`fas ${mostrarColumnas ? "fa-eye-slash" : "fa-eye"}`}></i>
+              {mostrarColumnas ? "Ocultar selección de columnas" : "Habilitar selección de columnas"}
+            </button>
+
+            <div className="export-buttons">
+              <button onClick={handleExportExcel} className="export-button">
+                <i className="fas fa-file-excel"></i> Exportar a Excel
+              </button>
+              <button onClick={handleExportPDF} className="export-button">
+                <i className="fas fa-file-pdf"></i> Exportar a PDF
+              </button>
+            </div>
+          </div>
+
+          {mostrarColumnas && (
+            <div className="column-selector">
+              <h4>Selección de columnas:</h4>
+              <div className="column-grid">
+                {columnasPDF.map((col, idx) => (
+                  <label key={idx} className="column-option">
+                    <input
+                      type="checkbox"
+                      checked={col.visible}
+                      onChange={() => {
+                        const updated = [...columnasPDF];
+                        updated[idx].visible = !updated[idx].visible;
+                        setColumnasPDF(updated);
+                      }}
+                    />
+                    {col.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -232,6 +351,7 @@ export default function Busqueda() {
                   <th>Nombre</th>
                   <th>Apellidos</th>
                   <th>Nivel</th>
+                  <th>Carrera</th>
                   <th>Maestría</th>
                   <th>Semestre</th>
                   <th>Promedio</th>
@@ -254,6 +374,10 @@ export default function Busqueda() {
                   <th>F. Fin</th>
                   <th>Obs. Mov.</th>
                   <th>Becado</th>
+                  {/* Nuevos encabezados añadidos */}
+                  <th>Estado (Geo)</th>
+                  <th>Nacionalidad</th>
+                  {/* Encabezados de becas dinámicos y resto... */}
                   {Array.from({ length: maxBecas }).flatMap((_, idx) => [
                     <th key={`tipo-${idx}`}>{`Beca ${idx+1} Tipo`}</th>,
                     <th key={`nom-${idx}`}>{`Beca ${idx+1} Nombre`}</th>,
@@ -290,6 +414,7 @@ export default function Busqueda() {
                       <td>{a.nombre}</td>
                       <td>{a.apellidos}</td>
                       <td>{a.nivel_academico}</td>
+                      <td>{a.carrera}</td>
                       <td>{a.maestria}</td>
                       <td>{a.semestre}</td>
                       <td>{a.promedio}</td>
@@ -312,6 +437,10 @@ export default function Busqueda() {
                       <td>{a.fecha_fin}</td>
                       <td>{a.movilidades_observaciones}</td>
                       <td>{a.tiene_beca}</td>
+                      {/* Celdas de las nuevas columnas */}
+                      <td>{a.estado_geo}</td>
+                      <td>{a.nacionalidad}</td>
+                      {/* Becas dinámicas */}
                       {parsed.map((b, idx) => (
                         <React.Fragment key={`becaVal-${i}-${idx}`}>
                           <td>{b.tipo}</td>
@@ -319,7 +448,6 @@ export default function Busqueda() {
                           <td>{b.monto}</td>
                         </React.Fragment>
                       ))}
-                      {/* Rellenar celdas vacías si hay menos becas que el máximo */}
                       {Array.from({ length: maxBecas - parsed.length }).map((_, idx) => (
                         <React.Fragment key={`empty-${i}-${idx}`}>
                           <td></td>
