@@ -326,33 +326,35 @@ export default function Busqueda() {
       </div>
 
       {/* Sección de exportación */}
-      {alumnos.length > 0 && (
+        {alumnos.length > 0 && (
         <div className="export-section">
-          <div className="export-actions">
-          {/* Botón de seleccionar columnas va primero */}
-          <button 
-            onClick={() => setMostrarColumnas(prev => !prev)} 
-            className="column-toggle-button"
-          >
-            <i className={`fas ${mostrarColumnas ? "fa-eye-slash" : "fa-eye"}`}></i>
-            {mostrarColumnas ? "Ocultar seleccion de columnas" : "Seleccionar columnas para generar el reporte"}
-          </button>
-
-          {/* Luego los botones de exportación */}
-          <div className="export-buttons">
-            <button onClick={handleExportExcel} className="export-button">
-              <i className="fas fa-file-excel"></i> Exportar a Excel
-            </button>
-            <button onClick={handleExportPDF} className="export-button">
-              <i className="fas fa-file-pdf"></i> Exportar a PDF
-            </button>
+          {/* Aquí insertamos el título */}
+          <div className="export-section-title">
+            Generación de reporte
           </div>
-        </div>
 
+          <div className="export-actions">
+            <button 
+              onClick={() => setMostrarColumnas(prev => !prev)} 
+              className="column-toggle-button"
+            >
+              <i className={`fas ${mostrarColumnas ? "fa-eye-slash" : "fa-eye"}`}></i>
+              {mostrarColumnas ? "Ocultar selección de columnas" : "Habilitar selección de columnas"}
+            </button>
+
+            <div className="export-buttons">
+              <button onClick={handleExportExcel} className="export-button">
+                <i className="fas fa-file-excel"></i> Exportar a Excel
+              </button>
+              <button onClick={handleExportPDF} className="export-button">
+                <i className="fas fa-file-pdf"></i> Exportar a PDF
+              </button>
+            </div>
+          </div>
 
           {mostrarColumnas && (
             <div className="column-selector">
-              <h4>Selecciona las columnas para PDF:</h4>
+              <h4>Selección de columnas:</h4>
               <div className="column-grid">
                 {columnasPDF.map((col, idx) => (
                   <label key={idx} className="column-option">
@@ -373,6 +375,7 @@ export default function Busqueda() {
           )}
         </div>
       )}
+
 
       {/* Resultados */}
       <div className="results-container">
