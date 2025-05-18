@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Busqueda.css";
 // Librerías para exportar Excel y PDF
-import { utils, writeFile } from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const BASE_URL = "http://localhost/basecambios";
 
@@ -15,6 +16,7 @@ export default function Busqueda() {
     actividad: "", semestre: "", pais: "",
     institucion: "", becado: "", anio: ""
   });
+
   const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [catalogos, setCatalogos] = useState({
@@ -24,6 +26,50 @@ export default function Busqueda() {
   });
   const [alumnos, setAlumnos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [mostrarColumnas, setMostrarColumnas] = useState(false);
+
+  const [columnasPDF, setColumnasPDF] = useState([
+    { id: 'codigo', label: 'Código', visible: true },
+    { id: 'nombre', label: 'Nombre', visible: true },
+    { id: 'apellidos', label: 'Apellidos', visible: true },
+    { id: 'nivel_academico', label: 'Nivel', visible: true },
+    { id: 'carrera', label: 'Carrera', visible: true },
+    { id: 'maestria', label: 'Maestría', visible: true },
+    { id: 'semestre', label: 'Semestre', visible: true },
+    { id: 'promedio', label: 'Promedio', visible: true },
+    { id: 'sexo', label: 'Sexo', visible: true },
+    { id: 'fecha_nacimiento', label: 'F. Nac.', visible: true },
+    { id: 'tipo_sangre', label: 'Sangre', visible: true },
+    { id: 'telefono', label: 'Teléfono', visible: true },
+    { id: 'correo', label: 'Correo', visible: true },
+    { id: 'contacto_emergencia', label: 'Cont. Emerg.', visible: true },
+    { id: 'nombre_contacto_emergencia', label: 'Nom. Cont.', visible: true },
+    { id: 'nss', label: 'NSS', visible: true },
+    { id: 'programa', label: 'Programa', visible: true },
+    { id: 'folio', label: 'Folio', visible: true },
+    { id: 'estado_programa', label: 'Est. Programa', visible: true },
+    { id: 'actividad', label: 'Actividad', visible: true },
+    { id: 'tipo_destino', label: 'Tipo Dest.', visible: true },
+    { id: 'pais', label: 'País', visible: true },
+    { id: 'institucion', label: 'Institución', visible: true },
+    { id: 'fecha_inicio', label: 'F. Inicio', visible: true },
+    { id: 'fecha_fin', label: 'F. Fin', visible: true },
+    { id: 'movilidades_observaciones', label: 'Obs. Mov.', visible: true },
+    { id: 'tiene_beca', label: 'Becado', visible: true },
+    { id: 'revalidacion_materias', label: 'Reval. Mat', visible: true },
+    { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
+    { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
+    { id: 'cuenta_discapacidad', label: 'Disp.', visible: true },
+    { id: 'datos_discapacidad', label: 'Datos Disp.', visible: true },
+    { id: 'seguro_viaje', label: 'Seguro', visible: true },
+    { id: 'aseguradora', label: 'Aseguradora', visible: true },
+    { id: 'poliza', label: 'Póliza', visible: true },
+    { id: 'seguro_inicio', label: 'F. Ini Seg.', visible: true },
+    { id: 'seguro_fin', label: 'F. Fin Seg.', visible: true },
+    { id: 'obs_seguro', label: 'Obs. Seg.', visible: true },
+    { id: 'exp_compartida', label: 'Exp. Compart.', visible: true },
+    { id: 'detalles_experiencia', label: 'Det. Exp.', visible: true }
+  ]);
 
   useEffect(() => {
     fetch(`${BASE_URL}/get_catalogos.php`)
@@ -69,83 +115,152 @@ export default function Busqueda() {
       .finally(() => setLoading(false));
   };
 
-  // Máximo de becas para columnas dinámicas
   const maxBecas = alumnos.reduce((max, a) => {
     if (!a.detalle_becas) return max;
     const count = a.detalle_becas.split('; ').length;
     return count > max ? count : max;
   }, 0);
 
-  // Exportar a Excel
-  const handleExportExcel = () => {
-    const header = [
-      "Código", "Nombre", "Apellidos", "Carrera", "Nivel", "Maestría", "Semestre", "Promedio",
-      "Sexo", "F. Nac.", "Sangre", "Teléfono", "Correo", "Cont. Emerg.",
-      "Nom. Cont.", "NSS", "Programa", "Folio", "Est. Programa", "Actividad",
-      "Tipo Dest.", "País", "Institución", "F. Inicio", "F. Fin", "Obs. Mov.",
-      "Becado", ...Array.from({ length: maxBecas }).flatMap((_, i) => [
-        `Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`
-      ]),
-      "Reval. Mat", "Datos Reval.", "Certif. Calif.", "Disp.", "Datos Disp.",
-      "Seguro", "Aseguradora", "Póliza", "F. Ini Seg.", "F. Fin Seg.", "Obs. Seg.",
-      "Exp. Compart.", "Det. Exp."
-    ];
+  //generar excel
 
-    const data = alumnos.map(a => {
+  const handleExportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Alumnos');
+  
+    const columnasVisibles = columnasPDF.filter(c => c.visible);
+    const header = columnasVisibles.map(col => col.label);
+  
+    for (let i = 0; i < maxBecas; i++) {
+      header.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+    }
+  
+    worksheet.addRow(header);
+  
+    const rows = alumnos.map(a => {
+      const seleccionados = columnasVisibles.map(c => a[c.id] ?? '');
+  
       const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
       const parsed = becas.map(str => {
         const [typeName, amount] = str.split(' ($');
         const [tipo, nombre] = typeName.split(': ');
         return [tipo, nombre, amount ? amount.replace(')', '') : ''];
       }).flat();
-      const blank = Array((maxBecas*3) - parsed.length).fill('');
-      return [
-        a.codigo, a.nombre, a.apellidos,  a.nivel_academico, a.maestria, a.semestre, a.promedio,
-        a.sexo, a.fecha_nacimiento, a.tipo_sangre, a.telefono, a.correo, a.contacto_emergencia,
-        a.nombre_contacto_emergencia, a.nss, a.programa, a.folio, a.estado_programa, a.actividad,
-        a.tipo_destino, a.pais, a.institucion, a.fecha_inicio, a.fecha_fin, a.movilidades_observaciones,
-        a.tiene_beca, ...parsed, ...blank,
-        a.revalidacion_materias ? 'Sí' : 'No', a.datos_revalidacion,
-        a.certificado_calificaciones ? 'Sí' : 'No',
-        a.cuenta_discapacidad ? 'Sí' : 'No', a.datos_discapacidad,
-        a.seguro_viaje ? 'Sí' : 'No', a.aseguradora, a.poliza,
-        a.seguro_inicio, a.seguro_fin, a.obs_seguro,
-        a.exp_compartida ? 'Sí' : 'No', a.detalles_experiencia
-      ];
+  
+      const blank = Array((maxBecas * 3) - parsed.length).fill('');
+      return [...seleccionados, ...parsed, ...blank];
     });
-
-    const wb = utils.book_new();
-    const ws = utils.aoa_to_sheet([header, ...data]);
-    utils.book_append_sheet(wb, ws, 'Alumnos');
-
-    // Estilizar cabecera
-    const range = utils.decode_range(ws['!ref']);
-    for (let C=range.s.c; C<=range.e.c; ++C) {
-      const cell = ws[utils.encode_cell({r:0, c:C})];
-      if (cell) cell.s = { fill: { fgColor:{rgb:'DDEBF7'} }, font:{bold:true} };
-    }
-    writeFile(wb, 'alumnos.xlsx', { cellStyles: true });
+  
+    const headerRow = worksheet.getRow(1);
+    headerRow.height = 24;
+    headerRow.eachCell(cell => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '305496' }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      cell.border = {
+        top:    { style: 'thin' },
+        left:   { style: 'thin' },
+        bottom: { style: 'thin' },
+        right:  { style: 'thin' }
+      };
+    });
+  
+    rows.forEach((row, i) => {
+      const newRow = worksheet.addRow(row);
+      const fillColor = i % 2 === 0 ? 'F2F2F2' : 'FFFFFF';
+      newRow.eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: fillColor }
+        };
+        cell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
+        cell.border = {
+          top:    { style: 'thin' },
+          left:   { style: 'thin' },
+          bottom: { style: 'thin' },
+          right:  { style: 'thin' }
+        };
+      });
+    });
+  
+    worksheet.columns.forEach((col, i) => {
+      let maxLength = header[i].length;
+      rows.forEach(row => {
+        const val = row[i];
+        if (val && val.toString().length > maxLength) {
+          maxLength = val.toString().length;
+        }
+      });
+      col.width = maxLength + 2;
+    });
+  
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), 'alumnos.xlsx');
   };
+  
 
-  // Exportar a PDF
+  //Generar pdf
+  
   const handleExportPDF = () => {
-    const doc = new jsPDF({orientation:'landscape', unit:'pt', format:'A4'});
-    const ths = [...document.querySelectorAll('#alumnos-table thead th')].map(el=>el.textContent);
-    const trs = [...document.querySelectorAll('#alumnos-table tbody tr')].map(row=>
-      [...row.children].map(td=>td.textContent)
-    );
-    autoTable(doc, {
-      head:[ths], body:trs,
-      startY:40, theme:'grid',
-      headStyles:{fillColor:[40,167,69], textColor:255, fontSize:8, halign:'center'},
-      bodyStyles:{fontSize:7, valign:'top'},
-      styles:{overflow:'linebreak', cellPadding:2, halign:'left'},
-      margin:{top:40, left:10, right:10},
-      didDrawPage: (data)=>{
-        doc.setFontSize(12);
-        doc.text('Listado de Alumnos', data.settings.margin.left, 30);
-      }
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+  
+    const columnasVisibles = columnasPDF.filter(c => c.visible);
+    const headers = columnasVisibles.map(c => c.label);
+  
+    const becaHeaders = [];
+    for (let i = 0; i < maxBecas; i++) {
+      becaHeaders.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+    }
+  
+    const fullHeaders = [...headers, ...becaHeaders];
+  
+    const rows = alumnos.map(alumno => {
+      const row = columnasVisibles.map(c => alumno[c.id] ?? '');
+  
+      const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
+      const parsed = becas.map(str => {
+        const [typeName, amountPart] = str.split(' ($');
+        const [tipo, nombre] = typeName.split(': ');
+        const monto = amountPart ? amountPart.replace(')', '') : '';
+        return [tipo, nombre, monto];
+      }).flat();
+  
+      const blank = Array((maxBecas * 3) - parsed.length).fill('');
+      return [...row, ...parsed, ...blank];
     });
+  
+    const maxColsPerPage = 15;
+    const totalPages = Math.ceil(fullHeaders.length / maxColsPerPage);
+  
+    for (let p = 0; p < totalPages; p++) {
+      const start = p * maxColsPerPage;
+      const end = start + maxColsPerPage;
+  
+      const slicedHeaders = fullHeaders.slice(start, end);
+      const slicedRows = rows.map(row => row.slice(start, end));
+  
+      autoTable(doc, {
+        head: [slicedHeaders],
+        body: slicedRows,
+        startY: 40,
+        theme: 'grid',
+        headStyles: { fillColor: [33, 37, 41], textColor: 255, fontSize: 8 },
+        bodyStyles: { fontSize: 7, valign: 'top' },
+        styles: { overflow: 'linebreak', cellPadding: 2, halign: 'left' },
+        margin: { top: 40, left: 10, right: 10 },
+        didDrawPage: data => {
+          doc.setFontSize(12);
+          doc.text(`Listado de Alumnos - Página ${p + 1}`, data.settings.margin.left, 30);
+        }
+      });
+  
+      if (p < totalPages - 1) doc.addPage();
+    }
+  
     doc.save('alumnos.pdf');
   };
 
@@ -155,7 +270,7 @@ export default function Busqueda() {
         <h1>Buscar Alumno</h1>
         <p>Encuentra y filtra alumnos registrados en programas de movilidad.</p>
       </div>
-      {/* Búsqueda simple */}
+      
       <div className="search-container">
         <div className="search-box">
           <select value={searchType} onChange={e => setSearchType(e.target.value)}>
@@ -169,12 +284,15 @@ export default function Busqueda() {
             value={searchValue}
             onChange={e => setSearchValue(e.target.value)}
           />
-          <button onClick={handleSearch} disabled={loading}> {loading ? 'Buscando…' : 'Buscar'} </button>
+          <button onClick={handleSearch} disabled={loading}> 
+            {loading ? 'Buscando…' : 'Buscar'} 
+          </button>
+
           <button onClick={() => setFiltrosAvanzados(!filtrosAvanzados)}>
             {filtrosAvanzados ? 'Ocultar filtros' : 'Mostrar filtros avanzados'}
           </button>
         </div>
-        {/* Filtros avanzados */}
+
         {filtrosAvanzados && (
           <div className="advanced-filters">
             <h3>Filtros Avanzados</h3>
@@ -206,11 +324,53 @@ export default function Busqueda() {
           </div>
         )}
       </div>
-      {/* Exportación */}
-      {alumnos.length>0 && (
-        <div className="export-buttons">
-          <button onClick={handleExportExcel}>Exportar a Excel</button>
-          <button onClick={handleExportPDF}>Exportar a PDF</button>
+
+      {/* Sección de exportación */}
+      {alumnos.length > 0 && (
+        <div className="export-section">
+          <div className="export-actions">
+          {/* Botón de seleccionar columnas va primero */}
+          <button 
+            onClick={() => setMostrarColumnas(prev => !prev)} 
+            className="column-toggle-button"
+          >
+            <i className={`fas ${mostrarColumnas ? "fa-eye-slash" : "fa-eye"}`}></i>
+            {mostrarColumnas ? "Ocultar seleccion de columnas" : "Seleccionar columnas para generar el reporte"}
+          </button>
+
+          {/* Luego los botones de exportación */}
+          <div className="export-buttons">
+            <button onClick={handleExportExcel} className="export-button">
+              <i className="fas fa-file-excel"></i> Exportar a Excel
+            </button>
+            <button onClick={handleExportPDF} className="export-button">
+              <i className="fas fa-file-pdf"></i> Exportar a PDF
+            </button>
+          </div>
+        </div>
+
+
+          {mostrarColumnas && (
+            <div className="column-selector">
+              <h4>Selecciona las columnas para PDF:</h4>
+              <div className="column-grid">
+                {columnasPDF.map((col, idx) => (
+                  <label key={idx} className="column-option">
+                    <input
+                      type="checkbox"
+                      checked={col.visible}
+                      onChange={() => {
+                        const updated = [...columnasPDF];
+                        updated[idx].visible = !updated[idx].visible;
+                        setColumnasPDF(updated);
+                      }}
+                    />
+                    {col.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -290,8 +450,8 @@ export default function Busqueda() {
                       <td>{a.codigo}</td>
                       <td>{a.nombre}</td>
                       <td>{a.apellidos}</td>
-                      <td>{a.nivel_academico}</td>   {/* Nivel va primero */}
-                      <td>{a.carrera}</td>           {/* Luego carrera */}
+                      <td>{a.nivel_academico}</td>
+                      <td>{a.carrera}</td>
                       <td>{a.maestria}</td>
                       <td>{a.semestre}</td>
                       <td>{a.promedio}</td>
@@ -347,8 +507,6 @@ export default function Busqueda() {
                         </a>
                       </td>
                     </tr>
-
-
                   );
                 })}
               </tbody>
