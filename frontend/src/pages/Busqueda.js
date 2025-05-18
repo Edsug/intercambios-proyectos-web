@@ -100,7 +100,7 @@ export default function Busqueda() {
       }).flat();
       const blank = Array((maxBecas*3) - parsed.length).fill('');
       return [
-        a.codigo, a.nombre, a.apellidos, a.carrera, a.nivel_academico, a.maestria, a.semestre, a.promedio,
+        a.codigo, a.nombre, a.apellidos,  a.nivel_academico, a.maestria, a.semestre, a.promedio,
         a.sexo, a.fecha_nacimiento, a.tipo_sangre, a.telefono, a.correo, a.contacto_emergencia,
         a.nombre_contacto_emergencia, a.nss, a.programa, a.folio, a.estado_programa, a.actividad,
         a.tipo_destino, a.pais, a.institucion, a.fecha_inicio, a.fecha_fin, a.movilidades_observaciones,
@@ -232,6 +232,7 @@ export default function Busqueda() {
                   <th>Nombre</th>
                   <th>Apellidos</th>
                   <th>Nivel</th>
+                  <th>Carrera</th>
                   <th>Maestría</th>
                   <th>Semestre</th>
                   <th>Promedio</th>
@@ -289,7 +290,8 @@ export default function Busqueda() {
                       <td>{a.codigo}</td>
                       <td>{a.nombre}</td>
                       <td>{a.apellidos}</td>
-                      <td>{a.nivel_academico}</td>
+                      <td>{a.nivel_academico}</td>   {/* Nivel va primero */}
+                      <td>{a.carrera}</td>           {/* Luego carrera */}
                       <td>{a.maestria}</td>
                       <td>{a.semestre}</td>
                       <td>{a.promedio}</td>
@@ -319,7 +321,6 @@ export default function Busqueda() {
                           <td>{b.monto}</td>
                         </React.Fragment>
                       ))}
-                      {/* Rellenar celdas vacías si hay menos becas que el máximo */}
                       {Array.from({ length: maxBecas - parsed.length }).map((_, idx) => (
                         <React.Fragment key={`empty-${i}-${idx}`}>
                           <td></td>
@@ -346,6 +347,8 @@ export default function Busqueda() {
                         </a>
                       </td>
                     </tr>
+
+
                   );
                 })}
               </tbody>
