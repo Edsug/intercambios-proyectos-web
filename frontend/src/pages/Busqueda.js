@@ -11,19 +11,26 @@ const BASE_URL = "http://localhost/basecambios";
 export default function Busqueda() {
   const [searchType, setSearchType] = useState("nombre");
   const [searchValue, setSearchValue] = useState("");
-  const [filtros, setFiltros] = useState({
-    carrera: "", programa: "", estado: "",
-    actividad: "", semestre: "", pais: "",
-    institucion: "", becado: "", anio: ""
-  });
-
   const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [catalogos, setCatalogos] = useState({
-    carreras: [], programas: [], estados: [],
-    actividades: [], paises: [], instituciones: [],
-    semestres: [], anios: [], becado: []
+    carreras: [], programas: [], estados: [], actividades: [],
+    paises: [], instituciones: [], semestres: [], anios: [],
+    niveles: [], maestrias: [], sexos: [], destinos: [],
+    becado: ["SI","NO"], revalidaciones: ["Sí","No"],
+    discapacidades: ["Sí","No"], seguros: ["Sí","No"],
+    experiencias: ["Sí","No"] // Nueva categoría nacionalidad
   });
+
+  const [filtros, setFiltros] = useState({
+    carrera: "", programa: "", estado: "", actividad: "",
+    semestre: "", pais: "", institucion: "", becado: "", anio: "",
+    nivel_academico: "", maestria: "", sexo: "", tipo_destino: "",
+    revalidacion: "", discapacidad: "", seguro: "", expCompartida: "", promedioMin: "", promedioMax: "",
+    fechaInicioDesde: "", fechaInicioHasta: "",
+    fechaFinDesde: "", fechaFinHasta: ""
+  });
+
   const [alumnos, setAlumnos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mostrarColumnas, setMostrarColumnas] = useState(false);
@@ -56,6 +63,10 @@ export default function Busqueda() {
     { id: 'fecha_fin', label: 'F. Fin', visible: true },
     { id: 'movilidades_observaciones', label: 'Obs. Mov.', visible: true },
     { id: 'tiene_beca', label: 'Becado', visible: true },
+    // Nuevas columnas añadidas
+    { id: 'estado_geo', label: 'Estado (Geo)', visible: true },
+    { id: 'nacionalidad', label: 'Nacionalidad', visible: true },
+    // Columnas restantes
     { id: 'revalidacion_materias', label: 'Reval. Mat', visible: true },
     { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
     { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
@@ -71,13 +82,51 @@ export default function Busqueda() {
     { id: 'detalles_experiencia', label: 'Det. Exp.', visible: true }
   ]);
 
+  // Define selectFields para las opciones de filtros
+  const selectFields = [
+    { l: 'Carrera', n: 'carrera', opts: catalogos.carreras },
+    { l: 'Programa', n: 'programa', opts: catalogos.programas },
+    { l: 'Estado', n: 'estado', opts: catalogos.estados },
+    { l: 'Actividad', n: 'actividad', opts: catalogos.actividades },
+    { l: 'Semestre', n: 'semestre', opts: catalogos.semestres },
+    { l: 'País', n: 'pais', opts: catalogos.paises },
+    { l: 'Institución', n: 'institucion', opts: catalogos.instituciones },
+    { l: 'Becado', n: 'becado', opts: catalogos.becado },
+    { l: 'Año', n: 'anio', opts: catalogos.anios },
+    { l: 'Nivel Académico', n: 'nivel_academico', opts: catalogos.niveles },
+    { l: 'Maestría', n: 'maestria', opts: catalogos.maestrias },
+    { l: 'Sexo', n: 'sexo', opts: catalogos.sexos },
+    { l: 'Tipo Destino', n: 'tipo_destino', opts: catalogos.destinos },
+    { l: 'Revalidación', n: 'revalidacion', opts: catalogos.revalidaciones },
+    { l: 'Discapacidad', n: 'discapacidad', opts: catalogos.discapacidades },
+    { l: 'Estado (Geo)', n: 'estado_geo', opts: catalogos.estados_geo },
+    { l: 'Seguro', n: 'seguro', opts: catalogos.seguros },
+    { l: 'Exp. Compartida', n: 'expCompartida', opts: catalogos.experiencias },
+    { l: 'Nacionalidad', n: 'nacionalidad', opts: catalogos.nacionalidades },
+  ];
+
   useEffect(() => {
     fetch(`${BASE_URL}/get_catalogos.php`)
-      .then(res => res.json())
-      .then(data => setCatalogos(data))
+      .then(r => r.json())
+      .then(data => setCatalogos(prev => ({
+        ...prev,
+        carreras:      data.carreras      || prev.carreras,
+        programas:     data.programas     || prev.programas,
+        estados:       data.estados       || prev.estados,
+        actividades:   data.actividades   || prev.actividades,
+        paises:        data.paises        || prev.paises,
+        instituciones: data.instituciones || prev.instituciones,
+        semestres:     data.semestres     || prev.semestres,
+        anios:         data.anios         || prev.anios,
+        estados_geo:   data.estados_geo   || prev.estados_geo,
+        niveles:       data.niveles       || prev.niveles,
+        maestrias:     data.maestrias     || prev.maestrias,
+        sexos:         data.sexos         || prev.sexos,
+        destinos:      data.destinos      || prev.destinos
+      })))
       .catch(console.error);
   }, []);
-
+  
   const handleFilterChange = e => {
     const { name, value } = e.target;
     setFiltros(prev => ({ ...prev, [name]: value }));
@@ -85,15 +134,35 @@ export default function Busqueda() {
 
   const resetFiltros = () => {
     setFiltros({
-      carrera: "", programa: "", estado: "",
-      actividad: "", semestre: "", pais: "",
-      institucion: "", becado: "", anio: ""
+      carrera: "",
+      programa: "",
+      estado: "",
+      actividad: "",
+      semestre: "",
+      pais: "",
+      institucion: "",
+      becado: "",
+      anio: "",
+      nivel_academico: "",
+      maestria: "",
+      sexo: "",
+      tipo_destino: "",
+      revalidacion: "",
+      discapacidad: "",
+      seguro: "",
+      expCompartida: "",
+      promedioMin: "",
+      promedioMax: "",
+      fechaInicioDesde: "",
+      fechaInicioHasta: "",
+      fechaFinDesde: "",
+      fechaFinHasta: ""
     });
     setSearchValue("");
     setHasSearched(false);
     setAlumnos([]);
   };
-
+  
   const handleSearch = () => {
     setLoading(true);
     setHasSearched(false);
@@ -122,7 +191,6 @@ export default function Busqueda() {
   }, 0);
 
   //generar excel
-
   const handleExportExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Alumnos');
@@ -202,9 +270,7 @@ export default function Busqueda() {
     saveAs(new Blob([buffer]), 'alumnos.xlsx');
   };
   
-
   //Generar pdf
-  
   const handleExportPDF = () => {
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   
@@ -297,38 +363,53 @@ export default function Busqueda() {
           <div className="advanced-filters">
             <h3>Filtros Avanzados</h3>
             <div className="filter-grid">
-              {[
-                { label:'Carrera', name:'carrera', options:catalogos.carreras },
-                { label:'Programa', name:'programa', options:catalogos.programas },
-                { label:'Estado', name:'estado', options:catalogos.estados },
-                { label:'Actividad', name:'actividad', options:catalogos.actividades },
-                { label:'Semestre', name:'semestre', options:catalogos.semestres },
-                { label:'País', name:'pais', options:catalogos.paises },
-                { label:'Institución', name:'institucion', options:catalogos.instituciones },
-                { label:'Becado', name:'becado', options:catalogos.becado },
-                { label:'Año', name:'anio', options:catalogos.anios }
-              ].map(({label,name,options},i)=>(
-                <div className="filter-item" key={i}>
-                  <label>{label}:</label>
-                  <select name={name} value={filtros[name]} onChange={handleFilterChange}>
+              {/* Selects dinámicos */}
+              {selectFields.map(({l,n,opts}) => (
+                <div className="filter-item" key={n}>
+                  <label>{l}:</label>
+                  <select name={n} value={filtros[n]} onChange={handleFilterChange}>
                     <option value="">Todos</option>
-                    {options.map((opt,j)=><option key={j} value={opt}>{opt}</option>)}
+                    {opts.map(o => (<option key={o} value={o}>{o}</option>))}
                   </select>
                 </div>
               ))}
+              {/* Rangos */}
+              <div className="filter-item">
+                <label>Promedio ≥</label>
+                <input type="number" step="0.01" name="promedioMin"
+                       value={filtros.promedioMin} onChange={handleFilterChange}/>
+              </div>
+              <div className="filter-item">
+                <label>Promedio ≤</label>
+                <input type="number" step="0.01" name="promedioMax"
+                       value={filtros.promedioMax} onChange={handleFilterChange}/>
+              </div>
+
+              {/* Rango de fechas de inicio de movilidad */}
+              <div className="filter-item">
+                <label>Fecha inicio movilidad ≥</label>
+                <input type="date" name="fechaInicioDesde"
+                      value={filtros.fechaInicioDesde}
+                      onChange={handleFilterChange}/>
+              </div>
+              <div className="filter-item">
+                <label>Fecha inicio movilidad ≤</label>
+                <input type="date" name="fechaInicioHasta"
+                      value={filtros.fechaInicioHasta}
+                      onChange={handleFilterChange}/>
+              </div>
             </div>
             <div className="filter-buttons">
-              <button onClick={handleSearch} disabled={loading}>Aplicar Filtros</button>
-              <button onClick={resetFiltros}>Limpiar Filtros</button>
+              <button onClick={handleSearch} disabled={loading}>Aplicar filtros</button>
+              <button onClick={resetFiltros}>Limpiar filtros</button>
             </div>
           </div>
         )}
       </div>
 
       {/* Sección de exportación */}
-        {alumnos.length > 0 && (
+      {alumnos.length > 0 && (
         <div className="export-section">
-          {/* Aquí insertamos el título */}
           <div className="export-section-title">
             Generación de reporte
           </div>
@@ -376,7 +457,6 @@ export default function Busqueda() {
         </div>
       )}
 
-
       {/* Resultados */}
       <div className="results-container">
         <div className="results-header">
@@ -418,6 +498,10 @@ export default function Busqueda() {
                   <th>F. Fin</th>
                   <th>Obs. Mov.</th>
                   <th>Becado</th>
+                  {/* Nuevos encabezados añadidos */}
+                  <th>Estado (Geo)</th>
+                  <th>Nacionalidad</th>
+                  {/* Encabezados de becas dinámicos y resto... */}
                   {Array.from({ length: maxBecas }).flatMap((_, idx) => [
                     <th key={`tipo-${idx}`}>{`Beca ${idx+1} Tipo`}</th>,
                     <th key={`nom-${idx}`}>{`Beca ${idx+1} Nombre`}</th>,
@@ -477,6 +561,10 @@ export default function Busqueda() {
                       <td>{a.fecha_fin}</td>
                       <td>{a.movilidades_observaciones}</td>
                       <td>{a.tiene_beca}</td>
+                      {/* Celdas de las nuevas columnas */}
+                      <td>{a.estado_geo}</td>
+                      <td>{a.nacionalidad}</td>
+                      {/* Becas dinámicas */}
                       {parsed.map((b, idx) => (
                         <React.Fragment key={`becaVal-${i}-${idx}`}>
                           <td>{b.tipo}</td>
