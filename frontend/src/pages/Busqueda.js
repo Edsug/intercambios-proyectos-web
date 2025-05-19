@@ -526,7 +526,7 @@ export default function Busqueda() {
                   <th>Obs. Seg.</th>
                   <th>Exp. Compart.</th>
                   <th>Det. Exp.</th>
-                  <th>Ver Alumno</th>
+                  <th>Vista alumno detallada</th>
                 </tr>
               </thead>
               <tbody>
