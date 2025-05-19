@@ -1,0 +1,70 @@
+/* frontend/src/styles/AlumnoDetail.css */
+.alumno-detail {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  .alumno-detail h1,
+  .alumno-detail h2 {
+    margin-bottom: .5rem;
+    color: #0b5ed7;
+  }
+  .alumno-detail section {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .alumno-detail .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .alumno-detail label {
+    flex: 1 1 250px;
+    display: flex;
+    flex-direction: column;
+  }
+  .alumno-detail input[type="text"],
+  .alumno-detail input[type="number"],
+  .alumno-detail input[type="date"],
+  .alumno-detail textarea {
+    padding: .4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .alumno-detail textarea {
+    resize: vertical;
+    min-height: 2.5rem;
+  }
+  .alumno-detail .buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  .alumno-detail button {
+    padding: .6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .alumno-detail button.danger {
+    background: #dc3545;
+    color: white;
+  }
+  .alumno-detail button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+  .remove-btn {
+    margin-top: 1.8rem;
+    background: #e53e3e;
+    color: white;
+    padding: .4rem .8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  

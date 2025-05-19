@@ -89,16 +89,18 @@ const Registro = () => {
         else if (formData.FECHA_FIN < formData.FECHA_INICIO) errs.FECHA_FIN = "La fecha fin debe ser posterior.";
         break;
       case 4:
-        if (!formData.BECAS || formData.BECAS.length === 0) {
-          errs.BECAS = "Debe agregar al menos una beca.";
-        } else {
+        // Becas opcionales: sólo validamos si hay alguna
+        if (formData.BECAS && formData.BECAS.length > 0) {
           formData.BECAS.forEach((beca, idx) => {
-            if (!beca.tipo) errs[`BECAS_${idx}_tipo`] = "Seleccione tipo de beca.";
-            if (beca.tipo === "CUSUR" && (!beca.monto || isNaN(beca.monto))) errs[`BECAS_${idx}_monto`] = "Monto inválido.";
-            if ((beca.tipo === "CGCI" || beca.tipo === "EXTERNA") && !beca.nombre) errs[`BECAS_${idx}_nombre`] = "Nombre requerido.";
+            if (!beca.tipo)   errs[`BECAS_${idx}_tipo`]   = "Seleccione tipo de beca.";
+            if ((beca.tipo === "CGCI" || beca.tipo === "EXTERNA") && !beca.nombre)
+                               errs[`BECAS_${idx}_nombre`] = "Nombre requerido.";
+            if (beca.tipo === "CUSUR" && (!beca.monto || isNaN(beca.monto)))
+                                errs[`BECAS_${idx}_monto`]  = "Monto inválido.";
           });
         }
         break;
+        
       default:
         break;
     }
@@ -172,7 +174,9 @@ const Registro = () => {
           <div
             key={step}
             className={`progress-step ${activeSection >= step ? "active" : ""} ${activeSection > step ? "completed" : ""}`}
-            data-title={["Programa", "Datos del Alumno", "Datos de Movilidad", "Datos de Beca", "Datos Adicionales"][step - 1]}
+            data-title={
+              ["Programa", "Datos del Alumno", "Datos de Movilidad", "Datos de Beca", "Datos Adicionales"][step - 1]
+            }
           >
             {step}
           </div>

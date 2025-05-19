@@ -5,6 +5,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { Link } from 'react-router-dom';
 
 const BASE_URL = "http://localhost/basecambios";
 
@@ -16,11 +17,11 @@ export default function Busqueda() {
   const [catalogos, setCatalogos] = useState({
     carreras: [], programas: [], estados: [], actividades: [],
     paises: [], instituciones: [], semestres: [], anios: [],
-    estados_geo: [],           // Nueva categoría estado geográfico
-    niveles: [], maestrias: [], sexos: [], destinos: [],
+    estados_geo: [], niveles: [], maestrias: [], sexos: [], destinos: [],
     becado: ["SI","NO"], revalidaciones: ["Sí","No"],
     discapacidades: ["Sí","No"], seguros: ["Sí","No"],
-    experiencias: ["Sí","No"], nacionalidades: ["Nacional","Extranjero"] // Nueva categoría nacionalidad
+    experiencias: ["Sí","No"], 
+    nacionalidades: ["Nacional","Extranjero"]  // valor por defecto
   });
 
   const [filtros, setFiltros] = useState({
@@ -112,19 +113,20 @@ export default function Busqueda() {
       .then(r => r.json())
       .then(data => setCatalogos(prev => ({
         ...prev,
-        carreras:      data.carreras      || prev.carreras,
-        programas:     data.programas     || prev.programas,
-        estados:       data.estados       || prev.estados,
-        actividades:   data.actividades   || prev.actividades,
-        paises:        data.paises        || prev.paises,
-        instituciones: data.instituciones || prev.instituciones,
-        semestres:     data.semestres     || prev.semestres,
-        anios:         data.anios         || prev.anios,
-        estados_geo:   data.estados_geo   || prev.estados_geo,
-        niveles:       data.niveles       || prev.niveles,
-        maestrias:     data.maestrias     || prev.maestrias,
-        sexos:         data.sexos         || prev.sexos,
-        destinos:      data.destinos      || prev.destinos
+        carreras:      data.carreras       || prev.carreras,
+        programas:     data.programas      || prev.programas,
+        estados:       data.estados        || prev.estados,
+        actividades:   data.actividades    || prev.actividades,
+        paises:        data.paises         || prev.paises,
+        instituciones: data.instituciones  || prev.instituciones,
+        semestres:     data.semestres      || prev.semestres,
+        anios:         data.anios          || prev.anios,
+        estados_geo:   data.estados_geo    || prev.estados_geo,
+        niveles:       data.niveles        || prev.niveles,
+        maestrias:     data.maestrias      || prev.maestrias,
+        sexos:         data.sexos          || prev.sexos,
+        destinos:      data.destinos       || prev.destinos,
+        nacionalidades:data.nacionalidades|| prev.nacionalidades
       })))
       .catch(console.error);
   }, []);
@@ -381,12 +383,12 @@ export default function Busqueda() {
               <div className="filter-item">
                 <label>Promedio ≥</label>
                 <input type="number" step="0.01" name="promedioMin"
-                       value={filtros.promedioMin} onChange={handleFilterChange}/>
+                      value={filtros.promedioMin} onChange={handleFilterChange}/>
               </div>
               <div className="filter-item">
                 <label>Promedio ≤</label>
                 <input type="number" step="0.01" name="promedioMax"
-                       value={filtros.promedioMax} onChange={handleFilterChange}/>
+                      value={filtros.promedioMax} onChange={handleFilterChange}/>
               </div>
 
               {/* Rango de fechas de inicio de movilidad */}
@@ -597,9 +599,13 @@ export default function Busqueda() {
                       <td>{a.exp_compartida ? 'Sí' : 'No'}</td>
                       <td>{a.detalles_experiencia}</td>
                       <td>
-                        <a href={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
-                          Ver Alumno
-                        </a>
+                        <Link
+                          to={`/alumno/${a.codigo}`}            // ② Usa `to`, no `href`
+                          className="action-button view"
+                          title="Ver alumno"
+                        >
+                          <i className="fas fa-eye" /> Ver Alumno
+                        </Link>
                       </td>
                     </tr>
                   );
