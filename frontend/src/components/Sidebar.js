@@ -10,9 +10,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const items = [];
 
   if (cargo === "Administrador") {
-    items.push("dashboard", "registro", "busqueda", "reportes", "configuracion");
+    items.push("dashboard", "registro", "busqueda", "configuracion");
   } else if (cargo === "Asistente") {
-    items.push("dashboard", "registro", "busqueda", "reportes");
+    items.push("dashboard", "registro", "busqueda");
   } else if (cargo === "Administrador consulta") {
     items.push("busqueda", "reportes");
   }
@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const itemComponents = {
     dashboard: { path: "/dashboard", label: "Dashboard", icon: <FaChartBar size={20} /> },
     registro: { path: "/registro", label: "Registro", icon: <FaFileAlt size={20} /> },
-    busqueda: { path: "/busqueda", label: "Buscar", icon: <FaSearch size={20} /> },
+    busqueda: { path: "/busqueda", label: "Buscar", icon: <FaSearch size={20} /> }, 
     reportes: { path: "/reportes", label: "Reportes", icon: <FaClipboardList size={20} /> },
     configuracion: { path: "/configuracion", label: "Configuración", icon: <FaCog size={20} /> }
   };
