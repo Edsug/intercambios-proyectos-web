@@ -38,75 +38,71 @@ export default function Busqueda() {
   const [loading, setLoading] = useState(false);
   const [mostrarColumnas, setMostrarColumnas] = useState(false);
 
-  const [columnasPDF, setColumnasPDF] = useState([
-    { id: 'codigo', label: 'Código', visible: true },
-    { id: 'nombre', label: 'Nombre', visible: true },
-    { id: 'apellidos', label: 'Apellidos', visible: true },
-    { id: 'nivel_academico', label: 'Nivel', visible: true },
-    { id: 'carrera', label: 'Carrera', visible: true },
-    { id: 'maestria', label: 'Maestría', visible: true },
-    { id: 'semestre', label: 'Semestre', visible: true },
-    { id: 'promedio', label: 'Promedio', visible: true },
-    { id: 'sexo', label: 'Sexo', visible: true },
-    { id: 'fecha_nacimiento', label: 'F. Nac.', visible: true },
-    { id: 'tipo_sangre', label: 'Sangre', visible: true },
-    { id: 'telefono', label: 'Teléfono', visible: true },
-    { id: 'correo', label: 'Correo', visible: true },
-    { id: 'contacto_emergencia', label: 'Cont. Emerg.', visible: true },
-    { id: 'nombre_contacto_emergencia', label: 'Nom. Cont.', visible: true },
-    { id: 'nss', label: 'NSS', visible: true },
-    { id: 'programa', label: 'Programa', visible: true },
-    { id: 'folio', label: 'Folio', visible: true },
-    { id: 'estado_programa', label: 'Est. Programa', visible: true },
-    { id: 'actividad', label: 'Actividad', visible: true },
-    { id: 'tipo_destino', label: 'Tipo Dest.', visible: true },
-    { id: 'pais', label: 'País', visible: true },
-    { id: 'institucion', label: 'Institución', visible: true },
-    { id: 'fecha_inicio', label: 'F. Inicio', visible: true },
-    { id: 'fecha_fin', label: 'F. Fin', visible: true },
-    { id: 'movilidades_observaciones', label: 'Obs. Mov.', visible: true },
-    { id: 'tiene_beca', label: 'Becado', visible: true },
-    // Nuevas columnas añadidas
-    { id: 'estado_geo', label: 'Estado (Geo)', visible: true },
-    { id: 'nacionalidad', label: 'Nacionalidad', visible: true },
-    // Columnas restantes
-    { id: 'revalidacion_materias', label: 'Reval. Mat', visible: true },
-    { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
-    { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
-    { id: 'cuenta_discapacidad', label: 'Disp.', visible: true },
-    { id: 'datos_discapacidad', label: 'Datos Disp.', visible: true },
-    { id: 'seguro_viaje', label: 'Seguro', visible: true },
-    { id: 'aseguradora', label: 'Aseguradora', visible: true },
-    { id: 'poliza', label: 'Póliza', visible: true },
-    { id: 'seguro_inicio', label: 'F. Ini Seg.', visible: true },
-    { id: 'seguro_fin', label: 'F. Fin Seg.', visible: true },
-    { id: 'obs_seguro', label: 'Obs. Seg.', visible: true },
-    { id: 'exp_compartida', label: 'Exp. Compart.', visible: true },
-    { id: 'detalles_experiencia', label: 'Det. Exp.', visible: true }
-  ]);
+// Columnas para PDF/Excel con "Especialidad" unificada
+const [columnasPDF, setColumnasPDF] = useState([
+  { id: 'codigo', label: 'Código', visible: true },
+  { id: 'nombre', label: 'Nombre', visible: true },
+  { id: 'apellidos', label: 'Apellidos', visible: true },
+  { id: 'nivel_academico', label: 'Nivel', visible: true },
+  { id: 'especialidad', label: 'Especialidad', visible: true }, // ← Unificada aquí
+  { id: 'semestre', label: 'Semestre', visible: true },
+  { id: 'promedio', label: 'Promedio', visible: true },
+  { id: 'sexo', label: 'Sexo', visible: true },
+  { id: 'fecha_nacimiento', label: 'F. Nac.', visible: true },
+  { id: 'tipo_sangre', label: 'Sangre', visible: true },
+  { id: 'telefono', label: 'Teléfono', visible: true },
+  { id: 'correo', label: 'Correo', visible: true },
+  { id: 'contacto_emergencia', label: 'Cont. Emerg.', visible: true },
+  { id: 'nombre_contacto_emergencia', label: 'Nom. Cont.', visible: true },
+  { id: 'nss', label: 'NSS', visible: true },
+  { id: 'programa', label: 'Programa', visible: true },
+  { id: 'folio', label: 'Folio', visible: true },
+  { id: 'estado_programa', label: 'Est. Programa', visible: true },
+  { id: 'actividad', label: 'Actividad', visible: true },
+  { id: 'tipo_destino', label: 'Tipo Dest.', visible: true },
+  { id: 'ubicacion', label: 'País / Estado (Geo)', visible: true },
+  { id: 'institucion', label: 'Institución', visible: true },
+  { id: 'fecha_inicio', label: 'F. Inicio', visible: true },
+  { id: 'fecha_fin', label: 'F. Fin', visible: true },
+  { id: 'movilidades_observaciones', label: 'Obs. Mov.', visible: true },
+  { id: 'tiene_beca', label: 'Becado', visible: true },
+  { id: 'nacionalidad', label: 'Nacionalidad', visible: true },
+  { id: 'revalidacion_materias', label: 'Reval. Mat', visible: true },
+  { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
+  { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
+  { id: 'cuenta_discapacidad', label: 'Disp.', visible: true },
+  { id: 'datos_discapacidad', label: 'Datos Disp.', visible: true },
+  { id: 'seguro_viaje', label: 'Seguro', visible: true },
+  { id: 'aseguradora', label: 'Aseguradora', visible: true },
+  { id: 'poliza', label: 'Póliza', visible: true },
+  { id: 'seguro_inicio', label: 'F. Ini Seg.', visible: true },
+  { id: 'seguro_fin', label: 'F. Fin Seg.', visible: true },
+  { id: 'obs_seguro', label: 'Obs. Seg.', visible: true },
+  { id: 'exp_compartida', label: 'Exp. Compart.', visible: true },
+  { id: 'detalles_experiencia', label: 'Det. Exp.', visible: true }
+]);
 
-  // Define selectFields para las opciones de filtros
-  const selectFields = [
-    { l: 'Carrera', n: 'carrera', opts: catalogos.carreras },
-    { l: 'Programa', n: 'programa', opts: catalogos.programas },
-    { l: 'Estado', n: 'estado', opts: catalogos.estados },
-    { l: 'Actividad', n: 'actividad', opts: catalogos.actividades },
-    { l: 'Semestre', n: 'semestre', opts: catalogos.semestres },
-    { l: 'País', n: 'pais', opts: catalogos.paises },
-    { l: 'Institución', n: 'institucion', opts: catalogos.instituciones },
-    { l: 'Becado', n: 'becado', opts: catalogos.becado },
-    { l: 'Año', n: 'anio', opts: catalogos.anios },
-    { l: 'Nivel Académico', n: 'nivel_academico', opts: catalogos.niveles },
-    { l: 'Maestría', n: 'maestria', opts: catalogos.maestrias },
-    { l: 'Sexo', n: 'sexo', opts: catalogos.sexos },
-    { l: 'Tipo Destino', n: 'tipo_destino', opts: catalogos.destinos },
-    { l: 'Revalidación', n: 'revalidacion', opts: catalogos.revalidaciones },
-    { l: 'Discapacidad', n: 'discapacidad', opts: catalogos.discapacidades },
-    { l: 'Estado (Geo)', n: 'estado_geo', opts: catalogos.estados_geo },
-    { l: 'Seguro', n: 'seguro', opts: catalogos.seguros },
-    { l: 'Exp. Compartida', n: 'expCompartida', opts: catalogos.experiencias },
-    { l: 'Nacionalidad', n: 'nacionalidad', opts: catalogos.nacionalidades },
-  ];
+// SelectFields con especialidad combinada para filtros
+const selectFields = [
+  { l: 'Especialidad', n: 'especialidad', opts: [...catalogos.carreras, ...catalogos.maestrias] },
+  { l: 'Programa', n: 'programa', opts: catalogos.programas },
+  { l: 'Estado', n: 'estado', opts: catalogos.estados },
+  { l: 'Actividad', n: 'actividad', opts: catalogos.actividades },
+  { l: 'Semestre', n: 'semestre', opts: catalogos.semestres },
+  { l: 'Ubicación', n: 'ubicacion', opts: catalogos.paises.flatMap(p => catalogos.estados_geo.map(e => `${p} / ${e}`)) },
+  { l: 'Institución', n: 'institucion', opts: catalogos.instituciones },
+  { l: 'Becado', n: 'becado', opts: catalogos.becado },
+  { l: 'Año', n: 'anio', opts: catalogos.anios },
+  { l: 'Nivel Académico', n: 'nivel_academico', opts: catalogos.niveles },
+  { l: 'Sexo', n: 'sexo', opts: catalogos.sexos },
+  { l: 'Tipo Destino', n: 'tipo_destino', opts: catalogos.destinos },
+  { l: 'Revalidación', n: 'revalidacion', opts: catalogos.revalidaciones },
+  { l: 'Discapacidad', n: 'discapacidad', opts: catalogos.discapacidades },
+  { l: 'Seguro', n: 'seguro', opts: catalogos.seguros },
+  { l: 'Exp. Compartida', n: 'expCompartida', opts: catalogos.experiencias },
+  { l: 'Nacionalidad', n: 'nacionalidad', opts: catalogos.nacionalidades }
+];
+
 
   useEffect(() => {
     fetch(`${BASE_URL}/get_catalogos.php`)
@@ -205,13 +201,21 @@ export default function Busqueda() {
     const header = columnasVisibles.map(col => col.label);
   
     for (let i = 0; i < maxBecas; i++) {
-      header.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+      header.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`);
     }
   
     worksheet.addRow(header);
   
     const rows = alumnos.map(a => {
-      const seleccionados = columnasVisibles.map(c => a[c.id] ?? '');
+      const seleccionados = columnasVisibles.map(c => {
+        if (c.id === 'especialidad') {
+          return a.carrera  || a.maestria || '';
+        }
+        if (c.id === 'ubicacion') {
+          return [a.pais, a.estado_geo].filter(Boolean).join(' / ');
+        }
+        return a[c.id] ?? '';
+      });
   
       const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
       const parsed = becas.map(str => {
@@ -276,6 +280,7 @@ export default function Busqueda() {
     saveAs(new Blob([buffer]), 'alumnos.xlsx');
   };
   
+  
   //Generar pdf
   const handleExportPDF = () => {
     const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
@@ -285,13 +290,21 @@ export default function Busqueda() {
   
     const becaHeaders = [];
     for (let i = 0; i < maxBecas; i++) {
-      becaHeaders.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+      becaHeaders.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`);
     }
   
     const fullHeaders = [...headers, ...becaHeaders];
   
     const rows = alumnos.map(alumno => {
-      const row = columnasVisibles.map(c => alumno[c.id] ?? '');
+      const row = columnasVisibles.map(c => {
+        if (c.id === 'especialidad') {
+          return alumno.carrera ||alumno.maestria  || '';
+        }
+        if (c.id === 'ubicacion') {
+          return [alumno.pais, alumno.estado_geo].filter(Boolean).join(' / ');
+        }
+        return alumno[c.id] ?? '';
+      });
   
       const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
       const parsed = becas.map(str => {
@@ -335,6 +348,7 @@ export default function Busqueda() {
   
     doc.save('alumnos.pdf');
   };
+  
 
   return (
     <div className="dashboard-content">
@@ -467,152 +481,143 @@ export default function Busqueda() {
       <div className="results-container">
         <div className="results-header">
           <h3>Resultados ({alumnos.length})</h3>
-        </div>
+          </div>
         {loading && <p className="loading-msg">Cargando resultados...</p>}
         {!loading && hasSearched && alumnos.length === 0 && (
           <p className="no-results">No se encontraron alumnos con los criterios especificados.</p>
         )}
         {alumnos.length > 0 && (
-          <div className="table-responsive">
-            <table id="alumnos-table" className="data-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Nombre</th>
-                  <th>Apellidos</th>
-                  <th>Nivel</th>
-                  <th>Carrera</th>
-                  <th>Maestría</th>
-                  <th>Semestre</th>
-                  <th>Promedio</th>
-                  <th>Sexo</th>
-                  <th>F. Nac.</th>
-                  <th>Sangre</th>
-                  <th>Teléfono</th>
-                  <th>Correo</th>
-                  <th>Cont. Emerg.</th>
-                  <th>Nom. Cont.</th>
-                  <th>NSS</th>
-                  <th>Programa</th>
-                  <th>Folio</th>
-                  <th>Est. Programa</th>
-                  <th>Actividad</th>
-                  <th>Tipo Dest.</th>
-                  <th>País</th>
-                  <th>Institución</th>
-                  <th>F. Inicio</th>
-                  <th>F. Fin</th>
-                  <th>Obs. Mov.</th>
-                  <th>Becado</th>
-                  {/* Nuevos encabezados añadidos */}
-                  <th>Estado (Geo)</th>
-                  <th>Nacionalidad</th>
-                  {/* Encabezados de becas dinámicos y resto... */}
-                  {Array.from({ length: maxBecas }).flatMap((_, idx) => [
-                    <th key={`tipo-${idx}`}>{`Beca ${idx+1} Tipo`}</th>,
-                    <th key={`nom-${idx}`}>{`Beca ${idx+1} Nombre`}</th>,
-                    <th key={`mont-${idx}`}>{`Beca ${idx+1} Monto`}</th>
-                  ])}
-                  <th>Reval. Mat</th>
-                  <th>Datos Reval.</th>
-                  <th>Certif. Calif.</th>
-                  <th>Disp.</th>
-                  <th>Datos Disp.</th>
-                  <th>Seguro</th>
-                  <th>Aseguradora</th>
-                  <th>Póliza</th>
-                  <th>F. Ini Seg.</th>
-                  <th>F. Fin Seg.</th>
-                  <th>Obs. Seg.</th>
-                  <th>Exp. Compart.</th>
-                  <th>Det. Exp.</th>
-                  <th>Vista alumno detallada</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alumnos.map((a, i) => {
-                  const becasArray = a.detalle_becas ? a.detalle_becas.split('; ') : [];
-                  const parsed = becasArray.map(str => {
-                    const [typeName, amountPart] = str.split(' ($');
-                    const [tipo, nombre] = typeName.split(': ');
-                    const monto = amountPart ? amountPart.replace(')', '') : '';
-                    return { tipo, nombre, monto };
-                  });
-                  return (
-                    <tr key={i}>
-                      <td>{a.codigo}</td>
-                      <td>{a.nombre}</td>
-                      <td>{a.apellidos}</td>
-                      <td>{a.nivel_academico}</td>
-                      <td>{a.carrera}</td>
-                      <td>{a.maestria}</td>
-                      <td>{a.semestre}</td>
-                      <td>{a.promedio}</td>
-                      <td>{a.sexo}</td>
-                      <td>{a.fecha_nacimiento}</td>
-                      <td>{a.tipo_sangre}</td>
-                      <td>{a.telefono}</td>
-                      <td>{a.correo}</td>
-                      <td>{a.contacto_emergencia}</td>
-                      <td>{a.nombre_contacto_emergencia}</td>
-                      <td>{a.nss}</td>
-                      <td>{a.programa}</td>
-                      <td>{a.folio}</td>
-                      <td>{a.estado_programa}</td>
-                      <td>{a.actividad}</td>
-                      <td>{a.tipo_destino}</td>
-                      <td>{a.pais}</td>
-                      <td>{a.institucion}</td>
-                      <td>{a.fecha_inicio}</td>
-                      <td>{a.fecha_fin}</td>
-                      <td>{a.movilidades_observaciones}</td>
-                      <td>{a.tiene_beca}</td>
-                      {/* Celdas de las nuevas columnas */}
-                      <td>{a.estado_geo}</td>
-                      <td>{a.nacionalidad}</td>
-                      {/* Becas dinámicas */}
-                      {parsed.map((b, idx) => (
-                        <React.Fragment key={`becaVal-${i}-${idx}`}>
-                          <td>{b.tipo}</td>
-                          <td>{b.nombre}</td>
-                          <td>{b.monto}</td>
-                        </React.Fragment>
-                      ))}
-                      {Array.from({ length: maxBecas - parsed.length }).map((_, idx) => (
-                        <React.Fragment key={`empty-${i}-${idx}`}>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </React.Fragment>
-                      ))}
-                      <td>{a.revalidacion_materias ? 'Sí' : 'No'}</td>
-                      <td>{a.datos_revalidacion}</td>
-                      <td>{a.certificado_calificaciones ? 'Sí' : 'No'}</td>
-                      <td>{a.cuenta_discapacidad ? 'Sí' : 'No'}</td>
-                      <td>{a.datos_discapacidad}</td>
-                      <td>{a.seguro_viaje ? 'Sí' : 'No'}</td>
-                      <td>{a.aseguradora}</td>
-                      <td>{a.poliza}</td>
-                      <td>{a.seguro_inicio}</td>
-                      <td>{a.seguro_fin}</td>
-                      <td>{a.obs_seguro}</td>
-                      <td>{a.exp_compartida ? 'Sí' : 'No'}</td>
-                      <td>{a.detalles_experiencia}</td>
-                      <td>
-                        <Link
-                          to={`/alumno/${a.codigo}`}            // ② Usa `to`, no `href`
-                          className="action-button view"
-                          title="Ver alumno"
-                        >
-                          <i className="fas fa-eye" /> Ver Alumno
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+         <div className="table-responsive">
+         <table id="alumnos-table" className="data-table">
+           <thead>
+             <tr>
+               <th>Código</th>
+               <th>Nombre</th>
+               <th>Apellidos</th>
+               <th>Nivel</th>
+               <th>Especialidad</th>
+               <th>Semestre</th>
+               <th>Promedio</th>
+               <th>Sexo</th>
+               <th>F. Nac.</th>
+               <th>Sangre</th>
+               <th>Teléfono</th>
+               <th>Correo</th>
+               <th>Cont. Emerg.</th>
+               <th>Nom. Cont.</th>
+               <th>NSS</th>
+               <th>Programa</th>
+               <th>Folio</th>
+               <th>Est. Programa</th>
+               <th>Actividad</th>
+               <th>Tipo Dest.</th>
+               <th>Ubicación</th>
+               <th>Institución</th>
+               <th>F. Inicio</th>
+               <th>F. Fin</th>
+               <th>Obs. Mov.</th>
+               <th>Becado</th>
+               <th>Nacionalidad</th>
+               {Array.from({ length: maxBecas }).flatMap((_, idx) => [
+                 <th key={`tipo-${idx}`}>{`Beca ${idx + 1} Tipo`}</th>,
+                 <th key={`nom-${idx}`}>{`Beca ${idx + 1} Nombre`}</th>,
+                 <th key={`mont-${idx}`}>{`Beca ${idx + 1} Monto`}</th>
+               ])}
+               <th>Reval. Mat</th>
+               <th>Datos Reval.</th>
+               <th>Certif. Calif.</th>
+               <th>Disp.</th>
+               <th>Datos Disp.</th>
+               <th>Seguro</th>
+               <th>Aseguradora</th>
+               <th>Póliza</th>
+               <th>F. Ini Seg.</th>
+               <th>F. Fin Seg.</th>
+               <th>Obs. Seg.</th>
+               <th>Exp. Compart.</th>
+               <th>Det. Exp.</th>
+               <th>Vista alumno detallada</th>
+             </tr>
+           </thead>
+           <tbody>
+             {alumnos.map((a, i) => {
+               const becasArray = a.detalle_becas ? a.detalle_becas.split('; ') : [];
+               const parsed = becasArray.map(str => {
+                 const [typeName, amountPart] = str.split(' ($');
+                 const [tipo, nombre] = typeName.split(': ');
+                 const monto = amountPart ? amountPart.replace(')', '') : '';
+                 return { tipo, nombre, monto };
+               });
+
+               const especialidad = a.carrera|| a.maestria;
+               const ubicacion = a.pais ||a.estado_geo;
+               return (
+                 <tr key={i}>
+                   <td>{a.codigo}</td>
+                   <td>{a.nombre}</td>
+                   <td>{a.apellidos}</td>
+                   <td>{a.nivel_academico}</td>
+                   <td>{especialidad}</td>
+                   <td>{a.semestre}</td>
+                   <td>{a.promedio}</td>
+                   <td>{a.sexo}</td>
+                   <td>{a.fecha_nacimiento}</td>
+                   <td>{a.tipo_sangre}</td>
+                   <td>{a.telefono}</td>
+                   <td>{a.correo}</td>
+                   <td>{a.contacto_emergencia}</td>
+                   <td>{a.nombre_contacto_emergencia}</td>
+                   <td>{a.nss}</td>
+                   <td>{a.programa}</td>
+                   <td>{a.folio}</td>
+                   <td>{a.estado_programa}</td>
+                   <td>{a.actividad}</td>
+                   <td>{a.tipo_destino}</td>
+                   <td>{ubicacion}</td>
+                   <td>{a.institucion}</td>
+                   <td>{a.fecha_inicio}</td>
+                   <td>{a.fecha_fin}</td>
+                   <td>{a.movilidades_observaciones}</td>
+                   <td>{a.tiene_beca}</td>
+                   <td>{a.nacionalidad}</td>
+                   {parsed.map((b, idx) => (
+                     <React.Fragment key={`becaVal-${i}-${idx}`}>
+                       <td>{b.tipo}</td>
+                       <td>{b.nombre}</td>
+                       <td>{b.monto}</td>
+                     </React.Fragment>
+                   ))}
+                   {Array.from({ length: maxBecas - parsed.length }).map((_, idx) => (
+                     <React.Fragment key={`empty-${i}-${idx}`}>
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                     </React.Fragment>
+                   ))}
+                   <td>{a.revalidacion_materias ? 'Sí' : 'No'}</td>
+                   <td>{a.datos_revalidacion}</td>
+                   <td>{a.certificado_calificaciones ? 'Sí' : 'No'}</td>
+                   <td>{a.cuenta_discapacidad ? 'Sí' : 'No'}</td>
+                   <td>{a.datos_discapacidad}</td>
+                   <td>{a.seguro_viaje ? 'Sí' : 'No'}</td>
+                   <td>{a.aseguradora}</td>
+                   <td>{a.poliza}</td>
+                   <td>{a.seguro_inicio}</td>
+                   <td>{a.seguro_fin}</td>
+                   <td>{a.obs_seguro}</td>
+                   <td>{a.exp_compartida ? 'Sí' : 'No'}</td>
+                   <td>{a.detalles_experiencia}</td>
+                   <td>
+                     <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
+                       <i className="fas fa-eye" /> Ver Alumno
+                     </Link>
+                   </td>
+                 </tr>
+               );
+             })}
+           </tbody>
+         </table>
+       </div>
         )}
       </div>
     </div>
