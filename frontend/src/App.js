@@ -5,7 +5,6 @@ import Dashboard from "./pages/Dashboard";
 import Registro from "./pages/Registro";
 import Busqueda from "./pages/Busqueda";
 import AlumnoDetail from "./pages/AlumnoDetail"; // Importa el nuevo componente
-import Reportes from "./pages/Reportes";
 import Configuracion from "./pages/Configuracion";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -91,18 +90,6 @@ function App() {
             isAuthenticated ? (
               <AuthenticatedLayout>
                 <AlumnoDetail />
-              </AuthenticatedLayout>
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/reportes"
-          element={
-            isAuthenticated ? (
-              <AuthenticatedLayout>
-                <Reportes />
               </AuthenticatedLayout>
             ) : (
               <Navigate to="/" />
