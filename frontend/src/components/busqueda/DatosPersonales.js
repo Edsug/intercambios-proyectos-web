@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Section from "../common/Section";
-import "../styles/DatosPersonales.css"; // Importamos los nuevos estilos
+import '../../styles/DatosPersonales.css';
+
+
 
 export default function DatosPersonales({ alumno, onChange, catalogos }) {
   const [carreras, setCarreras] = useState([]);
