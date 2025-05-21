@@ -75,7 +75,42 @@ export default function Busqueda() {
                   </select>
                 </div>
               ))}
+
+              {/* Semestre como input numérico */}
+              <div className="filter-item">
+                <label>Semestre:</label>
+                <input
+                  type="number"
+                  name="semestre"
+                  value={filtros.semestre}
+                  onChange={handleFilterChange}
+                  min="1"
+                  max="20"
+                />
+              </div>
+
+              {/* Filtros de fecha */}
+              <div className="filter-item">
+                <label>Fecha Registro Desde:</label>
+                <input
+                  type="date"
+                  name="fechaInicioDesde"
+                  value={filtros.fechaInicioDesde || ''}
+                  onChange={handleFilterChange}
+                />
+              </div>
+
+              <div className="filter-item">
+                <label>Fecha Registro Hasta:</label>
+                <input
+                  type="date"
+                  name="fechaInicioHasta"
+                  value={filtros.fechaInicioHasta || ''}
+                  onChange={handleFilterChange}
+                />
+              </div>
             </div>
+
             <div className="filter-buttons">
               <button onClick={handleSearch} disabled={loading}>
                 Aplicar filtros
@@ -84,6 +119,7 @@ export default function Busqueda() {
             </div>
           </div>
         )}
+
       </section>
 
       {alumnos.length > 0 && (
@@ -144,71 +180,102 @@ export default function Busqueda() {
         )}
         {alumnos.length > 0 && (
           <div className="table-responsive">
-            <table id="alumnos-table" className="data-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Nombre</th>
-                  <th>Apellidos</th>
-                  <th>Nivel</th>
-                  <th>Especialidad</th>
-                  <th>Semestre</th>
-                  <th>Promedio</th>
-                  <th>Sexo</th>
-                  <th>F. Nac.</th>
-                  <th>Sangre</th>
-                  <th>Teléfono</th>
-                  <th>Correo</th>
-                  <th>Cont. Emerg.</th>
-                  <th>Nom. Cont.</th>
-                  <th>NSS</th>
-                  <th>Programa</th>
-                  <th>Folio</th>
-                  <th>Est. Programa</th>
-                  <th>Actividad</th>
-                  <th>Tipo Dest.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alumnos.map((al, i) => (
+          <table id="alumnos-table" className="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Nivel</th>
+                <th>Especialidad</th>
+                <th>Semestre</th>
+                <th>Promedio</th>
+                <th>Certif. Calif.</th>
+                <th>Disp.</th>
+                <th>Datos Disp.</th>
+                <th>Seguro</th>
+                <th>Aseguradora</th>
+                <th>Póliza</th>
+                <th>F. Ini Seg.</th>
+                <th>F. Fin Seg.</th>
+                <th>Obs. Seg.</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {alumnos.map((a, i) => {
+                const especialidad =
+                  a.nivel_academico === 'LICENCIATURA'
+                    ? a.carrera
+                    : a.nivel_academico === 'MAESTRÍA'
+                    ? a.maestria
+                    : '';
+                const esVerdadero = val => parseInt(val) === 1;
+
+                return (
                   <tr key={i}>
-                    <td>{al.codigo}</td>
-                    <td>{al.nombre}</td>
-                    <td>{al.apellidos}</td>
-                    <td>{al.nivel_academico}</td>
+                    <td className="highlight-cell">{a.codigo || <span className="empty-cell">-</span>}</td>
+                    <td>{a.nombre || <span className="empty-cell">-</span>}</td>
+                    <td>{a.apellidos || <span className="empty-cell">-</span>}</td>
+                    <td>{a.nivel_academico || <span className="empty-cell">-</span>}</td>
+                    <td>{especialidad || <span className="empty-cell">-</span>}</td>
+                    <td>{a.semestre || <span className="empty-cell">-</span>}</td>
+                    <td>{a.promedio || <span className="empty-cell">-</span>}</td>
                     <td>
-                      {al.nivel_academico === 'LICENCIATURA'
-                        ? al.carrera
-                        : al.nivel_academico === 'MAESTRÍA'
-                        ? al.maestria
-                        : ''}
+                      {esVerdadero(a.certificado_calificaciones) ? (
+                        <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
+                      ) : (
+                        <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
+                      )}
                     </td>
-                    <td>{al.semestre}</td>
-                    <td>{al.promedio}</td>
-                    <td>{al.sexo}</td>
-                    <td>{al.fecha_nacimiento}</td>
-                    <td>{al.tipo_sangre}</td>
-                    <td>{al.telefono}</td>
-                    <td>{al.correo}</td>
-                    <td>{al.contacto_emergencia}</td>
-                    <td>{al.nombre_contacto_emergencia}</td>
-                    <td>{al.nss}</td>
-                    <td>{al.programa}</td>
-                    <td>{al.folio}</td>
-                    <td>{al.estado_programa}</td>
-                    <td>{al.actividad}</td>
-                    <td>{al.tipo_destino}</td>
                     <td>
-                          <Link to={`/alumno/${al.codigo}`} className="action-button view" title="Ver alumno">
-                            <i className="fas fa-eye"></i> Ver
-                          </Link>
-                        </td>
+                      {esVerdadero(a.cuenta_discapacidad) ? (
+                        <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
+                      ) : (
+                        <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
+                      )}
+                    </td>
+                    <td>
+                      {a.datos_discapacidad ? (
+                        <span className="truncate-text" title={a.datos_discapacidad}>
+                          {a.datos_discapacidad}
+                        </span>
+                      ) : (
+                        <span className="empty-cell">-</span>
+                      )}
+                    </td>
+                    <td>
+                      {esVerdadero(a.seguro_viaje) ? (
+                        <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
+                      ) : (
+                        <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
+                      )}
+                    </td>
+                    <td>{a.aseguradora || <span className="empty-cell">-</span>}</td>
+                    <td>{a.poliza || <span className="empty-cell">-</span>}</td>
+                    <td>{a.seguro_inicio || <span className="empty-cell">-</span>}</td>
+                    <td>{a.seguro_fin || <span className="empty-cell">-</span>}</td>
+                    <td>
+                      {a.observaciones_seguro ? (
+                        <span className="truncate-text" title={a.observaciones_seguro}>
+                          {a.observaciones_seguro}
+                        </span>
+                      ) : (
+                        <span className="empty-cell">-</span>
+                      )}
+                    </td>
+                    <td>
+                      <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
+                        <i className="fas fa-eye"></i> Ver
+                      </Link>
+                    </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        
+                );
+              })}
+          </tbody>
+
+          </table>
+        </div>
         )}
       </section>
     </div>

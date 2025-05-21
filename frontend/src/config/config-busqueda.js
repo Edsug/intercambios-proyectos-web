@@ -7,26 +7,25 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 const BASE_URL = 'http://localhost/basecambios';
-
 export function useBusquedaConfig() {
-  // — Estados básicos de búsqueda
-  const [searchType, setSearchType]           = useState('nombre');
-  const [searchValue, setSearchValue]         = useState('');
-  const [filtrosAvanzados, setFiltrosAvanzados]= useState(false);
-  const [hasSearched, setHasSearched]         = useState(false);
-  const [loading, setLoading]                 = useState(false);
-  const [alumnos, setAlumnos]                 = useState([]);
+  const [searchType, setSearchType] = useState('nombre');
+  const [searchValue, setSearchValue] = useState('');
+  const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [alumnos, setAlumnos] = useState([]);
   const [mostrarColumnas, setMostrarColumnas] = useState(false);
-  const [catalogos, setCatalogos]             = useState({
+  const [catalogos, setCatalogos] = useState({
     carreras: [], programas: [], estados: [], actividades: [],
-    semestres: [], anios: [],
+    semestres: [],
     niveles: [], maestrias: [], sexos: [], destinos: [],
     revalidaciones: ['Sí','No']
   });
   const [filtros, setFiltros] = useState({
     carrera: '', maestria: '', programa: '', estado: '', actividad: '',
-    semestre: '', anio: '', nivel_academico: '', sexo: '',
-    tipo_destino: '', revalidacion: ''
+    semestre: '', nivel_academico: '', sexo: '',
+    tipo_destino: '', revalidacion: '',
+    fechaInicioDesde: '', fechaInicioHasta: ''
   });
 
   // — Columnas para PDF/Excel (visibilidad controlable)
@@ -77,8 +76,6 @@ export function useBusquedaConfig() {
     { l: 'Programa',        n: 'programa',     opts: catalogos.programas },
     { l: 'Estado',          n: 'estado',       opts: catalogos.estados },
     { l: 'Actividad',       n: 'actividad',    opts: catalogos.actividades },
-    { l: 'Semestre',        n: 'semestre',     opts: catalogos.semestres },
-    { l: 'Año',             n: 'anio',         opts: catalogos.anios },
     { l: 'Nivel Académico', n: 'nivel_academico', opts: catalogos.niveles },
     { l: 'Sexo',            n: 'sexo',         opts: catalogos.sexos },
     { l: 'Tipo Destino',    n: 'tipo_destino', opts: catalogos.destinos },

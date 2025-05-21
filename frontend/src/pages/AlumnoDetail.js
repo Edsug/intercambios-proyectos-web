@@ -145,32 +145,32 @@ export default function AlumnoDetail() {
 
   // 5) Eliminar
   const handleDelete = () => {
-    if(!window.confirm("¿Estás seguro que deseas eliminar este alumno? Esta acción no se puede deshacer.")) return;
-    
+    if (!window.confirm("¿Estás seguro que deseas eliminar este alumno? Esta acción no se puede deshacer.")) return;
+  
     setSaving(true);
     setError("");
     setSuccess("");
-    
-    fetch(`${BASE}/delete_alumno.php`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
+  
+    fetch(`${BASE}/delete_alumno.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codigo })
     })
-    .then(r=>r.json())
-    .then(j=>{
-      if(j.status==="success"){
-        setSuccess("Alumno eliminado correctamente");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      } else {
-        setError("Error: " + (j.error || j.message));
-      }
-    })
-    .catch(e => setError("Error de conexión: " + e.message))
-    .finally(() => setSaving(false));
+      .then(r => r.json())
+      .then(j => {
+        if (j.status === "success") {
+          setSuccess("Alumno eliminado correctamente");
+          setTimeout(() => {
+            navigate("/busqueda");  // 🔁 Aquí redirige a la página de búsqueda
+          }, 2000);
+        } else {
+          setError("Error: " + (j.error || j.message));
+        }
+      })
+      .catch(e => setError("Error de conexión: " + e.message))
+      .finally(() => setSaving(false));
   };
-
+  
   if (loading) return (
     <div className="alumno-detail">
       <div className="loading">Cargando información del alumno</div>

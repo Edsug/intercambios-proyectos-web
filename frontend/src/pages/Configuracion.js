@@ -128,31 +128,7 @@ const Configuracion = () => {
         {currentTab === "sistema" && (
           <form onSubmit={handleSettingsSubmit} className="config-form">
             <div className="form-group">
-              <label>Tema:</label>
-              <select name="theme" value={systemSettings.theme} onChange={handleSettingsChange}>
-                <option value="light">Claro</option>
-                <option value="dark">Oscuro</option>
-                <option value="system">Sistema</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Idioma:</label>
-              <select name="language" value={systemSettings.language} onChange={handleSettingsChange}>
-                <option value="es">Español</option>
-                <option value="en">Inglés</option>
-              </select>
-            </div>
-            <div className="form-group checkbox-group">
-              <label>
-                <input type="checkbox" name="notificationsEnabled" checked={systemSettings.notificationsEnabled} onChange={handleSettingsChange} />
-                Habilitar notificaciones
-              </label>
-            </div>
-            <div className="form-group checkbox-group">
-              <label>
-                <input type="checkbox" name="autoSave" checked={systemSettings.autoSave} onChange={handleSettingsChange} />
-                Guardar automáticamente
-              </label>
+             
             </div>
             <button type="submit" className="save-button">Guardar Configuración</button>
           </form>
