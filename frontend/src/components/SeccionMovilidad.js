@@ -88,6 +88,7 @@ export default function SeccionMovilidad({
             INSTITUCIÓN DESTINO:
             <input
               type="text"
+              style={{ textTransform: "uppercase" }}
               name="INSTITUCION_DESTINO"
               value={formData.INSTITUCION_DESTINO}
               onChange={handleChange}
@@ -175,6 +176,7 @@ export default function SeccionMovilidad({
           <label>
             OBSERVACIONES:
             <textarea
+              style={{ textTransform: "uppercase" }}
               name="OBSERVACIONES"
               value={formData.OBSERVACIONES}
               onChange={handleChange}

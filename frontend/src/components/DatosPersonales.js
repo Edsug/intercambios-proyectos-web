@@ -40,6 +40,8 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           NOMBRE(S):
           <input
             name="nombre"
+            
+            style={{ textTransform: "uppercase" }}
             value={alumno.nombre || ""}
             onChange={onChange}
             required
@@ -52,6 +54,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
         <label>
           APELLIDOS:
           <input
+            style={{ textTransform: "uppercase" }}
             name="apellidos"
             value={alumno.apellidos || ""}
             onChange={onChange}
@@ -219,6 +222,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           CORREO:
           <input
             type="email"
+            style={{ textTransform: "uppercase" }}
             name="correo"
             value={alumno.correo||""}
             onChange={onChange}
@@ -244,6 +248,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           <label>
             NOMBRE CONTACTO:
             <input
+              style={{ textTransform: "uppercase" }}
               name="nombre_contacto_emergencia"
               value={alumno.nombre_contacto_emergencia||""}
               onChange={onChange}
@@ -258,6 +263,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
         <label>
           NSS:
           <input
+            style={{ textTransform: "uppercase" }}
             name="nss"
             maxLength={11}
             value={alumno.nss||""}

@@ -59,6 +59,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
         <label>
           INSTITUCIÓN:
           <input
+            style={{ textTransform: "uppercase" }}
             name="institucion"
             value={alumno.institucion||""}
             onChange={onChange}

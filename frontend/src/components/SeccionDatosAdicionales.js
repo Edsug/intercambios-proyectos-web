@@ -1,11 +1,18 @@
-// components/SeccionDatosAdicionales.js
 import React from 'react';
 
-export default function SeccionDatosAdicionales({ formData, setFormData, handleChange, prevSection, handleSubmit, errores }) {
+export default function SeccionDatosAdicionales({
+  formData,
+  setFormData,
+  handleChange,
+  prevSection,
+  handleSubmit,
+  errores
+}) {
   return (
     <div className="form-section">
       <h2 className="section-title">Datos Adicionales</h2>
       <div className="section-content">
+        
         {/* Revalidación de materias */}
         <div className="form-row checkbox-row">
           <label className="checkbox-label">
@@ -28,6 +35,7 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                 onChange={handleChange}
                 placeholder="Ingrese detalles sobre la revalidación"
                 rows="3"
+                style={{ textTransform: "uppercase" }}
               />
             </label>
           </div>
@@ -55,10 +63,12 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                 onChange={handleChange}
                 placeholder="Ingrese detalles sobre la discapacidad"
                 rows="3"
+                style={{ textTransform: "uppercase" }}
               />
             </label>
           </div>
         )}
+
         {/* Seguro de Viaje */}
         <div className="form-row checkbox-row">
           <label className="checkbox-label">
@@ -82,6 +92,7 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                   value={formData.NOMBRE_ASEGURADORA}
                   onChange={handleChange}
                   placeholder="Nombre de la aseguradora"
+                  style={{ textTransform: "uppercase" }}
                   required
                 />
               </label>
@@ -93,6 +104,7 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                   value={formData.NUMERO_POLIZA}
                   onChange={handleChange}
                   placeholder="Número de póliza"
+                  style={{ textTransform: "uppercase" }}
                   required
                 />
               </label>
@@ -126,6 +138,7 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                   name="CONTACTO_ASEGURADORA"
                   value={formData.CONTACTO_ASEGURADORA}
                   onChange={handleChange}
+                  style={{ textTransform: "uppercase" }}
                   placeholder="Teléfono de emergencias"
                   required
                 />
@@ -138,6 +151,7 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                   onChange={handleChange}
                   placeholder="Observaciones sobre el seguro"
                   rows="3"
+                  style={{ textTransform: "uppercase" }}
                 />
               </label>
             </div>
@@ -166,11 +180,13 @@ export default function SeccionDatosAdicionales({ formData, setFormData, handleC
                 onChange={handleChange}
                 placeholder="Ingrese detalles sobre la experiencia"
                 rows="3"
+                style={{ textTransform: "uppercase" }}
               />
             </label>
           </div>
         )}
       </div>
+
       <div className="form-navigation">
         <button type="button" onClick={prevSection} className="prev-button">Anterior</button>
         <button type="submit" className="submit-button">Enviar</button>

@@ -34,6 +34,7 @@ export default function SeccionDatosAlumno({
               type="text" name="CODIGO"
               value={formData.CODIGO}
               onChange={handleChange}
+              style={{ textTransform: "uppercase" }}
               maxLength={9} required />
             {errores.CODIGO && <span className="error-message">{errores.CODIGO}</span>}
           </label>
@@ -41,6 +42,7 @@ export default function SeccionDatosAlumno({
             NOMBRE(S):
             <input
               type="text" name="NOMBRE"
+              style={{ textTransform: "uppercase" }}
               value={formData.NOMBRE}
               onChange={handleChange} required />
             {errores.NOMBRE && <span className="error-message">{errores.NOMBRE}</span>}
@@ -54,6 +56,7 @@ export default function SeccionDatosAlumno({
             <input
               type="text" name="APELLIDOS"
               value={formData.APELLIDOS}
+              style={{ textTransform: "uppercase" }}
               onChange={handleChange} required />
             {errores.APELLIDOS && <span className="error-message">{errores.APELLIDOS}</span>}
           </label>
@@ -247,6 +250,7 @@ export default function SeccionDatosAlumno({
             <label>
               NOMBRE CONTACTO:
               <input
+                style={{ textTransform: "uppercase" }}
                 type="text" name="NOMBRE_CONTACTO_EMERGENCIA"
                 value={formData.NOMBRE_CONTACTO_EMERGENCIA}
                 onChange={handleChange}
@@ -263,6 +267,7 @@ export default function SeccionDatosAlumno({
           <label>
             NÚMERO DE SEGURO SOCIAL (NSS):
             <input
+              style={{ textTransform: "uppercase" }}
               type="text" name="NSS"
               value={formData.NSS}
               onChange={handleChange}

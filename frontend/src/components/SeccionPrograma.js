@@ -38,6 +38,7 @@ export default function SeccionPrograma({ formData, handleChange, nextSection, e
               name="FOLIO"
               value={formData.FOLIO}
               onChange={handleChange}
+              style={{ textTransform: "uppercase" }}
               placeholder="Ej. MOV-2025A-001"
               required
             />

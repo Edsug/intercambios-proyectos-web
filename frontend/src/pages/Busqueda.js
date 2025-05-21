@@ -84,7 +84,8 @@ const [columnasPDF, setColumnasPDF] = useState([
 
 // SelectFields con especialidad combinada para filtros
 const selectFields = [
-  { l: 'Especialidad', n: 'especialidad', opts: [...catalogos.carreras, ...catalogos.maestrias] },
+  { l: 'Carreras', n: 'carreras', opts: catalogos.carreras },
+  { l: 'Maestrias', n: 'maestrias', opts: catalogos.maestrias },
   { l: 'Programa', n: 'programa', opts: catalogos.programas },
   { l: 'Estado', n: 'estado', opts: catalogos.estados },
   { l: 'Actividad', n: 'actividad', opts: catalogos.actividades },
@@ -209,11 +210,26 @@ const selectFields = [
     const rows = alumnos.map(a => {
       const seleccionados = columnasVisibles.map(c => {
         if (c.id === 'especialidad') {
-          return a.carrera  || a.maestria || '';
+          if (a.nivel_academico === 'LICENCIATURA') {
+            return a.carrera;
+          }
+          if (a.nivel_academico === 'MAESTRÍA') {
+            return a.maestria;
+          }
+          return '';
         }
+        
         if (c.id === 'ubicacion') {
-          return [a.pais, a.estado_geo].filter(Boolean).join(' / ');
+          if (a.tipo_destino === 'NACIONAL') {
+            return a.estado_geo || '';
+          }
+          if (a.tipo_destino === 'INTERNACIONAL') {
+            return a.pais || '';
+          }
+          return '';
         }
+        
+
         return a[c.id] ?? '';
       });
   
@@ -298,10 +314,23 @@ const selectFields = [
     const rows = alumnos.map(alumno => {
       const row = columnasVisibles.map(c => {
         if (c.id === 'especialidad') {
-          return alumno.carrera ||alumno.maestria  || '';
+          if (alumno.nivel_academico === 'LICENCIATURA') {
+            return alumno.carrera || '';
+          }
+          if (alumno.nivel_academico === 'MAESTRÍA') {
+            return alumno.maestria || '';
+          }
+          return '';
         }
+        
         if (c.id === 'ubicacion') {
-          return [alumno.pais, alumno.estado_geo].filter(Boolean).join(' / ');
+          if (alumno.tipo_destino === 'NACIONAL') {
+            return alumno.estado_geo || '';
+          }
+          if (alumno.tipo_destino === 'INTERNACIONAL') {
+            return alumno.pais || '';
+          }
+          return '';
         }
         return alumno[c.id] ?? '';
       });
@@ -548,9 +577,21 @@ const selectFields = [
                  const monto = amountPart ? amountPart.replace(')', '') : '';
                  return { tipo, nombre, monto };
                });
+                let especialidad = "";
+                let ubicacion = "";
+                
 
-               const especialidad = a.carrera|| a.maestria;
-               const ubicacion = a.pais ||a.estado_geo;
+                if (a.nivel_academico === "LICENCIATURA") {
+                  especialidad = a.carrera;
+                } else if (a.nivel_academico === "MAESTRÍA") {
+                  especialidad = a.maestria;
+                }
+                if (a.tipo_destino === "NACIONAL") {
+                  ubicacion = a.estado_geo;
+                } else if (a.tipo_destino === "INTERNACIONAL") {
+                  ubicacion = a.pais;
+                }
+
                return (
                  <tr key={i}>
                    <td>{a.codigo}</td>

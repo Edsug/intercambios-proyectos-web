@@ -12,6 +12,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
         <label>
           <input
             type="checkbox"
+            style={{ textTransform: "uppercase" }}
             name="revalidacion_materias"
             checked={isChecked(alumno.revalidacion_materias)}
             onChange={onChange}
@@ -22,6 +23,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
           value={alumno.datos_revalidacion||""}
           onChange={onChange}
           placeholder="Detalle revalidación"
+          style={{ textTransform: "uppercase" }}
         />
       </div>
 
@@ -29,6 +31,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
       <div className="form-row">
         <label>
           <input
+            style={{ textTransform: "uppercase" }}
             type="checkbox"
             name="certificado_calificaciones"
             checked={isChecked(alumno.certificado_calificaciones)}
@@ -38,6 +41,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
         <label>
           <input
             type="checkbox"
+            style={{ textTransform: "uppercase" }}
             name="cuenta_discapacidad"
             checked={isChecked(alumno.cuenta_discapacidad)}
             onChange={onChange}
@@ -45,6 +49,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
         </label>
         <textarea
           name="datos_discapacidad"
+          style={{ textTransform: "uppercase" }}
           value={alumno.datos_discapacidad||""}
           onChange={onChange}
           placeholder="Detalle discapacidad"
@@ -55,6 +60,8 @@ export default function DatosAdicionales({ alumno, onChange }) {
       <div className="form-row">
         <label>
           <input
+          
+            style={{ textTransform: "uppercase" }}
             type="checkbox"
             name="seguro_viaje"
             checked={isChecked(alumno.seguro_viaje)}
@@ -66,12 +73,15 @@ export default function DatosAdicionales({ alumno, onChange }) {
         <>
           <div className="form-row">
             <input
+              style={{ textTransform: "uppercase" }}
               name="aseguradora"
+              
               value={alumno.aseguradora||""}
               onChange={onChange}
               placeholder="Aseguradora"
             />
             <input
+              style={{ textTransform: "uppercase" }}     
               name="poliza"
               value={alumno.poliza||""}
               onChange={onChange}
@@ -95,6 +105,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
           <textarea
             name="obs_seguro"
             value={alumno.obs_seguro||""}
+            style={{ textTransform: "uppercase" }}
             onChange={onChange}
             placeholder="Obs. seguro"
           />
@@ -102,6 +113,8 @@ export default function DatosAdicionales({ alumno, onChange }) {
             name="contacto_aseguradora"
             value={alumno.contacto_aseguradora||""}
             onChange={onChange}
+            
+            style={{ textTransform: "uppercase" }}
             placeholder="Contacto aseguradora"
           />
         </>
@@ -111,6 +124,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
       <div className="form-row">
         <label>
           <input
+            style={{ textTransform: "uppercase" }}
             type="checkbox"
             name="exp_compartida"
             checked={isChecked(alumno.exp_compartida)}

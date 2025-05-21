@@ -23,6 +23,7 @@ export default function Programa({ alumno, onChange, catalogos }) {
           FOLIO:
           <input
             name="folio"
+            style={{ textTransform: "uppercase" }}
             value={alumno.folio||""}
             onChange={onChange}
           />
