@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DatosPersonales   from "../components/DatosPersonales";
-import Programa          from "../components/Programa";
-import Movilidad         from "../components/Movilidad";
-import BecasSection      from "../components/BecasSection";
-import DatosAdicionales  from "../components/DatosAdicionales";
+import DatosPersonales   from "../components/busqueda/DatosPersonales";
+import Programa          from "../components/busqueda/Programa";
+import Movilidad         from "../components/busqueda/Movilidad";
+import BecasSection      from "../components/busqueda/BecasSection";
+import DatosAdicionales  from "../components/busqueda/DatosAdicionales";
 import "../styles/AlumnoDetail.css";
 
 const BASE = "http://localhost/basecambios";
@@ -21,6 +21,8 @@ export default function AlumnoDetail() {
   });
   const [loading, setLoading] = useState(true);
   const [saving,  setSaving]  = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // 1) Cargar catálogos
   useEffect(()=>{
@@ -43,7 +45,10 @@ export default function AlumnoDetail() {
       fetch(`${BASE}/${f}`)
         .then(r=>r.json())
         .then(data=>setCatalogos(c=>({...c,[k]:data})))
-        .catch(console.error);
+        .catch(err => {
+          console.error("Error cargando catálogo", k, err);
+          setError(`Error cargando catálogo ${k}`);
+        });
     });
   },[]);
 
@@ -51,7 +56,7 @@ export default function AlumnoDetail() {
   useEffect(()=>{
     fetch(`${BASE}/get_alumno.php?codigo=${codigo}`)
       .then(r=>{
-        if(!r.ok) throw new Error("No encontrado");
+        if(!r.ok) throw new Error("Alumno no encontrado");
         return r.json();
       })
       .then(data=>{
@@ -66,8 +71,10 @@ export default function AlumnoDetail() {
         setAlumno({...data, becas});
       })
       .catch(e=>{
-        alert(e.message);
-        navigate("/");
+        setError(e.message);
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
       })
       .finally(()=>setLoading(false));
   },[codigo,navigate]);
@@ -80,6 +87,7 @@ export default function AlumnoDetail() {
       [name]: type==="checkbox" ? checked : value
     }));
   };
+  
   const handleBecaChange = (i,field,val) => {
     setAlumno(a=>{
       const b = [...a.becas];
@@ -87,10 +95,12 @@ export default function AlumnoDetail() {
       return {...a, becas:b};
     });
   };
+  
   const addBeca = () => setAlumno(a=>({
     ...a,
     becas:[...a.becas,{tipo:"",nombre:"",monto:""}]
   }));
+  
   const removeBeca = i => setAlumno(a=>({
     ...a,
     becas:a.becas.filter((_,j)=>j!==i)
@@ -99,6 +109,9 @@ export default function AlumnoDetail() {
   // 4) Guardar
   const handleSave = () => {
     setSaving(true);
+    setError("");
+    setSuccess("");
+    
     const detalle_becas = alumno.becas
       .map(b=>`${b.tipo}: ${b.nombre} ($${b.monto})`)
       .join("; ");
@@ -114,20 +127,30 @@ export default function AlumnoDetail() {
         const text = await res.text();
         let json;
         try { json = JSON.parse(text); }
-        catch{ throw new Error(`Respuesta no JSON: ${text}`); }
+        catch{ throw new Error(`Respuesta no válida: ${text}`); }
+        
         if (res.ok && json.status==="success") {
-          alert("✔️ " + json.message);
+          setSuccess(json.message || "Información actualizada correctamente");
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           throw new Error(json.error || json.message || text);
         }
       })
-      .catch(err=>alert("Error: "+err.message))
+      .catch(err => {
+        setError("Error: " + err.message);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
       .finally(()=>setSaving(false));
   };
 
   // 5) Eliminar
   const handleDelete = () => {
-    if(!window.confirm("¿Eliminar este alumno?")) return;
+    if(!window.confirm("¿Estás seguro que deseas eliminar este alumno? Esta acción no se puede deshacer.")) return;
+    
+    setSaving(true);
+    setError("");
+    setSuccess("");
+    
     fetch(`${BASE}/delete_alumno.php`,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -136,48 +159,94 @@ export default function AlumnoDetail() {
     .then(r=>r.json())
     .then(j=>{
       if(j.status==="success"){
-        alert("Eliminado 👍");
-        navigate("/");
+        setSuccess("Alumno eliminado correctamente");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } else {
-        alert("Error: "+j.error||j.message);
+        setError("Error: " + (j.error || j.message));
       }
     })
-    .catch(e=>alert("Error red: "+e.message));
+    .catch(e => setError("Error de conexión: " + e.message))
+    .finally(() => setSaving(false));
   };
 
-  if (loading) return <p>Cargando alumno…</p>;
-  if (!alumno)  return <p>Alumno no encontrado.</p>;
+  if (loading) return (
+    <div className="alumno-detail">
+      <div className="loading">Cargando información del alumno</div>
+    </div>
+  );
+  
+  if (!alumno) return (
+    <div className="alumno-detail">
+      <div className="alerta-formulario error">
+        Alumno no encontrado. Redirigiendo...
+      </div>
+    </div>
+  );
 
   return (
     <div className="alumno-detail">
-      <h1>Ficha de Alumno {alumno.codigo}</h1>
+      <div className="content-header">
+        <h1>Ficha de Alumno</h1>
+        <p>Información detallada del alumno con código: {alumno.codigo}</p>
+      </div>
+      
+      {error && (
+        <div className="alerta-formulario error">
+          {error}
+        </div>
+      )}
+      
+      {success && (
+        <div className="alerta-formulario exito">
+          {success}
+        </div>
+      )}
+      
       <DatosPersonales
         alumno={alumno}
         onChange={handleChange}
         catalogos={catalogos}
       />
+      
       <Programa
         alumno={alumno}
         onChange={handleChange}
         catalogos={catalogos}
       />
+      
       <Movilidad
         alumno={alumno}
         onChange={handleChange}
         catalogos={catalogos}
       />
+      
       <BecasSection
         alumno={alumno}
         onAdd={addBeca}
         onBecaChange={handleBecaChange}
         onRemove={removeBeca}
       />
-      <DatosAdicionales alumno={alumno} onChange={handleChange}/>
+      
+      <DatosAdicionales 
+        alumno={alumno} 
+        onChange={handleChange}
+      />
+      
       <div className="buttons">
-        <button onClick={handleSave} disabled={saving}>
-          {saving ? "Guardando…" : "Guardar Cambios"}
+        <button 
+          onClick={handleSave} 
+          disabled={saving}
+          className="save-btn"
+        >
+          {saving ? "Guardando..." : "Guardar Cambios"}
         </button>
-        <button onClick={handleDelete} className="danger">
+        <button 
+          onClick={handleDelete} 
+          disabled={saving}
+          className="danger"
+        >
           Eliminar Alumno
         </button>
       </div>

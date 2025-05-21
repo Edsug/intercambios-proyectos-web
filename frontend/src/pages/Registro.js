@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../styles/FrmRegistro.css";
 import { initialFormData, REGEX } from "../config/config";
-import SeccionPrograma from "../components/SeccionPrograma";
-import SeccionDatosAlumno from "../components/SeccionDatosAlumno";
-import SeccionMovilidad from "../components/SeccionMovilidad";
-import SeccionDatosBeca from "../components/SeccionDatosBeca";
-import SeccionDatosAdicionales from "../components/SeccionDatosAdicionales";
+import SeccionPrograma from "../components/registro/SeccionPrograma";
+import SeccionMovilidad from "../components/registro/SeccionMovilidad";
+import SeccionDatosBeca from "../components/registro/SeccionDatosBeca";
+import SeccionDatosAdicionales from "../components/registro/SeccionDatosAdicionales";
+import SeccionDatosAlumno from "../components/registro/SeccionDatosAlumno";
 
 const Registro = () => {
   const [activeSection, setActiveSection] = useState(1);

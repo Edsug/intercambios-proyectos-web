@@ -1,5 +1,6 @@
 // frontend/src/components/BecasSection.js
 import React, { useState, useEffect } from "react";
+import Section from "../common/Section";
 
 export default function BecasSection({
   alumno,            // { becas: [ { tipo, nombre, monto, detalles }, ... ] }
@@ -56,9 +57,7 @@ export default function BecasSection({
   };
 
   return (
-    <section className="becas-section">
-      <h2>Becas</h2>
-
+    <Section title="Becas" className="becas-section">
       {/* → Alta nueva beca */}
       <div className="form-row add-beca-row">
         <label>
@@ -159,6 +158,6 @@ export default function BecasSection({
           })}
         </>
       )}
-    </section>
+    </Section>
   );
 }

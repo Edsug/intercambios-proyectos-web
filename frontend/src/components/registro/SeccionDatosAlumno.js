@@ -9,7 +9,7 @@ export default function SeccionDatosAlumno({
   nextSection
 }) {
   const [carreras, setCarreras] = useState([]);
-  const [maestrias, setMaestrias] = useState([]);
+  const [maestria, setMaestrias] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ export default function SeccionDatosAlumno({
                 required
               >
                 <option value="">—Seleccione—</option>
-                {maestrias.map((m,i) => <option key={i} value={m}>{m}</option>)}
+                {maestria.map((m,i) => <option key={i} value={m}>{m}</option>)}
               </select>
               {errores.MAESTRIA && <span className="error-message">{errores.MAESTRIA}</span>}
             </label>

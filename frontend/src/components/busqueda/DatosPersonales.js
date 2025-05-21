@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Section from "../common/Section";
 
 export default function DatosPersonales({ alumno, onChange, catalogos }) {
   const [carreras, setCarreras] = useState([]);
@@ -21,9 +22,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
   const esMast  = alumno.nivel_academico === "MAESTRÍA";
 
   return (
-    <section>
-      <h2>Datos Personales</h2>
-
+    <Section title="Datos Personales" className="datos-personales-section">
       {/* 1️⃣ Código / Nombre */}
       <div className="form-row">
         <label>
@@ -40,7 +39,6 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           NOMBRE(S):
           <input
             name="nombre"
-            
             style={{ textTransform: "uppercase" }}
             value={alumno.nombre || ""}
             onChange={onChange}
@@ -272,6 +270,6 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           />
         </label>
       </div>
-    </section>
+    </Section>
   );
 }
