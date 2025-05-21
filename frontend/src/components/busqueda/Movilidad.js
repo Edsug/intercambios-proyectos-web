@@ -1,22 +1,22 @@
 import React from "react";
+import Section from "../common/Section";
 
 export default function Movilidad({ alumno, onChange, catalogos }) {
   const esNacional = alumno.tipo_destino === "NACIONAL";
 
   return (
-    <section>
-      <h2>Movilidad</h2>
+    <Section title="Movilidad" className="movilidad-section">
       <div className="form-row">
         <label>
           TIPO DESTINO:
           <select
             name="tipo_destino"
-            value={alumno.tipo_destino||""}
+            value={alumno.tipo_destino || ""}
             onChange={onChange}
             required
           >
             <option value="">—Seleccione—</option>
-            {catalogos.tiposDestino.map((t,i)=>(
+            {catalogos.tiposDestino.map((t, i) => (
               <option key={i} value={t}>{t}</option>
             ))}
           </select>
@@ -27,12 +27,12 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
             ESTADO (Geo):
             <select
               name="estado_geo"
-              value={alumno.estado_geo||""}
+              value={alumno.estado_geo || ""}
               onChange={onChange}
               required
             >
               <option value="">—Seleccione—</option>
-              {catalogos.estados_geo.map((e,i)=>(
+              {catalogos.estados_geo.map((e, i) => (
                 <option key={i} value={e}>{e}</option>
               ))}
             </select>
@@ -42,12 +42,12 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
             PAÍS:
             <select
               name="pais"
-              value={alumno.pais||""}
+              value={alumno.pais || ""}
               onChange={onChange}
               required
             >
               <option value="">—Seleccione—</option>
-              {catalogos.paises.map((p,i)=>(
+              {catalogos.paises.map((p, i) => (
                 <option key={i} value={p}>{p}</option>
               ))}
             </select>
@@ -61,7 +61,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
           <input
             style={{ textTransform: "uppercase" }}
             name="institucion"
-            value={alumno.institucion||""}
+            value={alumno.institucion || ""}
             onChange={onChange}
           />
         </label>
@@ -70,7 +70,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
           <input
             type="date"
             name="fecha_inicio"
-            value={alumno.fecha_inicio||""}
+            value={alumno.fecha_inicio || ""}
             onChange={onChange}
           />
         </label>
@@ -79,7 +79,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
           <input
             type="date"
             name="fecha_fin"
-            value={alumno.fecha_fin||""}
+            value={alumno.fecha_fin || ""}
             onChange={onChange}
           />
         </label>
@@ -90,11 +90,12 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
           OBSERVACIONES:
           <textarea
             name="movilidades_observaciones"
-            value={alumno.movilidades_observaciones||""}
+            value={alumno.movilidades_observaciones || ""}
             onChange={onChange}
+            placeholder="Ingrese observaciones sobre la movilidad del alumno..."
           />
         </label>
       </div>
-    </section>
+    </Section>
   );
 }
