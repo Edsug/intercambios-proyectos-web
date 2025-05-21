@@ -84,8 +84,8 @@ const [columnasPDF, setColumnasPDF] = useState([
 
 // SelectFields con especialidad combinada para filtros
 const selectFields = [
-  { l: 'Carreras', n: 'carreras', opts: catalogos.carreras },
-  { l: 'Maestrias', n: 'maestrias', opts: catalogos.maestrias },
+  { l: 'Carreras', n: 'carrera', opts: catalogos.carreras },
+  { l: 'Maestrias', n: 'maestria', opts: catalogos.maestrias },
   { l: 'Programa', n: 'programa', opts: catalogos.programas },
   { l: 'Estado', n: 'estado', opts: catalogos.estados },
   { l: 'Actividad', n: 'actividad', opts: catalogos.actividades },
