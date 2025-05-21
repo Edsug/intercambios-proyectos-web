@@ -1,0 +1,182 @@
+/* frontend/src/styles/DatosPersonales.css */
+/* Estilos específicos para la sección de Datos Personales */
+
+.datos-personales-section {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.8rem;
+  overflow: hidden;
+}
+
+/* Encabezado mejorado */
+.datos-personales-section .section-header {
+  background: linear-gradient(to right, #00a650, #00c85d);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.datos-personales-section .section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.datos-personales-section .section-header::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 24px;
+  background-color: white;
+  margin-right: 14px;
+  border-radius: 3px;
+}
+
+/* Contenido de la sección */
+.datos-personales-section .section-content {
+  padding: 25px 30px;
+}
+
+/* Filas de formulario */
+.datos-personales-section .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+/* Etiquetas */
+.datos-personales-section label {
+  flex: 1 1 calc(50% - 12px);
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5a5a5a;
+  margin-bottom: 5px;
+}
+
+/* Campos de entrada */
+.datos-personales-section input,
+.datos-personales-section select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  margin-top: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Estilos para hover */
+.datos-personales-section input:hover,
+.datos-personales-section select:hover {
+  border-color: #c8c8c8;
+}
+
+/* Estilos para focus */
+.datos-personales-section input:focus,
+.datos-personales-section select:focus {
+  outline: none;
+  border-color: #00a650;
+  box-shadow: 0 0 0 3px rgba(0, 166, 80, 0.15);
+}
+
+/* Estilo para campos selects */
+.datos-personales-section select {
+  appearance: none;
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+/* Estilo para opciones del select */
+.datos-personales-section select option {
+  font-size: 14px;
+  padding: 10px;
+}
+
+/* Estilo para campos numéricos */
+.datos-personales-section input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.datos-personales-section input[type="number"]::-webkit-outer-spin-button,
+.datos-personales-section input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Estilo para campos de fecha */
+.datos-personales-section input[type="date"] {
+  position: relative;
+  color: #333;
+}
+
+.datos-personales-section input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  background-color: transparent;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+/* Estilo para campos inválidos */
+.datos-personales-section input:invalid,
+.datos-personales-section select:invalid {
+  border-color: #ff6b6b;
+}
+
+/* Estilo para inputs con texto en MAYÚSCULAS */
+.datos-personales-section input[style*="textTransform: uppercase"] {
+  text-transform: uppercase;
+}
+
+/* Responsive para pantallas medianas */
+@media (max-width: 992px) {
+  .datos-personales-section .form-row {
+    gap: 20px;
+  }
+  
+  .datos-personales-section label {
+    flex: 1 1 calc(50% - 10px);
+  }
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+  .datos-personales-section .form-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .datos-personales-section label {
+    flex: 1 1 100%;
+  }
+  
+  .datos-personales-section .section-content {
+    padding: 20px;
+  }
+}
+
+/* Animación suave para cambios de estado */
+.datos-personales-section .form-row {
+  transition: all 0.3s ease;
+}
+
+/* Estilos para validación de campos */
+.datos-personales-section input:required:valid,
+.datos-personales-section select:required:valid {
+  border-color: #00a650;
+  background-color: rgba(0, 166, 80, 0.03);
+}

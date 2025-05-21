@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Section from "../common/Section";
+import "../styles/DatosPersonales.css"; // Importamos los nuevos estilos
 
 export default function DatosPersonales({ alumno, onChange, catalogos }) {
   const [carreras, setCarreras] = useState([]);
@@ -18,8 +19,8 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
     setTiposSangre(catalogos.tiposSangre);
   }, [catalogos]);
 
-  const esLic   = alumno.nivel_academico === "LICENCIATURA";
-  const esMast  = alumno.nivel_academico === "MAESTRÍA";
+  const esLic = alumno.nivel_academico === "LICENCIATURA";
+  const esMast = alumno.nivel_academico === "MAESTRÍA";
 
   return (
     <Section title="Datos Personales" className="datos-personales-section">
@@ -29,9 +30,11 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           CÓDIGO:
           <input
             name="codigo"
+            type="text" 
             value={alumno.codigo || ""}
             onChange={onChange}
             maxLength={9}
+            placeholder="Ingrese código"
             required
           />
         </label>
@@ -39,9 +42,11 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           NOMBRE(S):
           <input
             name="nombre"
+            type="text"
             style={{ textTransform: "uppercase" }}
             value={alumno.nombre || ""}
             onChange={onChange}
+            placeholder="Ingrese nombre(s)"
             required
           />
         </label>
@@ -52,10 +57,12 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
         <label>
           APELLIDOS:
           <input
+            type="text"
             style={{ textTransform: "uppercase" }}
             name="apellidos"
             value={alumno.apellidos || ""}
             onChange={onChange}
+            placeholder="Ingrese apellidos"
             required
           />
         </label>
@@ -67,8 +74,8 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             onChange={onChange}
             required
           >
-            <option value="">—Seleccione—</option>
-            {nacionalidades.map((n,i)=>(
+            <option value="">—Seleccione una nacionalidad—</option>
+            {nacionalidades.map((n, i) => (
               <option key={i} value={n}>{n}</option>
             ))}
           </select>
@@ -85,8 +92,8 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             onChange={onChange}
             required
           >
-            <option value="">—Seleccione—</option>
-            {niveles.map((n,i)=>(
+            <option value="">—Seleccione un nivel académico—</option>
+            {niveles.map((n, i) => (
               <option key={i} value={n}>{n}</option>
             ))}
           </select>
@@ -100,12 +107,12 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             CARRERA:
             <select
               name="carrera"
-              value={alumno.carrera||""}
+              value={alumno.carrera || ""}
               onChange={onChange}
               required
             >
-              <option value="">—Seleccione—</option>
-              {carreras.map((c,i)=>(
+              <option value="">—Seleccione una carrera—</option>
+              {carreras.map((c, i) => (
                 <option key={i} value={c}>{c}</option>
               ))}
             </select>
@@ -118,12 +125,12 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             MAESTRÍA:
             <select
               name="maestria"
-              value={alumno.maestria||""}
+              value={alumno.maestria || ""}
               onChange={onChange}
               required
             >
-              <option value="">—Seleccione—</option>
-              {maestrias.map((m,i)=>(
+              <option value="">—Seleccione una maestría—</option>
+              {maestrias.map((m, i) => (
                 <option key={i} value={m}>{m}</option>
               ))}
             </select>
@@ -141,6 +148,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             value={alumno.semestre ?? ""}
             onChange={onChange}
             min="1" max="12"
+            placeholder="Ingrese semestre (1-12)"
             required
           />
         </label>
@@ -152,6 +160,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             value={alumno.promedio ?? ""}
             onChange={onChange}
             step="0.01" min="0" max="100"
+            placeholder="Ingrese promedio (0-100)"
             required
           />
         </label>
@@ -168,7 +177,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             required
           >
             <option value="">—Seleccione—</option>
-            {sexos.map((s,i)=>(
+            {sexos.map((s, i) => (
               <option key={i} value={s}>{s}</option>
             ))}
           </select>
@@ -178,7 +187,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           <input
             type="date"
             name="fecha_nacimiento"
-            value={alumno.fecha_nacimiento||""}
+            value={alumno.fecha_nacimiento || ""}
             onChange={onChange}
             required
           />
@@ -191,12 +200,12 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           TIPO SANGRE:
           <select
             name="tipo_sangre"
-            value={alumno.tipo_sangre||""}
+            value={alumno.tipo_sangre || ""}
             onChange={onChange}
             required
           >
-            <option value="">—Seleccione—</option>
-            {tiposSangre.map((t,i)=>(
+            <option value="">—Seleccione tipo de sangre—</option>
+            {tiposSangre.map((t, i) => (
               <option key={i} value={t}>{t}</option>
             ))}
           </select>
@@ -206,9 +215,10 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           <input
             type="tel"
             name="telefono"
-            value={alumno.telefono||""}
+            value={alumno.telefono || ""}
             onChange={onChange}
             maxLength={10}
+            placeholder="Ingrese número de teléfono"
             required
           />
         </label>
@@ -222,8 +232,9 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             type="email"
             style={{ textTransform: "uppercase" }}
             name="correo"
-            value={alumno.correo||""}
+            value={alumno.correo || ""}
             onChange={onChange}
+            placeholder="ejemplo@correo.com"
             required
           />
         </label>
@@ -232,24 +243,27 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
           <input
             type="tel"
             name="contacto_emergencia"
-            value={alumno.contacto_emergencia||""}
+            value={alumno.contacto_emergencia || ""}
             onChange={onChange}
             maxLength={10}
+            placeholder="Número para emergencias"
             required
           />
         </label>
       </div>
 
-      {/* 9️⃣ Nombre contacto (opcional) */}
+      {/* 9️⃣ Nombre contacto (condicional) */}
       {alumno.contacto_emergencia && (
         <div className="form-row">
           <label>
             NOMBRE CONTACTO:
             <input
+              type="text"
               style={{ textTransform: "uppercase" }}
               name="nombre_contacto_emergencia"
-              value={alumno.nombre_contacto_emergencia||""}
+              value={alumno.nombre_contacto_emergencia || ""}
               onChange={onChange}
+              placeholder="Nombre de contacto de emergencia"
               required
             />
           </label>
@@ -261,11 +275,13 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
         <label>
           NSS:
           <input
+            type="text"
             style={{ textTransform: "uppercase" }}
             name="nss"
             maxLength={11}
-            value={alumno.nss||""}
+            value={alumno.nss || ""}
             onChange={onChange}
+            placeholder="Número de Seguro Social"
             required
           />
         </label>
