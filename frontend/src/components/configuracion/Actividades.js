@@ -12,7 +12,7 @@ const Actividades = () => {
     try {
       const res = await fetch("http://localhost/basecambios/get_tipos_movilidad_admin.php");
       const data = await res.json();
-      setActividades(data);
+      setActividades(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener actividades:", err);
     }
@@ -56,6 +56,26 @@ const Actividades = () => {
       obtenerActividades();
     } catch (err) {
       console.error("Error al actualizar actividad:", err);
+    }
+  };
+
+  const eliminarActividad = async (id) => {
+    const confirmacion = window.confirm(
+      "⚠️ Esta acción eliminará la actividad de forma permanente.\n¿Estás completamente seguro?"
+    );
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_tipo_movilidad.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerActividades();
+    } catch (err) {
+      console.error("Error al eliminar actividad:", err);
     }
   };
 
@@ -126,15 +146,24 @@ const Actividades = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(act.id);
-                      setNuevoNombre(act.nombre);
-                      setNuevaVisibilidad(Number(act.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(act.id);
+                        setNuevoNombre(act.nombre);
+                        setNuevaVisibilidad(Number(act.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarActividad(act.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

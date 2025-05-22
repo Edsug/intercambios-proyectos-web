@@ -59,6 +59,24 @@ const Estados = () => {
     }
   };
 
+  const eliminarEstado = async (id) => {
+    const confirmar = window.confirm("⚠️ Esto eliminará el estado permanentemente.\n¿Deseas continuar?");
+    if (!confirmar) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_estados.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerEstados();
+    } catch (err) {
+      console.error("Error al eliminar estado:", err);
+    }
+  };
+
   return (
     <div className="estado-admin">
       <h3>Agregar Estado</h3>
@@ -99,10 +117,7 @@ const Estados = () => {
             <tr key={estado.id}>
               <td>
                 {editandoId === estado.id ? (
-                  <input
-                    value={nuevoNombre}
-                    onChange={(e) => setNuevoNombre(e.target.value)}
-                  />
+                  <input value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
                 ) : (
                   estado.nombre
                 )}
@@ -129,15 +144,24 @@ const Estados = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(estado.id);
-                      setNuevoNombre(estado.nombre);
-                      setNuevaVisibilidad(Number(estado.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(estado.id);
+                        setNuevoNombre(estado.nombre);
+                        setNuevaVisibilidad(Number(estado.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarEstado(estado.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

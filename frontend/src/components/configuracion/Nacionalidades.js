@@ -59,6 +59,26 @@ const Nacionalidades = () => {
     }
   };
 
+  const eliminarNacionalidad = async (id) => {
+    const confirmacion = window.confirm(
+      "⚠️ Esta acción eliminará la nacionalidad de forma permanente.\n¿Estás completamente seguro?"
+    );
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_nacionalidades.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerNacionalidades();
+    } catch (err) {
+      console.error("Error al eliminar nacionalidad:", err);
+    }
+  };
+
   return (
     <div className="nacionalidad-admin">
       <h3>Agregar Nacionalidad</h3>
@@ -126,15 +146,24 @@ const Nacionalidades = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(n.id);
-                      setNuevoNombre(n.nombre);
-                      setNuevaVisibilidad(Number(n.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(n.id);
+                        setNuevoNombre(n.nombre);
+                        setNuevaVisibilidad(Number(n.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarNacionalidad(n.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

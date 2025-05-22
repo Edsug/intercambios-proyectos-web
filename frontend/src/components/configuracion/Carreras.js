@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
 
-
 const Carreras = () => {
   const [carreras, setCarreras] = useState([]);
   const [nuevaCarrera, setNuevaCarrera] = useState({ nombre: "", visible: 1 });
@@ -13,7 +12,7 @@ const Carreras = () => {
     try {
       const res = await fetch("http://localhost/basecambios/get_carreras_admin.php");
       const data = await res.json();
-      setCarreras(data);
+      setCarreras(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener carreras:", err);
     }
@@ -57,6 +56,24 @@ const Carreras = () => {
       obtenerCarreras();
     } catch (err) {
       console.error("Error al actualizar carrera:", err);
+    }
+  };
+
+  const eliminarCarrera = async (id) => {
+    const confirmacion = window.confirm("⚠️ ¿Estás seguro de eliminar esta carrera? Esta acción es irreversible.");
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_carreras.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerCarreras();
+    } catch (err) {
+      console.error("Error al eliminar carrera:", err);
     }
   };
 
@@ -130,11 +147,24 @@ const Carreras = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button onClick={() => {
-                    setEditandoId(carrera.id);
-                    setNuevoNombre(carrera.nombre);
-                    setNuevaVisibilidad(Number(carrera.visible));
-                  }}>Editar</button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(carrera.id);
+                        setNuevoNombre(carrera.nombre);
+                        setNuevaVisibilidad(Number(carrera.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarCarrera(carrera.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>
