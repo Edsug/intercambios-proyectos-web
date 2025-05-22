@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../common/Section";
 
-export default function Movilidad({ alumno, onChange, catalogos }) {
-  const esNacional = alumno.tipo_destino === "NACIONAL";
+export default function Movilidad({ alumno, onChange }) {
+  const [catalogos, setCatalogos] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const esNacional = alumno?.tipo_destino === "NACIONAL";
+
+  useEffect(() => {
+    fetch("http://localhost/basecambios/get_catalogos.php")
+      .then(res => res.json())
+      .then(data => {
+        console.log("Catálogos cargados:", data);
+        setCatalogos(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error al cargar catálogos", err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Cargando catálogos...</p>;
 
   return (
     <Section title="Movilidad" className="movilidad-section">
@@ -16,7 +35,22 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
             required
           >
             <option value="">—Seleccione—</option>
-            {catalogos.tiposDestino.map((t, i) => (
+            {(catalogos.destinos || []).map((t, i) => (
+              <option key={i} value={t}>{t}</option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          ACTIVIDAD:
+          <select
+            name="actividad"
+            value={alumno.actividad || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {(catalogos.tipo_movilidad || []).map((t, i) => (
               <option key={i} value={t}>{t}</option>
             ))}
           </select>
@@ -32,7 +66,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
               required
             >
               <option value="">—Seleccione—</option>
-              {catalogos.estados_geo.map((e, i) => (
+              {(catalogos.estados_geo || []).map((e, i) => (
                 <option key={i} value={e}>{e}</option>
               ))}
             </select>
@@ -47,7 +81,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
               required
             >
               <option value="">—Seleccione—</option>
-              {catalogos.paises.map((p, i) => (
+              {(catalogos.paises || []).map((p, i) => (
                 <option key={i} value={p}>{p}</option>
               ))}
             </select>

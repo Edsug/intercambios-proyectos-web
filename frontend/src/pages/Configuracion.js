@@ -139,12 +139,53 @@ const Configuracion = () => {
       <div className="content-header">
         <h1>⚙️ Configuración</h1>
         <p>Administra tu cuenta y configura el sistema.</p>
+        
+
       </div>
 
       <div className="config-tabs">
         <button className={`config-tab ${currentTab === "sistema" ? "active" : ""}`} onClick={() => setCurrentTab("sistema")}>Configuración del Sistema</button>
         <button className={`config-tab ${currentTab === "usuarios" ? "active" : ""}`} onClick={() => setCurrentTab("usuarios")}>Gestión de Usuarios</button>
       </div>
+
+
+    
+
+
+
+      <div className="config-content">
+        {currentTab === "sistema" && (
+          <div>
+            {<p>holaaaaaa</p>}
+          </div>
+        )}
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div className="config-content">
         {currentTab === "usuarios" && (
