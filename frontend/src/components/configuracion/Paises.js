@@ -12,7 +12,7 @@ const Paises = () => {
     try {
       const res = await fetch("http://localhost/basecambios/get_paises_admin.php");
       const data = await res.json();
-      setPaises(data);
+      setPaises(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener países:", err);
     }
@@ -56,6 +56,26 @@ const Paises = () => {
       obtenerPaises();
     } catch (err) {
       console.error("Error al actualizar país:", err);
+    }
+  };
+
+  const eliminarPais = async (id) => {
+    const confirmacion = window.confirm(
+      "⚠️ Esta acción eliminará el país permanentemente.\n¿Estás completamente seguro?"
+    );
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_paises.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerPaises();
+    } catch (err) {
+      console.error("Error al eliminar país:", err);
     }
   };
 
@@ -126,15 +146,24 @@ const Paises = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(pais.id);
-                      setNuevoNombre(pais.nombre);
-                      setNuevaVisibilidad(Number(pais.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(pais.id);
+                        setNuevoNombre(pais.nombre);
+                        setNuevaVisibilidad(Number(pais.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarPais(pais.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

@@ -12,7 +12,7 @@ const Maestrias = () => {
     try {
       const res = await fetch("http://localhost/basecambios/get_maestrias_admin.php");
       const data = await res.json();
-      setMaestrias(data);
+      setMaestrias(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener maestrías:", err);
     }
@@ -56,6 +56,26 @@ const Maestrias = () => {
       obtenerMaestrias();
     } catch (err) {
       console.error("Error al actualizar maestría:", err);
+    }
+  };
+
+  const eliminarMaestria = async (id) => {
+    const confirmacion = window.confirm(
+      "⚠️ Esta acción eliminará permanentemente esta maestría.\n¿Estás seguro que deseas continuar?"
+    );
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_maestrias.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerMaestrias();
+    } catch (err) {
+      console.error("Error al eliminar maestría:", err);
     }
   };
 
@@ -126,15 +146,24 @@ const Maestrias = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(m.id);
-                      setNuevoNombre(m.nombre);
-                      setNuevaVisibilidad(Number(m.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(m.id);
+                        setNuevoNombre(m.nombre);
+                        setNuevaVisibilidad(Number(m.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarMaestria(m.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

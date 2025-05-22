@@ -59,6 +59,24 @@ const Programas = () => {
     }
   };
 
+  const eliminarPrograma = async (id) => {
+    const confirmacion = window.confirm("⚠️ Esta acción eliminará el programa de forma permanente.\n¿Estás completamente seguro?");
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_programas.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerProgramas();
+    } catch (err) {
+      console.error("Error al eliminar programa:", err);
+    }
+  };
+
   return (
     <div className="programa-admin">
       <h3>Agregar Programa</h3>
@@ -126,15 +144,24 @@ const Programas = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(p.id);
-                      setNuevoNombre(p.nombre);
-                      setNuevaVisibilidad(Number(p.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(p.id);
+                        setNuevoNombre(p.nombre);
+                        setNuevaVisibilidad(Number(p.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarPrograma(p.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

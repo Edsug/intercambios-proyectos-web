@@ -59,6 +59,26 @@ const TiposDestino = () => {
     }
   };
 
+  const eliminarDestino = async (id) => {
+    const confirmacion = window.confirm(
+      "⚠️ Esta acción eliminará el tipo de destino de forma permanente.\n¿Estás completamente seguro?"
+    );
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_tipos_destino.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerDestinos();
+    } catch (err) {
+      console.error("Error al eliminar destino:", err);
+    }
+  };
+
   return (
     <div className="tipos-destino-admin">
       <h3>Agregar Tipo de Destino</h3>
@@ -126,15 +146,24 @@ const TiposDestino = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(d.id);
-                      setNuevoNombre(d.nombre);
-                      setNuevaVisibilidad(Number(d.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(d.id);
+                        setNuevoNombre(d.nombre);
+                        setNuevaVisibilidad(Number(d.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarDestino(d.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

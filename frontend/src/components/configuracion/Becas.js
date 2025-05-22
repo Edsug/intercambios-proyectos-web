@@ -13,13 +13,7 @@ const Becas = () => {
     try {
       const res = await fetch("http://localhost/basecambios/get_becas_catalogo_admin.php");
       const data = await res.json();
-
-      if (Array.isArray(data)) {
-        setBecas(data);
-      } else {
-        console.error("La respuesta no es un arreglo:", data);
-        setBecas([]);
-      }
+      setBecas(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener becas:", err);
       setBecas([]);
@@ -68,6 +62,24 @@ const Becas = () => {
     }
   };
 
+  const eliminarBeca = async (id) => {
+    const confirmacion = window.confirm("⚠️ Esta acción eliminará permanentemente la beca.\n¿Estás completamente seguro?");
+    if (!confirmacion) return;
+
+    try {
+      const res = await fetch("http://localhost/basecambios/eliminar_beca_catalogo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      obtenerBecas();
+    } catch (err) {
+      console.error("Error al eliminar beca:", err);
+    }
+  };
+
   return (
     <div className="becas-admin">
       <h3>Agregar Beca</h3>
@@ -110,11 +122,11 @@ const Becas = () => {
             <th>Tipo</th>
             <th>Nombre</th>
             <th>Visible</th>
-            <th>Acción</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(becas) && becas.map((b) => (
+          {becas.map((b) => (
             <tr key={b.id}>
               <td>
                 {editandoId === b.id ? (
@@ -152,16 +164,25 @@ const Becas = () => {
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setEditandoId(b.id);
-                      setNuevoTipo(b.tipo);
-                      setNuevoNombre(b.nombre);
-                      setNuevaVisibilidad(Number(b.visible));
-                    }}
-                  >
-                    Editar
-                  </button>
+                  <>
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditandoId(b.id);
+                        setNuevoTipo(b.tipo);
+                        setNuevoNombre(b.nombre);
+                        setNuevaVisibilidad(Number(b.visible));
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => eliminarBeca(b.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </>
                 )}
               </td>
             </tr>

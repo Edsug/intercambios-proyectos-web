@@ -15,6 +15,7 @@ import Nacionalidades from "../components/configuracion/Nacionalidades";
 import TiposDestino from "../components/configuracion/TiposDestino";
 import Actividades from "../components/configuracion/Actividades";
 
+
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
   const [subTab, setSubTab] = useState("carreras");
