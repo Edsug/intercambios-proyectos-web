@@ -1,15 +1,50 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Configuracion.css";
 
+const BarraSeguridad = ({ password }) => {
+  if (!password) return null;
+
+  const tieneMayus = /[A-Z]/.test(password);
+  const tieneMinus = /[a-z]/.test(password);
+  const tieneNumero = /\d/.test(password);
+  const tieneSimbolo = /[^A-Za-z0-9]/.test(password);
+  const longitud = password.length >= 8;
+
+  const score = [tieneMayus, tieneMinus, tieneNumero, tieneSimbolo].filter(Boolean).length + (longitud ? 1 : 0);
+  const porcentaje = (score / 5) * 100;
+
+  let color = "red";
+  if (porcentaje >= 80) color = "green";
+  else if (porcentaje >= 60) color = "orange";
+
+  const texto =
+    porcentaje >= 80 ? "Segura" :
+    porcentaje >= 60 ? "Media" :
+    longitud ? "Débil" : "Muy débil";
+
+  return (
+    <div style={{ marginTop: "5px" }}>
+      <div style={{
+        height: "8px",
+        background: "#ccc",
+        borderRadius: "4px",
+        overflow: "hidden"
+      }}>
+        <div style={{
+          width: `${porcentaje}%`,
+          height: "100%",
+          backgroundColor: color,
+          transition: "width 0.3s ease"
+        }}></div>
+      </div>
+      <small style={{ color }}>{`Seguridad: ${texto}`}</small>
+    </div>
+  );
+};
+
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
   const [subTab, setSubTab] = useState("modificar");
-  const [systemSettings, setSystemSettings] = useState({
-    theme: "light",
-    language: "es",
-    notificationsEnabled: true,
-    autoSave: true,
-  });
 
   const [usuarios, setUsuarios] = useState([]);
   const [nuevoUsuario, setNuevoUsuario] = useState({ nombre_usuario: "", contrasena: "", cargo: "Asistente" });
@@ -30,19 +65,6 @@ const Configuracion = () => {
   useEffect(() => {
     obtenerUsuarios();
   }, []);
-
-  const handleSettingsChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setSystemSettings({
-      ...systemSettings,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleSettingsSubmit = (e) => {
-    e.preventDefault();
-    alert("Configuración actualizada correctamente");
-  };
 
   const handleNuevoUsuarioChange = (e) => {
     const { name, value } = e.target;
@@ -125,15 +147,6 @@ const Configuracion = () => {
       </div>
 
       <div className="config-content">
-        {currentTab === "sistema" && (
-          <form onSubmit={handleSettingsSubmit} className="config-form">
-            <div className="form-group">
-             
-            </div>
-            <button type="submit" className="save-button">Guardar Configuración</button>
-          </form>
-        )}
-
         {currentTab === "usuarios" && (
           <div className="user-admin">
             <div className="config-tabs sub-tabs">
@@ -166,7 +179,10 @@ const Configuracion = () => {
                           </select>
                         ) : user.cargo}</td>
                         <td>{editandoUsuario?.id === user.id ? (
-                          <input type="password" placeholder="Nueva contraseña" value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)} />
+                          <>
+                            <input type="password" placeholder="Nueva contraseña" value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)} />
+                            <BarraSeguridad password={nuevaContrasena} />
+                          </>
                         ) : "••••••"}</td>
                         <td>
                           {editandoUsuario?.id === user.id ? (
@@ -199,6 +215,7 @@ const Configuracion = () => {
                   <div className="form-group">
                     <label>Contraseña:</label>
                     <input type="password" name="contrasena" value={nuevoUsuario.contrasena} onChange={handleNuevoUsuarioChange} required />
+                    <BarraSeguridad password={nuevoUsuario.contrasena} />
                   </div>
                   <div className="form-group">
                     <label>Cargo:</label>

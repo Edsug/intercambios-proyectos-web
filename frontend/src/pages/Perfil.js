@@ -1,6 +1,47 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Perfil.css";
 
+const BarraSeguridad = ({ password }) => {
+  if (!password) return null;
+
+  const tieneMayus = /[A-Z]/.test(password);
+  const tieneMinus = /[a-z]/.test(password);
+  const tieneNumero = /\d/.test(password);
+  const tieneSimbolo = /[^A-Za-z0-9]/.test(password);
+  const longitud = password.length >= 8;
+
+  const score = [tieneMayus, tieneMinus, tieneNumero, tieneSimbolo].filter(Boolean).length + (longitud ? 1 : 0);
+  const porcentaje = (score / 5) * 100;
+
+  let color = "red";
+  if (porcentaje >= 80) color = "green";
+  else if (porcentaje >= 60) color = "orange";
+
+  const texto =
+    porcentaje >= 80 ? "Segura" :
+    porcentaje >= 60 ? "Media" :
+    longitud ? "Débil" : "Muy débil";
+
+  return (
+    <div style={{ marginTop: "5px" }}>
+      <div style={{
+        height: "8px",
+        background: "#ccc",
+        borderRadius: "4px",
+        overflow: "hidden"
+      }}>
+        <div style={{
+          width: `${porcentaje}%`,
+          height: "100%",
+          backgroundColor: color,
+          transition: "width 0.3s ease"
+        }}></div>
+      </div>
+      <small style={{ color }}>{`Seguridad: ${texto}`}</small>
+    </div>
+  );
+};
+
 const Perfil = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -19,6 +60,12 @@ const Perfil = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (newPassword && newPassword.length < 8) {
+      setMessage("La nueva contraseña debe tener al menos 8 caracteres.");
+      setMessageType("error");
+      return;
+    }
+
     if (newPassword !== confirmNewPassword) {
       setMessage("Las contraseñas nuevas no coinciden.");
       setMessageType("error");
@@ -34,9 +81,7 @@ const Perfil = () => {
 
     const response = await fetch("http://localhost/basecambios/actualizar_usuario.php", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: storedUser.id,
         nombre_usuario: nombreUsuario,
@@ -50,7 +95,6 @@ const Perfil = () => {
     if (data.status === "success") {
       setMessage("Perfil actualizado correctamente.");
       setMessageType("success");
-      // Actualizar el nombre de usuario en localStorage
       storedUser.nombre_usuario = nombreUsuario;
       localStorage.setItem("user", JSON.stringify(storedUser));
     } else {
@@ -88,6 +132,7 @@ const Perfil = () => {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
+          <BarraSeguridad password={newPassword} />
         </div>
         <div>
           <label>Confirmar Nueva Contraseña</label>
