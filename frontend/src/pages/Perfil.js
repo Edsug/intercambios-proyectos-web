@@ -1,46 +1,7 @@
+// src/pages/Perfil.js
 import React, { useState, useEffect } from "react";
 import "../styles/Perfil.css";
-
-const BarraSeguridad = ({ password }) => {
-  if (!password) return null;
-
-  const tieneMayus = /[A-Z]/.test(password);
-  const tieneMinus = /[a-z]/.test(password);
-  const tieneNumero = /\d/.test(password);
-  const tieneSimbolo = /[^A-Za-z0-9]/.test(password);
-  const longitud = password.length >= 8;
-
-  const score = [tieneMayus, tieneMinus, tieneNumero, tieneSimbolo].filter(Boolean).length + (longitud ? 1 : 0);
-  const porcentaje = (score / 5) * 100;
-
-  let color = "red";
-  if (porcentaje >= 80) color = "green";
-  else if (porcentaje >= 60) color = "orange";
-
-  const texto =
-    porcentaje >= 80 ? "Segura" :
-    porcentaje >= 60 ? "Media" :
-    longitud ? "Débil" : "Muy débil";
-
-  return (
-    <div style={{ marginTop: "5px" }}>
-      <div style={{
-        height: "8px",
-        background: "#ccc",
-        borderRadius: "4px",
-        overflow: "hidden"
-      }}>
-        <div style={{
-          width: `${porcentaje}%`,
-          height: "100%",
-          backgroundColor: color,
-          transition: "width 0.3s ease"
-        }}></div>
-      </div>
-      <small style={{ color }}>{`Seguridad: ${texto}`}</small>
-    </div>
-  );
-};
+import BarraSeguridad from "../components/configuracion/BarraSeguridad"; // Ajusta si lo mueves a otra carpeta
 
 const Perfil = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
@@ -79,7 +40,7 @@ const Perfil = () => {
       return;
     }
 
-    const response = await fetch("http://localhost/basecambios/actualizar_usuario.php", {
+    const response = await fetch("http://localhost/basecambios/actualizar_perfil.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -104,10 +65,10 @@ const Perfil = () => {
   };
 
   return (
-    <div>
+    <div className="perfil-container">
       <h1>Perfil de Usuario</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="perfil-form">
+        <div className="form-group">
           <label>Nombre de Usuario</label>
           <input
             type="text"
@@ -116,7 +77,7 @@ const Perfil = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Contraseña Actual</label>
           <input
             type="password"
@@ -125,7 +86,7 @@ const Perfil = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Nueva Contraseña</label>
           <input
             type="password"
@@ -134,7 +95,7 @@ const Perfil = () => {
           />
           <BarraSeguridad password={newPassword} />
         </div>
-        <div>
+        <div className="form-group">
           <label>Confirmar Nueva Contraseña</label>
           <input
             type="password"
@@ -142,9 +103,9 @@ const Perfil = () => {
             onChange={(e) => setConfirmNewPassword(e.target.value)}
           />
         </div>
-        <button type="submit">Actualizar Perfil</button>
+        <button type="submit" className="save-button">Actualizar Perfil</button>
       </form>
-      {message && <p className={messageType}>{message}</p>}
+      {message && <p className={`message ${messageType}`}>{message}</p>}
     </div>
   );
 };

@@ -1,0 +1,175 @@
+import React, { useState, useEffect } from "react";
+import "../../styles/Configuracion.css";
+
+const Becas = () => {
+  const [becas, setBecas] = useState([]);
+  const [nuevaBeca, setNuevaBeca] = useState({ tipo: "", nombre: "", visible: 1 });
+  const [editandoId, setEditandoId] = useState(null);
+  const [nuevoTipo, setNuevoTipo] = useState("");
+  const [nuevoNombre, setNuevoNombre] = useState("");
+  const [nuevaVisibilidad, setNuevaVisibilidad] = useState(1);
+
+  const obtenerBecas = async () => {
+    try {
+      const res = await fetch("http://localhost/basecambios/get_becas_catalogo_admin.php");
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setBecas(data);
+      } else {
+        console.error("La respuesta no es un arreglo:", data);
+        setBecas([]);
+      }
+    } catch (err) {
+      console.error("Error al obtener becas:", err);
+      setBecas([]);
+    }
+  };
+
+  useEffect(() => {
+    obtenerBecas();
+  }, []);
+
+  const agregarBeca = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost/basecambios/agregar_beca_catalogo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevaBeca),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      setNuevaBeca({ tipo: "", nombre: "", visible: 1 });
+      obtenerBecas();
+    } catch (err) {
+      console.error("Error al agregar beca:", err);
+    }
+  };
+
+  const guardarEdicion = async (id) => {
+    try {
+      const res = await fetch("http://localhost/basecambios/actualizar_beca_catalogo.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          tipo: nuevoTipo,
+          nombre: nuevoNombre,
+          visible: nuevaVisibilidad,
+        }),
+      });
+      const data = await res.json();
+      alert(data.message || data.error || "Error desconocido");
+      setEditandoId(null);
+      obtenerBecas();
+    } catch (err) {
+      console.error("Error al actualizar beca:", err);
+    }
+  };
+
+  return (
+    <div className="becas-admin">
+      <h3>Agregar Beca</h3>
+      <form onSubmit={agregarBeca} className="config-form">
+        <div className="form-group">
+          <label>Tipo:</label>
+          <input
+            type="text"
+            value={nuevaBeca.tipo}
+            onChange={(e) => setNuevaBeca({ ...nuevaBeca, tipo: e.target.value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Nombre:</label>
+          <input
+            type="text"
+            value={nuevaBeca.nombre}
+            onChange={(e) => setNuevaBeca({ ...nuevaBeca, nombre: e.target.value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Visible:</label>
+          <select
+            value={nuevaBeca.visible}
+            onChange={(e) => setNuevaBeca({ ...nuevaBeca, visible: parseInt(e.target.value) })}
+          >
+            <option value={1}>Sí</option>
+            <option value={0}>No</option>
+          </select>
+        </div>
+        <button type="submit" className="save-button">Agregar Beca</button>
+      </form>
+
+      <h3>Listado de Becas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Nombre</th>
+            <th>Visible</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.isArray(becas) && becas.map((b) => (
+            <tr key={b.id}>
+              <td>
+                {editandoId === b.id ? (
+                  <input value={nuevoTipo} onChange={(e) => setNuevoTipo(e.target.value)} />
+                ) : (
+                  b.tipo
+                )}
+              </td>
+              <td>
+                {editandoId === b.id ? (
+                  <input value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
+                ) : (
+                  b.nombre
+                )}
+              </td>
+              <td>
+                {editandoId === b.id ? (
+                  <select
+                    value={nuevaVisibilidad}
+                    onChange={(e) => setNuevaVisibilidad(parseInt(e.target.value))}
+                  >
+                    <option value={1}>Sí</option>
+                    <option value={0}>No</option>
+                  </select>
+                ) : (
+                  <span className={`etiqueta ${Number(b.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
+                    {Number(b.visible) === 1 ? "Sí" : "No"}
+                  </span>
+                )}
+              </td>
+              <td>
+                {editandoId === b.id ? (
+                  <>
+                    <button onClick={() => guardarEdicion(b.id)}>Guardar</button>
+                    <button onClick={() => setEditandoId(null)}>Cancelar</button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setEditandoId(b.id);
+                      setNuevoTipo(b.tipo);
+                      setNuevoNombre(b.nombre);
+                      setNuevaVisibilidad(Number(b.visible));
+                    }}
+                  >
+                    Editar
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Becas;
