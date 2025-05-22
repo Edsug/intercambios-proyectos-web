@@ -54,6 +54,7 @@ const Registro = () => {
         if (!formData.FOLIO) errs.FOLIO = "Ingrese el folio.";
         break;
       case 2:
+        if (!formData.FOTO) errs.FOTO = "Debe seleccionar una foto.";
         if (!formData.CODIGO) errs.CODIGO = "Ingrese el código.";
         if (!formData.NOMBRE) errs.NOMBRE = "Ingrese el nombre.";
         if (!formData.APELLIDOS) errs.APELLIDOS = "Ingrese los apellidos.";
@@ -61,7 +62,13 @@ const Registro = () => {
         if (formData.NIVEL_ACADEMICO === "LICENCIATURA" && !formData.CARRERA) errs.CARRERA = "Seleccione carrera.";
         if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
         if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";
+        else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 3 || formData.SEMESTRE > 10)
+          errs.SEMESTRE = "El semestre debe ser un número entre 3 y 10.";
         if (!formData.PROMEDIO) errs.PROMEDIO = "Ingrese promedio.";
+        else if (isNaN(formData.PROMEDIO) || !/^\d+(\.\d+)?$/.test(formData.PROMEDIO))
+          errs.PROMEDIO = "El promedio debe ser un número válido.";
+        else if (parseFloat(formData.PROMEDIO) <= 80)
+            errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor a 80 para continuar.";
         if (!formData.SEXO) errs.SEXO = "Seleccione género.";
         if (!formData.FECHA_NACIMIENTO) errs.FECHA_NACIMIENTO = "Ingrese fecha de nacimiento.";
         if (!formData.TIPO_SANGRE) errs.TIPO_SANGRE = "Seleccione tipo de sangre.";

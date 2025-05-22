@@ -11,6 +11,31 @@ export default function SeccionDatosAlumno({
   const [carreras, setCarreras] = useState([]);
   const [maestria, setMaestrias] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
+  const [previewFoto, setPreviewFoto] = useState(formData.FOTO ? URL.createObjectURL(formData.FOTO) : null);
+
+  const handleFotoChange = (e) => {
+  const file = e.target.files[0];
+  
+  if (file) {
+    // Validar tamaño de archivo (5MB máximo)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('El archivo es demasiado grande. El tamaño máximo es 5MB.');
+      e.target.value = '';
+      return;
+    }
+    
+    // Validar tipo de archivo
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      alert('Formato de archivo no válido. Use JPG, PNG o GIF.');
+      e.target.value = '';
+      return;
+    }
+    
+    setFormData(prev => ({ ...prev, FOTO: file }));
+    setPreviewFoto(URL.createObjectURL(file));
+  }
+};
 
   useEffect(() => {
     fetch('http://localhost/basecambios/get_carreras.php')
@@ -27,6 +52,67 @@ export default function SeccionDatosAlumno({
       <div className="section-content">
 
         {/* 1️⃣ Código / Nombre(s) */}
+        <div className="form-row">
+          <label style={{ alignItems: "center" }}>
+            FOTO DEL ALUMNO:
+          
+          
+            <div className={`foto-upload-container ${previewFoto ? 'has-image' : ''}`}>
+              {!previewFoto ? (
+                <div>
+                  <button 
+                    type="button" 
+                    className="foto-upload-button"
+                    onClick={() => document.querySelector('input[name="FOTO"]').click()}
+                  >
+                    <svg className="foto-upload-icon" viewBox="0 0 24 24">
+                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                    Seleccionar Foto
+                  </button>
+                  <div className="foto-upload-text">
+                    Formatos soportados: JPG, PNG, GIF<br/>
+                    Tamaño máximo: 5MB
+                  </div>
+                </div>
+              ) : (
+                <div className="foto-preview-container">
+                  <img
+                    src={previewFoto}
+                    alt="Vista previa"
+                    className="foto-preview"
+                  />
+                  <div className="foto-success-indicator">
+                    <svg className="foto-check-icon" viewBox="0 0 24 24">
+                      <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                    </svg>
+                    Foto cargada correctamente
+                  </div>
+                  <button 
+                    type="button" 
+                    className="foto-upload-button foto-change-button"
+                    onClick={() => document.querySelector('input[name="FOTO"]').click()}
+                  >
+                    <svg className="foto-upload-icon" viewBox="0 0 24 24">
+                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7Z"/>
+                    </svg>
+                    Cambiar Foto
+                  </button>
+                </div>
+              )}
+            
+              <input
+                type="file"
+                name="FOTO"
+                accept="image/*"
+                onChange={handleFotoChange}
+                className="foto-input-hidden"
+                required
+              />
+            </div>             
+          {errores.FOTO && <span className="error-message">{errores.FOTO}</span>}
+          </label> 
+        </div>
         <div className="form-row">
           <label>
             CÓDIGO:
@@ -144,7 +230,7 @@ export default function SeccionDatosAlumno({
               type="number" name="SEMESTRE"
               value={formData.SEMESTRE}
               onChange={handleChange}
-              min="1" max="12" required />
+              min="3" max="10" required />
             {errores.SEMESTRE && <span className="error-message">{errores.SEMESTRE}</span>}
           </label>
           <label>
