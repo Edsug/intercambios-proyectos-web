@@ -26,6 +26,11 @@ const Becas = () => {
 
   const agregarBeca = async (e) => {
     e.preventDefault();
+    if (!nuevaBeca.tipo.trim() || !nuevaBeca.nombre.trim()) {
+      alert("Completa todos los campos obligatorios.");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost/basecambios/agregar_beca_catalogo.php", {
         method: "POST",
@@ -63,7 +68,7 @@ const Becas = () => {
   };
 
   const eliminarBeca = async (id) => {
-    const confirmacion = window.confirm("⚠️ Esta acción eliminará permanentemente la beca.\n¿Estás completamente seguro?");
+    const confirmacion = window.confirm("⚠️ Esta acción eliminará permanentemente la beca. ¿Estás completamente seguro?");
     if (!confirmacion) return;
 
     try {
@@ -116,79 +121,75 @@ const Becas = () => {
       </form>
 
       <h3>Listado de Becas</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Nombre</th>
-            <th>Visible</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {becas.map((b) => (
-            <tr key={b.id}>
-              <td>
-                {editandoId === b.id ? (
-                  <input value={nuevoTipo} onChange={(e) => setNuevoTipo(e.target.value)} />
-                ) : (
-                  b.tipo
-                )}
-              </td>
-              <td>
-                {editandoId === b.id ? (
-                  <input value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
-                ) : (
-                  b.nombre
-                )}
-              </td>
-              <td>
-                {editandoId === b.id ? (
-                  <select
-                    value={nuevaVisibilidad}
-                    onChange={(e) => setNuevaVisibilidad(parseInt(e.target.value))}
-                  >
-                    <option value={1}>Sí</option>
-                    <option value={0}>No</option>
-                  </select>
-                ) : (
-                  <span className={`etiqueta ${Number(b.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
-                    {Number(b.visible) === 1 ? "Sí" : "No"}
-                  </span>
-                )}
-              </td>
-              <td>
-                {editandoId === b.id ? (
-                  <>
-                    <button onClick={() => guardarEdicion(b.id)}>Guardar</button>
-                    <button onClick={() => setEditandoId(null)}>Cancelar</button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="edit-button"
-                      onClick={() => {
-                        setEditandoId(b.id);
-                        setNuevoTipo(b.tipo);
-                        setNuevoNombre(b.nombre);
-                        setNuevaVisibilidad(Number(b.visible));
-                      }}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="delete-button"
-                      onClick={() => eliminarBeca(b.id)}
-                    >
-                      Eliminar
-                    </button>
-                  </>
-                )}
-              </td>
+      {becas.length === 0 ? (
+        <p>No hay becas registradas.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Nombre</th>
+              <th>Visible</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {becas.map((b) => (
+              <tr key={b.id}>
+                <td>
+                  {editandoId === b.id ? (
+                    <input value={nuevoTipo} onChange={(e) => setNuevoTipo(e.target.value)} />
+                  ) : (
+                    b.tipo
+                  )}
+                </td>
+                <td>
+                  {editandoId === b.id ? (
+                    <input value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
+                  ) : (
+                    b.nombre
+                  )}
+                </td>
+                <td>
+                  {editandoId === b.id ? (
+                    <select value={nuevaVisibilidad} onChange={(e) => setNuevaVisibilidad(parseInt(e.target.value))}>
+                      <option value={1}>Sí</option>
+                      <option value={0}>No</option>
+                    </select>
+                  ) : (
+                    <span className={`etiqueta ${Number(b.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
+                      {Number(b.visible) === 1 ? "Sí" : "No"}
+                    </span>
+                  )}
+                </td>
+                <td>
+                  {editandoId === b.id ? (
+                    <>
+                      <button onClick={() => guardarEdicion(b.id)}>Guardar</button>
+                      <button onClick={() => setEditandoId(null)}>Cancelar</button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="edit-button"
+                        onClick={() => {
+                          setEditandoId(b.id);
+                          setNuevoTipo(b.tipo);
+                          setNuevoNombre(b.nombre);
+                          setNuevaVisibilidad(Number(b.visible));
+                        }}
+                      >
+                        Editar
+                      </button>
+                      <button className="delete-button" onClick={() => eliminarBeca(b.id)}>Eliminar</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

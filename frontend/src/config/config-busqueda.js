@@ -141,24 +141,29 @@
         .finally(() => setLoading(false));
     };
 
-    // — Calcula cuántas becas hay en el conjunto actual
-    const maxBecas = alumnos.reduce((max, a) => {
-      if (!a.detalle_becas) return max;
-      const count = a.detalle_becas.split('; ').length;
-      return count > max ? count : max;
-    }, 0);
 
     // — Exportar a Excel
     const handleExportExcel = async () => {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Alumnos');
+    
       const columnasVisibles = columnasPDF.filter(c => c.visible);
       const header = columnasVisibles.map(col => col.label);
+    
+      // Paso 1: calcular cuántas becas tiene el alumno con más becas
+      const maxBecas = alumnos.reduce((max, a) => {
+        const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
+        return Math.max(max, becas.length);
+      }, 0);
+    
+      // Paso 2: columnas dinámicas para becas
       for (let i = 0; i < maxBecas; i++) {
-        header.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`);
+        header.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`, `Beca ${i + 1} Detalles`);
       }
+    
       worksheet.addRow(header);
-
+    
+      // Paso 3: agregar datos
       const rows = alumnos.map(a => {
         const seleccionados = columnasVisibles.map(c => {
           if (c.id === 'especialidad') {
@@ -170,39 +175,53 @@
           }
           return a[c.id] ?? '';
         });
+    
         const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
         const parsed = becas.map(str => {
-          const [typeName, amountPart] = str.split(' ($');
-          const [tipo, nombre] = typeName.split(': ');
-          const monto = amountPart ? amountPart.replace(')', '') : '';
-          return [tipo, nombre, monto];
+          const match = str.match(/^(.+?): (.+?) \(\$(\d+(?:\.\d+)?)\)(?:- (.*))?$/);
+          if (match) {
+            const [, tipo, nombre, monto, detalles] = match;
+            return [tipo, nombre, monto, detalles ?? ''];
+          }
+          return ['?', '?', '?', '?'];
         }).flat();
-        const blank = Array((maxBecas * 3) - parsed.length).fill('');
+    
+        const blank = Array((maxBecas * 4) - parsed.length).fill('');
         return [...seleccionados, ...parsed, ...blank];
       });
-
-      // Estilos de encabezado
+    
+      // Estilo de encabezado
       const headerRow = worksheet.getRow(1);
       headerRow.height = 24;
       headerRow.eachCell(cell => {
         cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
-        cell.fill = { type: 'pattern', pattern:'solid', fgColor:{ argb:'305496' } };
-        cell.alignment = { horizontal:'center', vertical:'middle', wrapText:true };
-        cell.border = { top:{style:'thin'}, left:{style:'thin'}, bottom:{style:'thin'}, right:{style:'thin'} };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '305496' } };
+        cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
       });
-
-      // Filas alternadas
+    
+      // Filas
       rows.forEach((row, i) => {
         const newRow = worksheet.addRow(row);
         const fillColor = i % 2 === 0 ? 'F2F2F2' : 'FFFFFF';
         newRow.eachCell(cell => {
-          cell.fill = { type:'pattern', pattern:'solid', fgColor:{ argb:fillColor } };
-          cell.alignment = { horizontal:'left', vertical:'top', wrapText:true };
-          cell.border = { top:{style:'thin'}, left:{style:'thin'}, bottom:{style:'thin'}, right:{style:'thin'} };
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } };
+          cell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
         });
       });
-
-      // Ajuste de ancho de columnas
+    
+      // Ajustar ancho de columnas
       worksheet.columns.forEach((col, i) => {
         let maxLength = header[i].length;
         rows.forEach(r => {
@@ -213,22 +232,32 @@
         });
         col.width = maxLength + 2;
       });
-
+    
       const buffer = await workbook.xlsx.writeBuffer();
       saveAs(new Blob([buffer]), 'alumnos.xlsx');
     };
+    
 
     // — Exportar a PDF
     const handleExportPDF = () => {
-      const doc = new jsPDF({ orientation:'landscape', unit:'pt', format:'a4' });
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
       const columnasVisibles = columnasPDF.filter(c => c.visible);
       const headers = columnasVisibles.map(c => c.label);
+    
+      // Determinar el máximo de becas encontradas
+      let maxBecas = 0;
+      alumnos.forEach(alumno => {
+        const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
+        if (becas.length > maxBecas) maxBecas = becas.length;
+      });
+    
+      // Generar encabezados dinámicos
       const becaHeaders = [];
       for (let i = 0; i < maxBecas; i++) {
-        becaHeaders.push(`Beca ${i+1} Tipo`, `Beca ${i+1} Nombre`, `Beca ${i+1} Monto`);
+        becaHeaders.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`, `Beca ${i + 1} Detalles`);
       }
       const fullHeaders = [...headers, ...becaHeaders];
-
+    
       const rows = alumnos.map(alumno => {
         const row = columnasVisibles.map(c => {
           if (c.id === 'especialidad') {
@@ -240,41 +269,50 @@
           }
           return alumno[c.id] ?? '';
         });
+    
         const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
         const parsed = becas.map(str => {
-          const [typeName, amountPart] = str.split(' ($');
-          const [tipo, nombre] = typeName.split(': ');
-          const monto = amountPart ? amountPart.replace(')', '') : '';
-          return [tipo, nombre, monto];
+          const match = str.match(/^(.+?): (.+?) \(\$(.+?)\)(?:- (.*))?$/);
+          if (match) {
+            const [, tipo, nombre, monto, detalles] = match;
+            return [tipo, nombre, monto, detalles ?? ''];
+          }
+          return ['?', '?', '?', '?'];
         }).flat();
-        const blank = Array((maxBecas * 3) - parsed.length).fill('');
+    
+        const blank = Array((maxBecas * 4) - parsed.length).fill('');
         return [...row, ...parsed, ...blank];
       });
-
+    
       const maxColsPerPage = 15;
       const totalPages = Math.ceil(fullHeaders.length / maxColsPerPage);
+    
       for (let p = 0; p < totalPages; p++) {
         const start = p * maxColsPerPage;
         const end = start + maxColsPerPage;
+    
         autoTable(doc, {
-          head: [ fullHeaders.slice(start, end) ],
+          head: [fullHeaders.slice(start, end)],
           body: rows.map(r => r.slice(start, end)),
           startY: 40,
           theme: 'grid',
-          headStyles: { fillColor:[33,37,41], textColor:255, fontSize:8 },
-          bodyStyles: { fontSize:7, valign:'top' },
-          styles: { overflow:'linebreak', cellPadding:2, halign:'left' },
-          margin: { top:40, left:10, right:10 },
+          headStyles: { fillColor: [33, 37, 41], textColor: 255, fontSize: 8 },
+          bodyStyles: { fontSize: 7, valign: 'top' },
+          styles: { overflow: 'linebreak', cellPadding: 2, halign: 'left' },
+          margin: { top: 40, left: 10, right: 10 },
           didDrawPage: data => {
             doc.setFontSize(12);
-            doc.text(`Listado de Alumnos - Página ${p+1}`, data.settings.margin.left, 30);
+            doc.text(`Listado de Alumnos - Página ${p + 1}`, data.settings.margin.left, 30);
           }
         });
+    
         if (p < totalPages - 1) doc.addPage();
       }
+    
       doc.save('alumnos.pdf');
     };
-
+    
+    
     return {
       // Búsqueda
       searchType, setSearchType,
