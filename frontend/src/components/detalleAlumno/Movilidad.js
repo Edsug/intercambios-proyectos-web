@@ -1,45 +1,141 @@
+// src/components/detalleAlumno/Movilidad.js
+
 import React from "react";
-import "../../styles/AlumnoDetail.css";
+import Section from "../common/Section";
+
 export default function Movilidad({ alumno, onChange, catalogos }) {
+  // Soportar camelCase y snake_case desde props
+  const tiposMov = catalogos.tiposMovilidad ?? catalogos.tipos_movilidad ?? [];
+  const tiposDest = catalogos.tiposDestino ?? catalogos.tipos_destino ?? [];
+  const paisesArr = catalogos.paises ?? [];
+  const estadosArr = catalogos.estados ?? [];
+
+  // Normalizar arrays (string u objeto { nombre })
+  const mapToNames = (arr) =>
+    arr.map(item => (item && typeof item === 'object' && 'nombre' in item ? item.nombre : item));
+  const movilidadOptions = mapToNames(tiposMov);
+  const destinoOptions = mapToNames(tiposDest);
+  const paisOptions = mapToNames(paisesArr);
+  const estadoOptions = mapToNames(estadosArr);
+
+  // Comparar tipo_destino en minúsculas para cubrir mayúsculas
+  const tipoDestSeleccionado = (alumno.tipo_destino || '').toLowerCase();
+  const esNacional = tipoDestSeleccionado === 'nacional';
+  const esInternacional = tipoDestSeleccionado === 'internacional';
+
   return (
-    <section>
-      <h3>Movilidad</h3>
+    <Section title="Movilidad" className="movilidad-section">
+      <div className="form-row">
+        <label>
+          TIPO DE MOVILIDAD:
+          <select
+            name="tipo_movilidad"
+            value={alumno.tipo_movilidad || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {movilidadOptions.map((t, i) => (
+              <option key={i} value={t}>{t}</option>
+            ))}
+          </select>
+        </label>
 
-      <label>Tipo de Movilidad:</label>
-      <select name="tipo_movilidad" value={alumno.tipo_movilidad || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.tiposMovilidad.map(m => <option key={m} value={m}>{m}</option>)}
-      </select>
+        <label>
+          TIPO DESTINO:
+          <select
+            name="tipo_destino"
+            value={alumno.tipo_destino || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {destinoOptions.map((d, i) => (
+              <option key={i} value={d}>{d}</option>
+            ))}
+          </select>
+        </label>
+      </div>
 
-      <label>Tipo de Destino:</label>
-      <select name="tipo_destino" value={alumno.tipo_destino || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.tiposDestino.map(d => <option key={d} value={d}>{d}</option>)}
-      </select>
+      <div className="form-row">
+        <label>
+          INSTITUCIÓN DESTINO:
+          <input
+            type="text"
+            name="institucion_destino"
+            value={alumno.institucion_destino || ""}
+            onChange={onChange}
+          />
+        </label>
 
-      <label>Institución Destino:</label>
-      <input type="text" name="institucion_destino" value={alumno.institucion_destino || ''} onChange={onChange} />
+        {esInternacional && (
+          <label>
+            PAÍS:
+            <select
+              name="pais"
+              value={alumno.pais || ""}
+              onChange={onChange}
+              required
+            >
+              <option value="">—Seleccione—</option>
+              {paisOptions.map((p, i) => (
+                <option key={i} value={p}>{p}</option>
+              ))}
+            </select>
+          </label>
+        )}
 
-      <label>País:</label>
-      <select name="pais" value={alumno.pais || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.paises.map(p => <option key={p} value={p}>{p}</option>)}
-      </select>
+        {esNacional && (
+          <label>
+            ESTADO:
+            <select
+              name="estado"
+              value={alumno.estado || ""}
+              onChange={onChange}
+              required
+            >
+              <option value="">—Seleccione—</option>
+              {estadoOptions.map((e, i) => (
+                <option key={i} value={e}>{e}</option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
 
-      <label>Estado:</label>
-      <select name="estado" value={alumno.estado || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.estados.map(e => <option key={e} value={e}>{e}</option>)}
-      </select>
+      <div className="form-row">
+        <label>
+          FECHA INICIO:
+          <input
+            type="date"
+            name="fecha_inicio"
+            value={alumno.fecha_inicio || ""}
+            onChange={onChange}
+          />
+        </label>
 
-      <label>Fecha de Inicio:</label>
-      <input type="date" name="fecha_inicio" value={alumno.fecha_inicio || ''} onChange={onChange} />
+        <label>
+          FECHA FIN:
+          <input
+            type="date"
+            name="fecha_fin"
+            value={alumno.fecha_fin || ""}
+            onChange={onChange}
+          />
+        </label>
+      </div>
 
-      <label>Fecha de Fin:</label>
-      <input type="date" name="fecha_fin" value={alumno.fecha_fin || ''} onChange={onChange} />
-
-      <label>Observaciones:</label>
-      <textarea name="observaciones_movilidad" value={alumno.observaciones_movilidad || ''} onChange={onChange} />
-    </section>
+      <div className="form-row">
+        <label>
+          OBSERVACIONES:
+          <textarea
+            name="observaciones_movilidad"
+            value={alumno.observaciones_movilidad || ""}
+            onChange={onChange}
+            placeholder="Detalles de la movilidad..."
+          />
+        </label>
+      </div>
+    </Section>
   );
 }

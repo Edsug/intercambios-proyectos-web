@@ -19,7 +19,7 @@ export default function SeccionDatosBeca({
 
   // Cargar catálogo desde PHP
   useEffect(() => {
-    fetch('http://localhost/basecambios/get_becas.php')
+    fetch('http://localhost/basecambios/get_becas_catalogo.php')
       .then(res => res.json())
       .then(data => {
         setCatalogoBecas(data);

@@ -1,69 +1,198 @@
+// src/components/detalleAlumno/DatosPersonales.js
 import React from "react";
-import "../../styles/DatosPersonales.css";
+import Section from "../common/Section";
+
 export default function DatosPersonales({ alumno, onChange, catalogos }) {
+  const {
+    niveles,
+    carreras,
+    maestrias,
+    sexos,
+    tipos_sangre: tiposSangre,
+    nacionalidades
+  } = catalogos;
+
   return (
-    <section>
-      <h3>Datos Personales</h3>
+    <Section title="Datos Personales" className="datos-personales-section">
+      {/* Código y Nombre */}
+      <div className="form-row">
+        <label>
+          CÓDIGO:
+          <input
+            type="text"
+            name="codigo"
+            value={alumno.codigo || ""}
+            onChange={onChange}
+            style={{ textTransform: "uppercase" }}
+            maxLength={9}
+            required
+          />
+        </label>
+        <label>
+          NOMBRE(S):
+          <input
+            type="text"
+            name="nombre"
+            value={alumno.nombre || ""}
+            onChange={onChange}
+            style={{ textTransform: "uppercase" }}
+            required
+          />
+        </label>
+      </div>
 
-      <label>Nombre:</label>
-      <input type="text" name="nombre" value={alumno.nombre || ''} onChange={onChange} />
+      {/* Apellidos y Nivel académico */}
+      <div className="form-row">
+        <label>
+          APELLIDOS:
+          <input
+            type="text"
+            name="apellidos"
+            value={alumno.apellidos || ""}
+            onChange={onChange}
+            style={{ textTransform: "uppercase" }}
+            required
+          />
+        </label>
+        <label>
+          NIVEL ACADÉMICO:
+          <select
+            name="nivel_academico"
+            value={alumno.nivel_academico || ""}
+            onChange={e => {
+              onChange({ target: { name: 'nivel_academico', value: e.target.value } });
+              onChange({ target: { name: 'carrera', value: '' } });
+              onChange({ target: { name: 'maestria', value: '' } });
+            }}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {niveles.map((n, i) => (
+              <option key={i} value={n}>{n}</option>
+            ))}
+          </select>
+        </label>
+      </div>
 
-      <label>Apellidos:</label>
-      <input type="text" name="apellidos" value={alumno.apellidos || ''} onChange={onChange} />
+      {/* Carrera o Maestría */}
+      {alumno.nivel_academico === "LICENCIATURA" && (
+        <div className="form-row">
+          <label>
+            CARRERA:
+            <select
+              name="carrera"
+              value={alumno.carrera || ""}
+              onChange={onChange}
+              required
+            >
+              <option value="">—Seleccione—</option>
+              {carreras.map((c, i) => (
+                <option key={i} value={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
+      {alumno.nivel_academico === "MAESTRÍA" && (
+        <div className="form-row">
+          <label>
+            MAESTRÍA:
+            <select
+              name="maestria"
+              value={alumno.maestria || ""}
+              onChange={onChange}
+              required
+            >
+              <option value="">—Seleccione—</option>
+              {maestrias.map((m, i) => (
+                <option key={i} value={m}>{m}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
-      <label>Nivel Académico:</label>
-      <select name="nivel_academico" value={alumno.nivel_academico || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.niveles.map(n => <option key={n} value={n}>{n}</option>)}
-      </select>
+      {/* Género, Tipo de Sangre y Nacionalidad */}
+      <div className="form-row">
+        <label>
+          GÉNERO:
+          <select
+            name="sexo"
+            value={alumno.sexo || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {sexos.map((s, i) => (
+              <option key={i} value={s}>{s}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          TIPO DE SANGRE:
+          <select
+            name="tipo_sangre"
+            value={alumno.tipo_sangre || ""}
+            onChange={onChange}
+          >
+            <option value="">—Seleccione—</option>
+            {tiposSangre.map((t, i) => (
+              <option key={i} value={t}>{t}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          NACIONALIDAD:
+          <select
+            name="nacionalidad"
+            value={alumno.nacionalidad || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {nacionalidades.map((n, i) => (
+              <option key={i} value={n}>{n}</option>
+            ))}
+          </select>
+        </label>
+      </div>
 
-      <label>Carrera:</label>
-      <select name="carrera" value={alumno.carrera || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.carreras.map(c => <option key={c} value={c}>{c}</option>)}
-      </select>
-
-      <label>Maestría:</label>
-      <select name="maestria" value={alumno.maestria || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.maestrias.map(m => <option key={m} value={m}>{m}</option>)}
-      </select>
-
-      <label>Sexo:</label>
-      <select name="sexo" value={alumno.sexo || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.sexos.map(s => <option key={s} value={s}>{s}</option>)}
-      </select>
-
-      <label>Tipo de Sangre:</label>
-      <select name="tipo_sangre" value={alumno.tipo_sangre || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.tiposSangre.map(t => <option key={t} value={t}>{t}</option>)}
-      </select>
-
-      <label>Fecha de Nacimiento:</label>
-      <input type="date" name="fecha_nacimiento" value={alumno.fecha_nacimiento || ''} onChange={onChange} />
-
-      <label>Semestre:</label>
-      <input type="number" name="semestre" value={alumno.semestre || ''} onChange={onChange} min="1" max="20" />
-
-      <label>Promedio:</label>
-      <input type="number" step="0.01" name="promedio" value={alumno.promedio || ''} onChange={onChange} />
-
-      <label>Teléfono:</label>
-      <input type="text" name="telefono" value={alumno.telefono || ''} onChange={onChange} />
-
-      <label>Correo:</label>
-      <input type="email" name="correo" value={alumno.correo || ''} onChange={onChange} />
-
-      <label>Contacto Emergencia:</label>
-      <input type="text" name="nombre_contacto_emergencia" value={alumno.nombre_contacto_emergencia || ''} onChange={onChange} />
-
-      <label>Tel. Emergencia:</label>
-      <input type="text" name="contacto_emergencia" value={alumno.contacto_emergencia || ''} onChange={onChange} />
-
-      <label>NSS:</label>
-      <input type="text" name="nss" value={alumno.nss || ''} onChange={onChange} />
-    </section>
+      {/* Fecha de nacimiento, Semestre y Promedio */}
+      <div className="form-row">
+        <label>
+          FECHA NACIMIENTO:
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            value={alumno.fecha_nacimiento || ""}
+            onChange={onChange}
+            required
+          />
+        </label>
+        <label>
+          SEMESTRE:
+          <input
+            type="number"
+            name="semestre"
+            value={alumno.semestre || ""}
+            onChange={onChange}
+            min="1"
+            max="20"
+          />
+        </label>
+        <label>
+          PROMEDIO:
+          <input
+            type="number"
+            name="promedio"
+            value={alumno.promedio || ""}
+            onChange={onChange}
+            step="0.01"
+            min="0"
+            max="100"
+          />
+        </label>
+      </div>
+    </Section>
   );
 }
