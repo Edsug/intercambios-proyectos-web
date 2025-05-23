@@ -197,6 +197,13 @@
   box-shadow: 0 0 0 3px rgba(0, 168, 107, 0.15);
 }
 
+.registro-form input:invalid,
+.registro-form select:invalid,
+.registro-form textarea:invalid {
+  border-color: var(--border-color); /* O el color que prefieras */
+
+}
+
 .registro-form input::placeholder {
   color: var(--text-lighter);
 }
