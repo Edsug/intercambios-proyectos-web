@@ -174,9 +174,8 @@ const Registro = () => {
     }
   };
 
-  return (
-    <div className="dashboard-content">
-      <ToastContainer position="top-left"
+  <ToastContainer 
+        position="top-left"
         autoClose={3000}
         closeButton={false}
         hideProgressBar={false}
@@ -187,6 +186,10 @@ const Registro = () => {
         draggable
         pauseOnHover 
       />
+
+  return (
+    <div className="dashboard-content">
+      
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>
