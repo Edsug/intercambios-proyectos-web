@@ -1,25 +1,63 @@
-import React from "react";
-import "../../styles/AlumnoDetail.css";
+// src/components/detalleAlumno/Programa.js
 
-export default function Programa({ alumno, onChange, catalogos }) {
+import React, { useState, useEffect } from "react";
+import Section from "../common/Section";
+
+export default function Programa({ alumno, onChange }) {
+  const [programas, setProgramas] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost/basecambios/get_programas.php")
+      .then(res => res.json())
+      .then(data => setProgramas(data))
+      .catch(err => console.error("Error cargando programas:", err));
+  }, []);
+
   return (
-    <section>
-      <h3>Programa</h3>
+    <Section title="Programa" className="programa-section">
+      <div className="form-row">
+        <label>
+          PROGRAMA:
+          <select
+            name="programa"
+            value={alumno.programa || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {programas.map((p, i) => (
+              <option key={i} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <label>Programa:</label>
-      <select name="programa" value={alumno.programa || ''} onChange={onChange}>
-        <option value="">Seleccione</option>
-        {catalogos.programas.map(p => <option key={p} value={p}>{p}</option>)}
-      </select>
+        <label>
+          FOLIO:
+          <input
+            name="folio"
+            style={{ textTransform: "uppercase" }}
+            value={alumno.folio || ""}
+            onChange={onChange}
+          />
+        </label>
 
-      <label>Folio:</label>
-      <input type="text" name="folio" value={alumno.folio || ''} onChange={onChange} />
+        <label>
+          ESTADO DEL PROGRAMA:
+          <select
+            name="estado_programa"
+            value={alumno.estado_programa || ""}
+            onChange={onChange}
+          >
+            <option value="">—Seleccione—</option>
+            <option value="ACTIVO">ACTIVO</option>
+            <option value="CANCELADO">CANCELADO</option>
+            <option value="RECHAZADO">RECHAZADO</option>
+          </select>
+        </label>
+      </div>
 
-      <label>Estado del Programa:</label>
-      <input type="text" name="estado_programa" value={alumno.estado_programa || ''} onChange={onChange} />
-
-      <label>Fecha de Registro:</label>
-      <input type="date" name="programa_fecha" value={alumno.programa_fecha || ''} onChange={onChange} />
-    </section>
+    </Section>
   );
 }
