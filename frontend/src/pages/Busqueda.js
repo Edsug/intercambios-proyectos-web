@@ -19,6 +19,7 @@ export default function Busqueda() {
     handleExportPDF,
     columnasPDF, setColumnasPDF
   } = useBusquedaConfig();
+  
 
   return (
     <div className="dashboard-content">
@@ -99,8 +100,8 @@ export default function Busqueda() {
                   name="semestre"
                   value={filtros.semestre}
                   onChange={handleFilterChange}
-                  min="1"
-                  max="20"
+                  min="3"
+                  max="10"
                 />
               </div>
 
@@ -126,72 +127,128 @@ export default function Busqueda() {
               </div>
             </div>
 
-            <div className="filter-buttons">
-              <button onClick={handleSearch} disabled={loading}>
-                Aplicar filtros
+            <div className="filter-actions">
+              <button
+                className="btn btn-success"
+                onClick={handleSearch}
+                disabled={loading}
+              >
+                <i className="fas fa-check"></i> Aplicar Filtros
               </button>
-              <button onClick={resetFiltros}>Limpiar filtros</button>
+              <button
+                className="btn btn-outline-secondary"
+                onClick={resetFiltros}
+              >
+                <i className="fas fa-times"></i> Limpiar Filtros
+              </button>
             </div>
           </div>
-        )}
-
+      )}
       </section>
 
       {alumnos.length > 0 && (
         <section className="export-section">
-          <div className="export-section-title">Generación de reporte</div>
-          <div className="export-actions">
-            <button
-              onClick={() => setMostrarColumnas(prev => !prev)}
-              className="column-toggle-button"
-            >
-              <i className={`fas ${mostrarColumnas ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-              {mostrarColumnas
-                ? 'Ocultar selección de columnas'
-                : 'Habilitar selección de columnas'}
-            </button>
-            <div className="export-buttons">
-              <button onClick={handleExportExcel} className="export-button">
-                <i className="fas fa-file-excel"></i> Exportar a Excel
-              </button>
-              <button onClick={handleExportPDF} className="export-button">
-                <i className="fas fa-file-pdf"></i> Exportar a PDF
-              </button>
+          <div className="export-header">
+            <div className="export-title">
+              <i className="fas fa-download"></i>
+              Generación de Reportes
+            </div>
+            <div className="results-count">
+              {alumnos.length} registros encontrados
             </div>
           </div>
-          {mostrarColumnas && (
-            <div className="column-selector">
-              <h4>Selección de columnas:</h4>
-              <div className="column-grid">
-                {columnasPDF.map((col, idx) => (
-                  <label key={idx} className="column-option">
-                    <input
-                      type="checkbox"
-                      checked={col.visible}
-                      onChange={() => {
-                        const updated = [...columnasPDF];
-                        updated[idx].visible = !updated[idx].visible;
-                        setColumnasPDF(updated);
-                      }}
-                    />
-                    {col.label}
-                  </label>
-                ))}
+          <div className="export-content">
+            <div className="export-controls">
+              <button
+                className="btn column-toggle-btn"
+                onClick={() => setMostrarColumnas(prev => !prev)}
+              >
+                <i className={`fas ${mostrarColumnas ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                {mostrarColumnas
+                  ? ' Ocultar selección de columnas'
+                  : ' Mostrar selección de columnas'}
+              </button>
+              <div className="export-buttons">
+                <button
+                  className="export-btn export-btn-excel"
+                  onClick={handleExportExcel}
+                >
+                  <div className="export-btn-icon">
+                    <i className="fas fa-file-excel"></i>
+                  </div>
+                  <div className="export-btn-text">Exportar a Excel</div>
+                  <div className="export-btn-desc">
+                    Descarga los datos en formato XLSX para análisis avanzado
+                  </div>
+                </button>
+                <button
+                  className="export-btn export-btn-pdf"
+                  onClick={handleExportPDF}
+                >
+                  <div className="export-btn-icon">
+                    <i className="fas fa-file-pdf"></i>
+                  </div>
+                  <div className="export-btn-text">Exportar a PDF</div>
+                  <div className="export-btn-desc">
+                    Genera un reporte imprimible con formato profesional
+                  </div>
+                </button>
               </div>
             </div>
-          )}
+            {mostrarColumnas && (
+              <div className="column-selector">
+                <div className="column-controls">
+                  <h4>
+                    <i className="fas fa-columns"></i> Configurar Columnas
+                  </h4>
+                  <hr className="column-controls-separator" />
+                  <p className="column-controls-desc">
+                    Selecciona las columnas que deseas mostrar en la tabla de resultados.
+                  </p>
+                </div>
+                <div className="column-grid">
+                  {columnasPDF.map((col, idx) => (
+                    <label key={idx} className="column-option">
+                      <input
+                        type="checkbox"
+                        checked={col.visible}
+                        onChange={() => {
+                          const updated = [...columnasPDF];
+                          updated[idx].visible = !updated[idx].visible;
+                          setColumnasPDF(updated);
+                        }}
+                      />
+                      {col.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </section>
       )}
 
       <section className="results-container">
         <div className="results-header">
-          <h3>Resultados ({alumnos.length})</h3>
+          <div className="results-title">
+            <i className="fas fa-table"></i>
+            Resultados de Búsqueda
+          </div>
+          <div className="results-count">
+            {alumnos.length} alumnos
+          </div>
         </div>
-        {loading && <p className="loading-msg">Cargando resultados…</p>}
+        {loading && (
+          <div className="loading-msg">
+            <div className="loading-spinner" />
+            <p>Cargando resultados…</p>
+          </div>
+        )}
         {!loading && hasSearched && alumnos.length === 0 && (
-          <p className="no-results">
-            No se encontraron alumnos con los criterios especificados.
-          </p>
+          <div className="no-results">
+            <i className="fas fa-search"></i>
+            <p>No se encontraron alumnos con los criterios especificados.</p>
+          </div>
         )}
         {alumnos.length > 0 && (
           <div className="table-responsive">
@@ -251,10 +308,9 @@ export default function Busqueda() {
                   </tr>
                 );
               })}
-          </tbody>
-
+            </tbody>
           </table>
-        </div>
+          </div>
         )}
       </section>
     </div>
