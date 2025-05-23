@@ -191,14 +191,7 @@ export default function Busqueda() {
                 <th>Semestre</th>
                 <th>Promedio</th>
                 <th>Certif. Calif.</th>
-                <th>Disp.</th>
-                <th>Datos Disp.</th>
                 <th>Seguro</th>
-                <th>Aseguradora</th>
-                <th>Póliza</th>
-                <th>F. Ini Seg.</th>
-                <th>F. Fin Seg.</th>
-                <th>Obs. Seg.</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -229,39 +222,10 @@ export default function Busqueda() {
                       )}
                     </td>
                     <td>
-                      {esVerdadero(a.cuenta_discapacidad) ? (
-                        <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
-                      ) : (
-                        <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
-                      )}
-                    </td>
-                    <td>
-                      {a.datos_discapacidad ? (
-                        <span className="truncate-text" title={a.datos_discapacidad}>
-                          {a.datos_discapacidad}
-                        </span>
-                      ) : (
-                        <span className="empty-cell">-</span>
-                      )}
-                    </td>
-                    <td>
                       {esVerdadero(a.seguro_viaje) ? (
                         <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
                       ) : (
                         <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
-                      )}
-                    </td>
-                    <td>{a.aseguradora || <span className="empty-cell">-</span>}</td>
-                    <td>{a.poliza || <span className="empty-cell">-</span>}</td>
-                    <td>{a.seguro_inicio || <span className="empty-cell">-</span>}</td>
-                    <td>{a.seguro_fin || <span className="empty-cell">-</span>}</td>
-                    <td>
-                      {a.observaciones_seguro ? (
-                        <span className="truncate-text" title={a.observaciones_seguro}>
-                          {a.observaciones_seguro}
-                        </span>
-                      ) : (
-                        <span className="empty-cell">-</span>
                       )}
                     </td>
                     <td>

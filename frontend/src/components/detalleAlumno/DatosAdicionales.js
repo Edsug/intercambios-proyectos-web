@@ -1,5 +1,5 @@
 import React from "react";
-
+import "../../styles/DatosAdicionales.css";
 export default function DatosAdicionales({ alumno, onChange }) {
   return (
     <section>
