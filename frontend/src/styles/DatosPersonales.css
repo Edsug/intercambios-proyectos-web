@@ -1,182 +1,177 @@
-/* frontend/src/styles/DatosPersonales.css */
-/* Estilos específicos para la sección de Datos Personales */
-
-.datos-personales-section {
-  font-family: 'Poppins', sans-serif;
-  background-color: #ffffff;
+/* Estilos para el componente DatosAdicionales */
+section {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.8rem;
-  overflow: hidden;
+  padding: 20px;
+  margin: 20px 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Encabezado mejorado */
-.datos-personales-section .section-header {
-  background: linear-gradient(to right, #00a650, #00c85d);
-  color: white;
-  padding: 15px 20px;
+section h3 {
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Estilos para etiquetas principales (checkboxes) */
+section > label {
   display: flex;
   align-items: center;
-  position: relative;
-}
-
-.datos-personales-section .section-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.datos-personales-section .section-header::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 24px;
-  background-color: white;
-  margin-right: 14px;
-  border-radius: 3px;
-}
-
-/* Contenido de la sección */
-.datos-personales-section .section-content {
-  padding: 25px 30px;
-}
-
-/* Filas de formulario */
-.datos-personales-section .form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 20px;
-}
-
-/* Etiquetas */
-.datos-personales-section label {
-  flex: 1 1 calc(50% - 12px);
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  font-weight: 600;
-  color: #5a5a5a;
-  margin-bottom: 5px;
-}
-
-/* Campos de entrada */
-.datos-personales-section input,
-.datos-personales-section select {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-  margin-top: 6px;
-  transition: all 0.2s ease-in-out;
-}
-
-/* Estilos para hover */
-.datos-personales-section input:hover,
-.datos-personales-section select:hover {
-  border-color: #c8c8c8;
-}
-
-/* Estilos para focus */
-.datos-personales-section input:focus,
-.datos-personales-section select:focus {
-  outline: none;
-  border-color: #00a650;
-  box-shadow: 0 0 0 3px rgba(0, 166, 80, 0.15);
-}
-
-/* Estilo para campos selects */
-.datos-personales-section select {
-  appearance: none;
-  background-color: white;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: calc(100% - 15px) center;
-  padding-right: 40px;
-  cursor: pointer;
-}
-
-/* Estilo para opciones del select */
-.datos-personales-section select option {
-  font-size: 14px;
+  margin: 15px 0;
   padding: 10px;
-}
-
-/* Estilo para campos numéricos */
-.datos-personales-section input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-.datos-personales-section input[type="number"]::-webkit-outer-spin-button,
-.datos-personales-section input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Estilo para campos de fecha */
-.datos-personales-section input[type="date"] {
-  position: relative;
-  color: #333;
-}
-
-.datos-personales-section input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
   cursor: pointer;
-  position: absolute;
-  right: 10px;
-  background-color: transparent;
-  padding: 5px;
-  border-radius: 3px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  font-weight: 500;
+  color: #495057;
 }
 
-/* Estilo para campos inválidos */
-.datos-personales-section input:invalid,
-.datos-personales-section select:invalid {
-  border-color: #ff6b6b;
+section > label:hover {
+  background-color: #e3f2fd;
+  border-color: #3498db;
 }
 
-/* Estilo para inputs con texto en MAYÚSCULAS */
-.datos-personales-section input[style*="textTransform: uppercase"] {
-  text-transform: uppercase;
+/* Estilos para checkboxes */
+section input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
+  cursor: pointer;
 }
 
-/* Responsive para pantallas medianas */
-@media (max-width: 992px) {
-  .datos-personales-section .form-row {
-    gap: 20px;
-  }
-  
-  .datos-personales-section label {
-    flex: 1 1 calc(50% - 10px);
-  }
+/* Contenedor para campos condicionales */
+section > label + div,
+section > label:has(+ div) ~ div {
+  background-color: #ffffff;
+  border: 1px solid #d1ecf1;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 10px 0 20px 0;
+  border-left: 4px solid #3498db;
 }
 
-/* Responsive para pantallas pequeñas */
+/* Etiquetas para campos de texto dentro de secciones condicionales */
+section label:not(:has(input[type="checkbox"])) {
+  display: block;
+  margin: 10px 0 5px 0;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+/* Campos de texto */
+section input[type="text"],
+section input[type="date"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #495057;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 10px;
+}
+
+section input[type="text"]:focus,
+section input[type="date"]:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Textareas */
+section textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #495057;
+  background-color: #ffffff;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 10px;
+}
+
+section textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Estilos específicos para la sección de seguro */
+section input[name="nombre_aseguradora"],
+section input[name="numero_poliza"],
+section input[name="fecha_inicio_seguro"],
+section input[name="fecha_fin_seguro"],
+section input[name="contacto_aseguradora"] {
+  margin-bottom: 15px;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .datos-personales-section .form-row {
-    flex-direction: column;
-    gap: 16px;
+  section {
+    padding: 15px;
+    margin: 15px 0;
   }
   
-  .datos-personales-section label {
-    flex: 1 1 100%;
+  section h3 {
+    font-size: 1.3rem;
   }
   
-  .datos-personales-section .section-content {
-    padding: 20px;
+  section > label {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  
+  section input[type="text"],
+  section input[type="date"],
+  section textarea {
+    font-size: 16px; /* Evita zoom en iOS */
   }
 }
 
-/* Animación suave para cambios de estado */
-.datos-personales-section .form-row {
-  transition: all 0.3s ease;
+/* Estados de validación */
+section input:invalid {
+  border-color: #e74c3c;
 }
 
-/* Estilos para validación de campos */
-.datos-personales-section input:required:valid,
-.datos-personales-section select:required:valid {
-  border-color: #00a650;
-  background-color: rgba(0, 166, 80, 0.03);
+section input:valid {
+  border-color: #27ae60;
+}
+
+/* Efectos adicionales */
+section > label input[type="checkbox"]:checked + span {
+  color: #3498db;
+  font-weight: 600;
+}
+
+/* Animación suave para campos condicionales */
+section > label:has(input[type="checkbox"]:checked) ~ div {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
 }

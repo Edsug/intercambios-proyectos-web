@@ -1,5 +1,5 @@
 import React from "react";
-
+import "../../styles/AlumnoDetail.css";
 export default function Movilidad({ alumno, onChange, catalogos }) {
   return (
     <section>

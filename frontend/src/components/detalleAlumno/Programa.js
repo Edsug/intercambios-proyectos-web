@@ -1,4 +1,5 @@
 import React from "react";
+import "../../styles/AlumnoDetail.css";
 
 export default function Programa({ alumno, onChange, catalogos }) {
   return (
