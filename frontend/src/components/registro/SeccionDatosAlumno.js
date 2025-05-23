@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 export default function SeccionDatosAlumno({
   formData,
@@ -19,7 +20,7 @@ export default function SeccionDatosAlumno({
   if (file) {
     // Validar tamaño de archivo (5MB máximo)
     if (file.size > 5 * 1024 * 1024) {
-      alert('El archivo es demasiado grande. El tamaño máximo es 5MB.');
+      toast.error('El archivo es demasiado grande. El tamaño máximo es 5MB.');
       e.target.value = '';
       return;
     }
@@ -27,7 +28,7 @@ export default function SeccionDatosAlumno({
     // Validar tipo de archivo
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     if (!validTypes.includes(file.type)) {
-      alert('Formato de archivo no válido. Use JPG, PNG o GIF.');
+      toast.error('Formato de archivo no válido. Use JPG, PNG o GIF.');
       e.target.value = '';
       return;
     }
@@ -55,8 +56,6 @@ export default function SeccionDatosAlumno({
         <div className="form-row">
           <label style={{ alignItems: "center" }}>
             FOTO DEL ALUMNO:
-          
-          
             <div className={`foto-upload-container ${previewFoto ? 'has-image' : ''}`}>
               {!previewFoto ? (
                 <div>
@@ -110,7 +109,7 @@ export default function SeccionDatosAlumno({
                 required
               />
             </div>             
-          {errores.FOTO && <span className="error-message">{errores.FOTO}</span>}
+            {errores.FOTO && <span className="error-message">{errores.FOTO}</span>}
           </label> 
         </div>
         <div className="form-row">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from "react-toastify";
 
 export default function SeccionDatosBeca({
   formData,
@@ -54,7 +55,8 @@ export default function SeccionDatosBeca({
 
   const agregarBeca = () => {
     if (!newBeca.tipo || !newBeca.nombre || !newBeca.monto || isNaN(newBeca.monto)) {
-      alert('Complete todos los campos correctamente.');
+      toast.error("Complete todos los campos correctamente.");
+
       return;
     }
 

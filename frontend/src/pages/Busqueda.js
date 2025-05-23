@@ -45,18 +45,33 @@ export default function Busqueda() {
             onChange={e => setSearchValue(e.target.value)}
           />
 
-          <button onClick={handleSearch} disabled={loading}>
-            {loading ? 'Buscando…' : 'Buscar'}
-          </button>
+          <div class="search-actions">
+            <button 
+              class="btn btn-primary" 
+              onClick={handleSearch} 
+              disabled={loading}
+            >
+              {loading ? 'Buscando…' : (
+                <><i className="fas fa-search"></i> Buscar</>
+              )}
+            </button>
 
-          <button onClick={() => setFiltrosAvanzados(prev => !prev)}>
-            {filtrosAvanzados ? 'Ocultar filtros' : 'Mostrar filtros avanzados'}
-          </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setFiltrosAvanzados(prev => !prev)}
+            >
+              <i className={`fas ${filtrosAvanzados ? 'fa-times' : 'fa-filter'}`}></i>
+              {filtrosAvanzados ? ' Ocultar filtros' : ' Filtros Avanzados'}
+            </button>
+          </div>
         </div>
 
         {filtrosAvanzados && (
           <div className="advanced-filters">
-            <h3>Filtros Avanzados</h3>
+            <div className="filters-header">
+              <i className="fas fa-sliders-h"></i>
+              Filtros Avanzados
+            </div>
             <div className="filter-grid">
               {selectFields.map(({ l, n, opts }) => (
                 <div className="filter-item" key={n}>

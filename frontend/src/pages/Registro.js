@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/FrmRegistro.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { initialFormData, REGEX } from "../config/config";
 import SeccionPrograma from "../components/registro/SeccionPrograma";
 import SeccionMovilidad from "../components/registro/SeccionMovilidad";
@@ -139,7 +141,7 @@ const Registro = () => {
     setErrores({});
   };
 
-  const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validarCampos()) {
       window.scrollTo(0, 0);
@@ -154,23 +156,37 @@ const Registro = () => {
       });
       const text = await resp.text();
       if (!resp.ok) {
-        alert(`Error HTTP ${resp.status}: ${text}`);
+        toast.error(`Error HTTP ${resp.status}: ${text}`);
         return;
       }
       const data = JSON.parse(text);
       if (data.status === "success") {
-        alert("Alumno registrado correctamente");
-        resetForm();
+        toast.success("Alumno registrado correctamente");
+        resetForm();        <div className="dashboard-content">
+          <ToastContainer position="top-center" autoClose={3000} />
+          {/* ...el resto de tu contenido... */}
+        </div>
       } else {
-        alert("Error al registrar: " + data.message);
+        toast.error("Error al registrar: " + data.message);
       }
     } catch (err) {
-      alert("Error de conexión: " + err.message);
+      toast.error("Error de conexión: " + err.message);
     }
   };
 
   return (
     <div className="dashboard-content">
+      <ToastContainer position="top-left"
+        autoClose={3000}
+        closeButton={false}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover 
+      />
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>
