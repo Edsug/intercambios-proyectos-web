@@ -77,10 +77,11 @@ export default function AlumnoDetail() {
         return res.json();
       })
       .then(data => {
-        // aseguro array de becas
         data.becas = Array.isArray(data.becas) ? data.becas : [];
+        data.codigo_original = data.codigo; // respaldo del código original
         setAlumno(data);
       })
+      
       .catch(err => {
         setError(err.message);
         setTimeout(() => navigate("/busqueda"), 3000);

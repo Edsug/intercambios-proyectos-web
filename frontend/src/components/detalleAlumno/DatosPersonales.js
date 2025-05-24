@@ -15,6 +15,13 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
 
   return (
     <Section title="Datos Personales" className="datos-personales-section">
+      {/* Código original oculto */}
+      <input
+        type="hidden"
+        name="codigo_original"
+        value={alumno.codigo_original || alumno.codigo || ""}
+      />
+
       {/* Código y Nombre */}
       <div className="form-row">
         <label>
@@ -26,7 +33,6 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             onChange={onChange}
             style={{ textTransform: "uppercase" }}
             maxLength={9}
-            readOnly 
             required
           />
         </label>
@@ -67,7 +73,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
               onChange({ target: { name: 'maestria', value: '' } });
               onChange({ target: { name: 'doctorado', value: '' } });
             }}
-            disabled 
+            disabled
             required
           >
             <option value="">—Seleccione—</option>

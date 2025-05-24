@@ -17,7 +17,8 @@ export default function Busqueda() {
     handleSearch,
     handleExportExcel,
     handleExportPDF,
-    columnasPDF, setColumnasPDF
+    columnasPDF, setColumnasPDF,
+    incluirBecas, setIncluirBecas // ← ✅ AÑADE ESTO
   } = useBusquedaConfig();
   
 
@@ -195,6 +196,9 @@ export default function Busqueda() {
                 </button>
               </div>
             </div>
+
+
+
             {mostrarColumnas && (
               <div className="column-selector">
                 <div className="column-controls">
@@ -205,7 +209,26 @@ export default function Busqueda() {
                   <p className="column-controls-desc">
                     Selecciona las columnas que deseas mostrar en la tabla de resultados.
                   </p>
+
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() => {
+                      const allVisible = columnasPDF.every(c => c.visible) && incluirBecas;
+                      const updated = columnasPDF.map(col => ({
+                        ...col,
+                        visible: !allVisible
+                      }));
+                      setColumnasPDF(updated);
+                      setIncluirBecas(!allVisible); // también alternar el checkbox de becas
+                    }}
+                  >
+                    <i className="fas fa-check-square"></i>{" "}
+                    {columnasPDF.every(c => c.visible) && incluirBecas
+                      ? "Deseleccionar todo"
+                      : "Seleccionar todo"}
+                  </button>
                 </div>
+
                 <div className="column-grid">
                   {columnasPDF.map((col, idx) => (
                     <label key={idx} className="column-option">
@@ -221,9 +244,24 @@ export default function Busqueda() {
                       {col.label}
                     </label>
                   ))}
+
+                  {/* ✅ Checkbox para becas */}
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '8px 0' }}>
+                    <input
+                      type="checkbox"
+                      checked={incluirBecas}
+                      onChange={e => setIncluirBecas(e.target.checked)}
+                    />
+                    Mostrar becas en reporte
+                  </label>
                 </div>
               </div>
             )}
+
+
+
+
+
           </div>
         </section>
       )}

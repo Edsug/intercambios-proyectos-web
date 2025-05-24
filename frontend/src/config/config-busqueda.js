@@ -15,6 +15,7 @@
     const [loading, setLoading] = useState(false);
     const [alumnos, setAlumnos] = useState([]);
     const [mostrarColumnas, setMostrarColumnas] = useState(false);
+    const [incluirBecas, setIncluirBecas] = useState(true); // por defecto activado
     const [catalogos, setCatalogos] = useState({
       carreras: [], programas: [], estados: [], actividades: [],
       semestres: [],
@@ -146,121 +147,150 @@
 
 
     // — Exportar a Excel
-    const handleExportExcel = async () => {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Alumnos');
-    
-      const columnasVisibles = columnasPDF.filter(c => c.visible);
-      const header = columnasVisibles.map(col => col.label);
-    
-      // Paso 1: calcular cuántas becas tiene el alumno con más becas
-      const maxBecas = alumnos.reduce((max, a) => {
-        const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
+    // — Exportar a Excel
+const handleExportExcel = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Alumnos');
+
+  const columnasVisibles = columnasPDF.filter(c => c.visible);
+  if (columnasVisibles.length === 0) {
+    alert("⚠️ Debes seleccionar al menos una columna para exportar el Excel.");
+    return;
+  }
+
+  const header = columnasVisibles.map(col => col.label);
+
+  // Paso 1: calcular cuántas becas tiene el alumno con más becas (si se van a incluir)
+  const maxBecas = incluirBecas
+    ? alumnos.reduce((max, a) => {
+        const becas = a?.detalle_becas ? a.detalle_becas.split('; ') : [];
         return Math.max(max, becas.length);
-      }, 0);
-    
-      // Paso 2: columnas dinámicas para becas
-      for (let i = 0; i < maxBecas; i++) {
-        header.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`, `Beca ${i + 1} Detalles`);
+      }, 0)
+    : 0;
+
+  // Paso 2: agregar columnas dinámicas para becas si aplica
+  if (incluirBecas) {
+    for (let i = 0; i < maxBecas; i++) {
+      header.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`, `Beca ${i + 1} Detalles`);
+    }
+  }
+
+  worksheet.addRow(header);
+
+  // Paso 3: agregar datos de cada alumno
+  const rows = alumnos.map(a => {
+    const seleccionados = columnasVisibles.map(c => {
+      if (c.id === 'especialidad') {
+        return a.nivel_academico === 'LICENCIATURA'
+          ? a.carrera
+          : a.nivel_academico === 'MAESTRÍA'
+          ? a.maestria
+          : a.nivel_academico === 'DOCTORADO'
+          ? a.doctorado
+          : '';
       }
-    
-      worksheet.addRow(header);
-    
-      // Paso 3: agregar datos
-      const rows = alumnos.map(a => {
-        const seleccionados = columnasVisibles.map(c => {
-          if (c.id === 'especialidad') {
-            return a.nivel_academico === 'LICENCIATURA'
-              ? a.carrera
-              : a.nivel_academico === 'MAESTRÍA'
-                ? a.maestria
-                : a.nivel_academico === 'DOCTORADO'
-                  ? a.doctorado
-                  : '';
-          }
-          return a[c.id] ?? '';
-        });
-    
-        const becas = a.detalle_becas ? a.detalle_becas.split('; ') : [];
-        const parsed = becas.map(str => {
+      return a[c.id] ?? '';
+    });
+
+    const becas = incluirBecas && a?.detalle_becas ? a.detalle_becas.split('; ') : [];
+    const parsed = incluirBecas
+      ? becas.map(str => {
           const match = str.match(/^(.+?): (.+?) \(\$(\d+(?:\.\d+)?)\)(?:- (.*))?$/);
           if (match) {
             const [, tipo, nombre, monto, detalles] = match;
             return [tipo, nombre, monto, detalles ?? ''];
           }
           return ['?', '?', '?', '?'];
-        }).flat();
-    
-        const blank = Array((maxBecas * 4) - parsed.length).fill('');
-        return [...seleccionados, ...parsed, ...blank];
-      });
-    
-      // Estilo de encabezado
-      const headerRow = worksheet.getRow(1);
-      headerRow.height = 24;
-      headerRow.eachCell(cell => {
-        cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '305496' } };
-        cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-      });
-    
-      // Filas
-      rows.forEach((row, i) => {
-        const newRow = worksheet.addRow(row);
-        const fillColor = i % 2 === 0 ? 'F2F2F2' : 'FFFFFF';
-        newRow.eachCell(cell => {
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } };
-          cell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
-          cell.border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' }
-          };
-        });
-      });
-    
-      // Ajustar ancho de columnas
-      worksheet.columns.forEach((col, i) => {
-        let maxLength = header[i].length;
-        rows.forEach(r => {
-          const val = r[i];
-          if (val && val.toString().length > maxLength) {
-            maxLength = val.toString().length;
-          }
-        });
-        col.width = maxLength + 2;
-      });
-    
-      const buffer = await workbook.xlsx.writeBuffer();
-      saveAs(new Blob([buffer]), 'alumnos.xlsx');
+        }).flat()
+      : [];
+
+    const blank = incluirBecas ? Array((maxBecas * 4) - parsed.length).fill('') : [];
+
+    return [...seleccionados, ...parsed, ...blank];
+  });
+
+  // Estilo del encabezado
+  const headerRow = worksheet.getRow(1);
+  headerRow.height = 24;
+  headerRow.eachCell(cell => {
+    cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 11 };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '305496' } };
+    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
     };
+  });
+
+  // Agregar filas
+  rows.forEach((row, i) => {
+    const newRow = worksheet.addRow(row);
+    const fillColor = i % 2 === 0 ? 'F2F2F2' : 'FFFFFF';
+    newRow.eachCell(cell => {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fillColor } };
+      cell.alignment = { horizontal: 'left', vertical: 'top', wrapText: true };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+  });
+
+  // Ajustar ancho de columnas
+  worksheet.columns.forEach((col, i) => {
+    let maxLength = header[i].length;
+    rows.forEach(r => {
+      const val = r[i];
+      if (val && val.toString().length > maxLength) {
+        maxLength = val.toString().length;
+      }
+    });
+    col.width = maxLength + 2;
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  saveAs(new Blob([buffer]), 'alumnos.xlsx');
+};
+
     
 
     // — Exportar a PDF
     const handleExportPDF = () => {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    
       const columnasVisibles = columnasPDF.filter(c => c.visible);
+      if (columnasVisibles.length === 0) {
+        alert("⚠️ Debes seleccionar al menos una columna para exportar el PDF.");
+        return;
+      }
+    
       const headers = columnasVisibles.map(c => c.label);
     
-      // Determinar el máximo de becas encontradas
-      let maxBecas = 0;
-      alumnos.forEach(alumno => {
-        const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
-        if (becas.length > maxBecas) maxBecas = becas.length;
-      });
+      // Calcular máximo de becas solo si se van a incluir
+      const maxBecas = incluirBecas
+        ? alumnos.reduce((max, a) => {
+            const becas = a?.detalle_becas ? a.detalle_becas.split('; ') : [];
+            return Math.max(max, becas.length);
+          }, 0)
+        : 0;
     
-      // Generar encabezados dinámicos
+      // Encabezados dinámicos de becas si aplica
       const becaHeaders = [];
-      for (let i = 0; i < maxBecas; i++) {
-        becaHeaders.push(`Beca ${i + 1} Tipo`, `Beca ${i + 1} Nombre`, `Beca ${i + 1} Monto`, `Beca ${i + 1} Detalles`);
+      if (incluirBecas) {
+        for (let i = 0; i < maxBecas; i++) {
+          becaHeaders.push(
+            `Beca ${i + 1} Tipo`,
+            `Beca ${i + 1} Nombre`,
+            `Beca ${i + 1} Monto`,
+            `Beca ${i + 1} Detalles`
+          );
+        }
       }
+    
       const fullHeaders = [...headers, ...becaHeaders];
     
       const rows = alumnos.map(alumno => {
@@ -269,23 +299,28 @@
             return alumno.nivel_academico === 'LICENCIATURA'
               ? alumno.carrera
               : alumno.nivel_academico === 'MAESTRÍA'
-                ? alumno.maestria
-                : '';
+              ? alumno.maestria
+              : alumno.nivel_academico === 'DOCTORADO'
+              ? alumno.doctorado
+              : '';
           }
           return alumno[c.id] ?? '';
         });
     
-        const becas = alumno.detalle_becas ? alumno.detalle_becas.split('; ') : [];
-        const parsed = becas.map(str => {
-          const match = str.match(/^(.+?): (.+?) \(\$(.+?)\)(?:- (.*))?$/);
-          if (match) {
-            const [, tipo, nombre, monto, detalles] = match;
-            return [tipo, nombre, monto, detalles ?? ''];
-          }
-          return ['?', '?', '?', '?'];
-        }).flat();
+        const becas = incluirBecas && alumno?.detalle_becas ? alumno.detalle_becas.split('; ') : [];
+        const parsed = incluirBecas
+          ? becas.map(str => {
+              const match = str.match(/^(.+?): (.+?) \(\$(.+?)\)(?:- (.*))?$/);
+              if (match) {
+                const [, tipo, nombre, monto, detalles] = match;
+                return [tipo, nombre, monto, detalles ?? ''];
+              }
+              return ['?', '?', '?', '?'];
+            }).flat()
+          : [];
     
-        const blank = Array((maxBecas * 4) - parsed.length).fill('');
+        const blank = incluirBecas ? Array((maxBecas * 4) - parsed.length).fill('') : [];
+    
         return [...row, ...parsed, ...blank];
       });
     
@@ -318,6 +353,7 @@
     };
     
     
+    
     return {
       // Búsqueda
       searchType, setSearchType,
@@ -329,6 +365,7 @@
       catalogos, filtros,
       columnasPDF, setColumnasPDF,
       selectFields,
+      incluirBecas, setIncluirBecas, // ✅ AGREGADO
       // Handlers
       handleFilterChange,
       resetFiltros,
