@@ -11,6 +11,7 @@ export default function SeccionDatosAlumno({
 }) {
   const [carreras, setCarreras] = useState([]);
   const [maestria, setMaestrias] = useState([]);
+  const [doctorados, setDoctorados] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
   const [previewFoto, setPreviewFoto] = useState(formData.FOTO ? URL.createObjectURL(formData.FOTO) : null);
 
@@ -43,6 +44,8 @@ export default function SeccionDatosAlumno({
       .then(r => r.json()).then(setCarreras).catch(console.error);
     fetch('http://localhost/basecambios/get_maestrias.php')
       .then(r => r.json()).then(setMaestrias).catch(console.error);
+    fetch('http://localhost/basecambios/get_doctorados.php')
+      .then(r => r.json()).then(setDoctorados).catch(console.error);
     fetch('http://localhost/basecambios/get_nacionalidades.php')
       .then(r => r.json()).then(setNacionalidades).catch(console.error);
   }, []);
@@ -152,10 +155,12 @@ export default function SeccionDatosAlumno({
               value={formData.NIVEL_ACADEMICO}
               onChange={e => {
                 const v = e.target.value;
-                setFormData({ ...formData,
+                setFormData({
+                  ...formData,
                   NIVEL_ACADEMICO: v,
                   CARRERA: '',
-                  MAESTRIA: ''
+                  MAESTRIA: '',
+                  DOCTORADO: ''
                 });
               }}
               required
@@ -163,7 +168,9 @@ export default function SeccionDatosAlumno({
               <option value="">—Seleccione—</option>
               <option value="LICENCIATURA">LICENCIATURA</option>
               <option value="MAESTRÍA">MAESTRÍA</option>
+              <option value="DOCTORADO">DOCTORADO</option>
             </select>
+
             {errores.NIVEL_ACADEMICO && <span className="error-message">{errores.NIVEL_ACADEMICO}</span>}
           </label>
         </div>
@@ -203,6 +210,25 @@ export default function SeccionDatosAlumno({
             </label>
           </div>
         )}
+
+        {formData.NIVEL_ACADEMICO === 'DOCTORADO' && (
+          <div className="form-row">
+            <label className="select-label">
+              DOCTORADO:
+              <select
+                name="DOCTORADO"
+                value={formData.DOCTORADO}
+                onChange={handleChange}
+                required
+              >
+                <option value="">—Seleccione—</option>
+                {doctorados.map((d, i) => <option key={i} value={d}>{d}</option>)}
+              </select>
+              {errores.DOCTORADO && <span className="error-message">{errores.DOCTORADO}</span>}
+            </label>
+          </div>
+        )}
+
 
         {/* 4️⃣ Nacionalidad */}
         <div className="form-row">

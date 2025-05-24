@@ -48,6 +48,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
             value={alumno.tipo_destino || ""}
             onChange={onChange}
             required
+            disabled
           >
             <option value="">—Seleccione—</option>
             {destinoOptions.map((d, i) => (

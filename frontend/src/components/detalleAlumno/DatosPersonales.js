@@ -7,6 +7,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
     niveles,
     carreras,
     maestrias,
+    doctorados,
     sexos,
     tipos_sangre: tiposSangre,
     nacionalidades
@@ -25,6 +26,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
             onChange={onChange}
             style={{ textTransform: "uppercase" }}
             maxLength={9}
+            readOnly 
             required
           />
         </label>
@@ -63,7 +65,9 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
               onChange({ target: { name: 'nivel_academico', value: e.target.value } });
               onChange({ target: { name: 'carrera', value: '' } });
               onChange({ target: { name: 'maestria', value: '' } });
+              onChange({ target: { name: 'doctorado', value: '' } });
             }}
+            disabled 
             required
           >
             <option value="">—Seleccione—</option>
@@ -74,7 +78,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
         </label>
       </div>
 
-      {/* Carrera o Maestría */}
+      {/* Carrera, Maestría o Doctorado */}
       {alumno.nivel_academico === "LICENCIATURA" && (
         <div className="form-row">
           <label>
@@ -106,6 +110,24 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
               <option value="">—Seleccione—</option>
               {maestrias.map((m, i) => (
                 <option key={i} value={m}>{m}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
+      {alumno.nivel_academico === "DOCTORADO" && (
+        <div className="form-row">
+          <label>
+            DOCTORADO:
+            <select
+              name="doctorado"
+              value={alumno.doctorado || ""}
+              onChange={onChange}
+              required
+            >
+              <option value="">—Seleccione—</option>
+              {doctorados.map((d, i) => (
+                <option key={i} value={d}>{d}</option>
               ))}
             </select>
           </label>

@@ -19,9 +19,17 @@ export default function AlumnoDetail() {
 
   const [alumno, setAlumno]       = useState(null);
   const [catalogos, setCatalogos] = useState({
-    niveles: [], carreras: [], maestrias: [],
-    sexos: [], tipos_sangre: [], nacionalidades: [],
-    tipos_movilidad: [], tipos_destino: [], paises: [], estados: [],
+    niveles: [], 
+    carreras: [], 
+    maestrias: [],
+    doctorados: [],   // <-- Agregado aquí
+    sexos: [], 
+    tipos_sangre: [], 
+    nacionalidades: [],
+    tipos_movilidad: [], 
+    tipos_destino: [], 
+    paises: [], 
+    estados: [],
     becas_catalogo: []
   });
   const [loading, setLoading]     = useState(true);
@@ -34,6 +42,7 @@ export default function AlumnoDetail() {
     const endpoints = {
       niveles:         "get_niveles_academicos.php",
       carreras:        "get_carreras.php",
+      doctorados:      "get_doctorados.php",
       maestrias:       "get_maestrias.php",
       sexos:           "get_sexos.php",
       tipos_sangre:    "get_tipos_sangre.php",
@@ -194,6 +203,7 @@ export default function AlumnoDetail() {
         catalogos={{
           niveles: catalogos.niveles,
           carreras: catalogos.carreras,
+          doctorados: catalogos.doctorados,
           maestrias: catalogos.maestrias,
           sexos: catalogos.sexos,
           tipos_sangre: catalogos.tipos_sangre,

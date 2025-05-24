@@ -18,16 +18,17 @@
     const [catalogos, setCatalogos] = useState({
       carreras: [], programas: [], estados: [], actividades: [],
       semestres: [],
-      niveles: [], maestrias: [], sexos: [], destinos: [],
+      niveles: [], maestrias: [], doctorados: [], sexos: [], destinos: [],
       revalidaciones: ['Sí','No']
     });
+    
+    
     const [filtros, setFiltros] = useState({
-      carrera: '', maestria: '', programa: '', estado: '', actividad: '',
+      carrera: '', maestria: '', doctorado: '', programa: '', estado: '', actividad: '',
       semestre: '', nivel_academico: '', sexo: '',
       tipo_destino: '', revalidacion: '',
       fechaInicioDesde: '', fechaInicioHasta: ''
     });
-
     // — Columnas para PDF/Excel (visibilidad controlable)
     const [columnasPDF, setColumnasPDF] = useState([
       { id: 'codigo', label: 'Código', visible: true },
@@ -73,6 +74,7 @@
     const selectFields = [
       { l: 'Carreras',        n: 'carrera',      opts: catalogos.carreras },
       { l: 'Maestrías',       n: 'maestria',     opts: catalogos.maestrias },
+      { l: 'Doctorados',      n: 'doctorado',    opts: catalogos.doctorados },
       { l: 'Programa',        n: 'programa',     opts: catalogos.programas },
       { l: 'Estado',          n: 'estado',       opts: catalogos.estados },
       { l: 'Actividad',       n: 'actividad',    opts: catalogos.actividades },
@@ -89,6 +91,7 @@
         .then(data => setCatalogos(prev => ({
           ...prev,
           carreras:      data.carreras       || prev.carreras,
+          doctorados: data.doctorados || prev.doctorados,
           programas:     data.programas      || prev.programas,
           estados:       data.estados        || prev.estados,
           actividades:   data.actividades    || prev.actividades,
@@ -112,7 +115,7 @@
     // — Reset de filtros y estado de búsqueda
     const resetFiltros = () => {
       setFiltros({
-        carrera: '', maestria: '', programa: '', estado: '', actividad: '',
+        carrera: '', maestria: '', doctorado: '', programa: '', estado: '', actividad: '',
         semestre: '', anio: '', nivel_academico: '', sexo: '',
         tipo_destino: '', revalidacion: ''
       });
@@ -171,7 +174,9 @@
               ? a.carrera
               : a.nivel_academico === 'MAESTRÍA'
                 ? a.maestria
-                : '';
+                : a.nivel_academico === 'DOCTORADO'
+                  ? a.doctorado
+                  : '';
           }
           return a[c.id] ?? '';
         });

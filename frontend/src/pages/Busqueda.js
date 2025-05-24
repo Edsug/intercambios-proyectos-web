@@ -274,7 +274,10 @@ export default function Busqueda() {
                     ? a.carrera
                     : a.nivel_academico === 'MAESTRÍA'
                     ? a.maestria
+                    : a.nivel_academico === 'DOCTORADO'
+                    ? a.doctorado
                     : '';
+
                 const esVerdadero = val => parseInt(val) === 1;
 
                 return (
