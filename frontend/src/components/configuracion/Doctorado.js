@@ -1,54 +1,51 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
 
-const Carreras = () => {
-  const [carreras, setCarreras] = useState([]);
-  const [nuevaCarrera, setNuevaCarrera] = useState({ nombre: "", visible: 1 });
+const Doctorados = () => {
+  const [doctorados, setDoctorados] = useState([]);
+  const [nuevoDoctorado, setNuevoDoctorado] = useState({ nombre: "", visible: 1 });
   const [editandoId, setEditandoId] = useState(null);
   const [nuevoNombre, setNuevoNombre] = useState("");
   const [nuevaVisibilidad, setNuevaVisibilidad] = useState(1);
 
-  const obtenerCarreras = async () => {
+  const obtenerDoctorados = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_carreras_admin.php");
+      const res = await fetch("http://localhost/basecambios/get_doctorados_admin.php");
       const data = await res.json();
-      setCarreras(Array.isArray(data) ? data : []);
+      setDoctorados(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Error al obtener carreras:", err);
+      console.error("Error al obtener doctorados:", err);
     }
   };
 
   useEffect(() => {
-    obtenerCarreras();
+    obtenerDoctorados();
   }, []);
 
-  const agregarCarrera = async (e) => {
+  const agregarDoctorado = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_carrera.php", {
+      const res = await fetch("http://localhost/basecambios/agregar_doctorado.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nuevaCarrera),
+        body: JSON.stringify(nuevoDoctorado),
       });
       const data = await res.json();
       alert(data.message || data.error || "Error desconocido");
-      setNuevaCarrera({ nombre: "", visible: 1 });
-      obtenerCarreras();
+      setNuevoDoctorado({ nombre: "", visible: 1 });
+      obtenerDoctorados();
     } catch (err) {
-      console.error("Error al agregar carrera:", err);
+      console.error("Error al agregar doctorado:", err);
     }
   };
 
   const guardarEdicion = async (id) => {
-    const carreraOriginal = carreras.find(c => c.id === id);
-    if (!carreraOriginal) return;
-
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_carrera.php", {
+      const res = await fetch("http://localhost/basecambios/actualizar_doctorado.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nombreAnterior: carreraOriginal.nombre,
+          id,
           nombre: nuevoNombre,
           visible: nuevaVisibilidad
         }),
@@ -56,57 +53,57 @@ const Carreras = () => {
       const data = await res.json();
       alert(data.message || data.error || "Error desconocido");
       setEditandoId(null);
-      obtenerCarreras();
+      obtenerDoctorados();
     } catch (err) {
-      console.error("Error al actualizar carrera:", err);
+      console.error("Error al actualizar doctorado:", err);
     }
   };
 
-  const eliminarCarrera = async (id) => {
-    const confirmacion = window.confirm("⚠️ ¿Estás seguro de eliminar esta carrera? Esta acción es irreversible.");
+  const eliminarDoctorado = async (id) => {
+    const confirmacion = window.confirm("⚠️ ¿Estás seguro de eliminar este doctorado? Esta acción es irreversible.");
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_carreras.php", {
+      const res = await fetch("http://localhost/basecambios/eliminar_doctorado.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
       const data = await res.json();
       alert(data.message || data.error || "Error desconocido");
-      obtenerCarreras();
+      obtenerDoctorados();
     } catch (err) {
-      console.error("Error al eliminar carrera:", err);
+      console.error("Error al eliminar doctorado:", err);
     }
   };
 
   return (
     <div className="carrera-admin">
-      <h3>Agregar Carrera</h3>
-      <form onSubmit={agregarCarrera} className="config-form">
+      <h3>Agregar Doctorado</h3>
+      <form onSubmit={agregarDoctorado} className="config-form">
         <div className="form-group">
           <label>Nombre:</label>
           <input
             type="text"
-            value={nuevaCarrera.nombre}
-            onChange={(e) => setNuevaCarrera({ ...nuevaCarrera, nombre: e.target.value })}
+            value={nuevoDoctorado.nombre}
+            onChange={(e) => setNuevoDoctorado({ ...nuevoDoctorado, nombre: e.target.value })}
             required
           />
         </div>
         <div className="form-group">
           <label>Visible:</label>
           <select
-            value={nuevaCarrera.visible}
-            onChange={(e) => setNuevaCarrera({ ...nuevaCarrera, visible: parseInt(e.target.value) })}
+            value={nuevoDoctorado.visible}
+            onChange={(e) => setNuevoDoctorado({ ...nuevoDoctorado, visible: parseInt(e.target.value) })}
           >
             <option value={1}>Sí</option>
             <option value={0}>No</option>
           </select>
         </div>
-        <button type="submit" className="save-button">Agregar Carrera</button>
+        <button type="submit" className="save-button">Agregar Doctorado</button>
       </form>
 
-      <h3>Listado de Carreras</h3>
+      <h3>Listado de Doctorados</h3>
       <table>
         <thead>
           <tr>
@@ -116,20 +113,20 @@ const Carreras = () => {
           </tr>
         </thead>
         <tbody>
-          {carreras.map(carrera => (
-            <tr key={carrera.id}>
+          {doctorados.map(doctorado => (
+            <tr key={doctorado.id}>
               <td>
-                {editandoId === carrera.id ? (
+                {editandoId === doctorado.id ? (
                   <input
                     value={nuevoNombre}
                     onChange={(e) => setNuevoNombre(e.target.value)}
                   />
                 ) : (
-                  carrera.nombre
+                  doctorado.nombre
                 )}
               </td>
               <td>
-                {editandoId === carrera.id ? (
+                {editandoId === doctorado.id ? (
                   <select
                     value={nuevaVisibilidad}
                     onChange={(e) => setNuevaVisibilidad(parseInt(e.target.value))}
@@ -138,15 +135,15 @@ const Carreras = () => {
                     <option value={0}>No</option>
                   </select>
                 ) : (
-                  <span className={`etiqueta ${Number(carrera.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
-                    {Number(carrera.visible) === 1 ? "Sí" : "No"}
+                  <span className={`etiqueta ${Number(doctorado.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
+                    {Number(doctorado.visible) === 1 ? "Sí" : "No"}
                   </span>
                 )}
               </td>
               <td>
-                {editandoId === carrera.id ? (
+                {editandoId === doctorado.id ? (
                   <>
-                    <button onClick={() => guardarEdicion(carrera.id)}>Guardar</button>
+                    <button onClick={() => guardarEdicion(doctorado.id)}>Guardar</button>
                     <button onClick={() => setEditandoId(null)}>Cancelar</button>
                   </>
                 ) : (
@@ -154,16 +151,16 @@ const Carreras = () => {
                     <button
                       className="edit-button"
                       onClick={() => {
-                        setEditandoId(carrera.id);
-                        setNuevoNombre(carrera.nombre);
-                        setNuevaVisibilidad(Number(carrera.visible));
+                        setEditandoId(doctorado.id);
+                        setNuevoNombre(doctorado.nombre);
+                        setNuevaVisibilidad(Number(doctorado.visible));
                       }}
                     >
                       Editar
                     </button>
                     <button
                       className="delete-button"
-                      onClick={() => eliminarCarrera(carrera.id)}
+                      onClick={() => eliminarDoctorado(doctorado.id)}
                     >
                       Eliminar
                     </button>
@@ -178,4 +175,4 @@ const Carreras = () => {
   );
 };
 
-export default Carreras;
+export default Doctorados;

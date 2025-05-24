@@ -7,6 +7,7 @@ import Usuarios from "../components/configuracion/Usuarios";
 // Subtabs de sistema
 import Carreras from "../components/configuracion/Carreras";
 import Maestrias from "../components/configuracion/Maestrias";
+import Doctorados from "../components/configuracion/Doctorado";
 import Programas from "../components/configuracion/Programas";
 import Becas from "../components/configuracion/Becas";
 import Estados from "../components/configuracion/Estados";
@@ -14,7 +15,6 @@ import Paises from "../components/configuracion/Paises";
 import Nacionalidades from "../components/configuracion/Nacionalidades";
 import TiposDestino from "../components/configuracion/TiposDestino";
 import Actividades from "../components/configuracion/Actividades";
-
 
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
@@ -52,6 +52,7 @@ const Configuracion = () => {
             <div className="config-tabs sub-tabs">
               <button className={`config-tab ${subTab === "carreras" ? "active" : ""}`} onClick={() => setSubTab("carreras")}>Carreras</button>
               <button className={`config-tab ${subTab === "maestrias" ? "active" : ""}`} onClick={() => setSubTab("maestrias")}>Maestrías</button>
+              <button className={`config-tab ${subTab === "doctorados" ? "active" : ""}`} onClick={() => setSubTab("doctorados")}>Doctorados</button>
               <button className={`config-tab ${subTab === "programas" ? "active" : ""}`} onClick={() => setSubTab("programas")}>Programas</button>
               <button className={`config-tab ${subTab === "becas" ? "active" : ""}`} onClick={() => setSubTab("becas")}>Becas</button>
               <button className={`config-tab ${subTab === "estados" ? "active" : ""}`} onClick={() => setSubTab("estados")}>Estados</button>
@@ -64,6 +65,7 @@ const Configuracion = () => {
             <div className="subtab-content">
               {subTab === "carreras" && <Carreras />}
               {subTab === "maestrias" && <Maestrias />}
+              {subTab === "doctorados" && <Doctorados />}
               {subTab === "programas" && <Programas />}
               {subTab === "becas" && <Becas />}
               {subTab === "estados" && <Estados />}
