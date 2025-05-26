@@ -11,24 +11,28 @@ export default function SeccionMovilidad({
   const [tiposMovilidad, setTiposMovilidad]     = useState([]);
   const [paises, setPaises]                     = useState([]);
   const [estadosRepublica, setEstadosRepublica] = useState([]);
+  const [ciclos, setCiclos]                     = useState([]);
 
   useEffect(() => {
-    // 1) Obtener tipos de movilidad
     fetch('http://localhost/basecambios/get_tipos_movilidad.php')
       .then(res => res.json())
       .then(setTiposMovilidad)
       .catch(console.error);
 
-    // 2) Obtener países
     fetch('http://localhost/basecambios/get_paises.php')
       .then(res => res.json())
       .then(setPaises)
       .catch(console.error);
 
-    // 3) Obtener estados de la república
     fetch('http://localhost/basecambios/get_estadogeo.php')
       .then(res => res.json())
       .then(setEstadosRepublica)
+      .catch(console.error);
+
+    // Obtener ciclos académicos
+    fetch('http://localhost/basecambios/get_ciclos.php')
+      .then(res => res.json())
+      .then(setCiclos)
       .catch(console.error);
   }, []);
 
@@ -36,6 +40,27 @@ export default function SeccionMovilidad({
     <div className="form-section">
       <h2 className="section-title">Datos de Movilidad</h2>
       <div className="section-content">
+
+        {/* Ciclo académico */}
+        <div className="form-row">
+          <label className="select-label">
+            CICLO:
+            <select
+              name="CICLO"
+              value={formData.CICLO}
+              onChange={handleChange}
+              required
+            >
+              <option value="">SELECCIONE CICLO</option>
+              {ciclos.map((ciclo, i) => (
+                <option key={i} value={ciclo}>{ciclo}</option>
+              ))}
+            </select>
+            {errores.CICLO && (
+              <span className="error-message">{errores.CICLO}</span>
+            )}
+          </label>
+        </div>
 
         {/* Tipo de Movilidad */}
         <div className="form-row">
@@ -187,18 +212,10 @@ export default function SeccionMovilidad({
 
       {/* Navegación */}
       <div className="form-navigation">
-        <button
-          type="button"
-          onClick={prevSection}
-          className="prev-button"
-        >
+        <button type="button" onClick={prevSection} className="prev-button">
           Anterior
         </button>
-        <button
-          type="button"
-          onClick={nextSection}
-          className="next-button"
-        >
+        <button type="button" onClick={nextSection} className="next-button">
           Siguiente
         </button>
       </div>

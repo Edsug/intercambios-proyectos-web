@@ -17,25 +17,18 @@ export default function AlumnoDetail() {
   const { codigo } = useParams();
   const navigate    = useNavigate();
 
-  const [alumno, setAlumno]       = useState(null);
+  const [alumno, setAlumno] = useState(null);
   const [catalogos, setCatalogos] = useState({
-    niveles: [], 
-    carreras: [], 
-    maestrias: [],
-    doctorados: [],   // <-- Agregado aquí
-    sexos: [], 
-    tipos_sangre: [], 
-    nacionalidades: [],
-    tipos_movilidad: [], 
-    tipos_destino: [], 
-    paises: [], 
-    estados: [],
-    becas_catalogo: []
+    niveles: [], carreras: [], maestrias: [], doctorados: [],
+    sexos: [], tipos_sangre: [], nacionalidades: [],
+    tipos_movilidad: [], tipos_destino: [], paises: [], estados: [],
+    becas_catalogo: [],
+    ciclos: [] // ✅ agregado
   });
-  const [loading, setLoading]     = useState(true);
-  const [saving, setSaving]       = useState(false);
-  const [error, setError]         = useState("");
-  const [success, setSuccess]     = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // 1) Cargar catálogos
   useEffect(() => {
@@ -51,7 +44,8 @@ export default function AlumnoDetail() {
       tipos_destino:   "get_tipos_destino.php",
       paises:          "get_paises.php",
       estados:         "get_estados.php",
-      becas_catalogo:  "get_becas_catalogo.php"
+      becas_catalogo:  "get_becas_catalogo.php",
+      ciclos:          "get_ciclos.php" // ✅ agregado
     };
     Object.entries(endpoints).forEach(([key, file]) => {
       fetch(`${BASE_URL}/${file}`)
@@ -59,9 +53,7 @@ export default function AlumnoDetail() {
         .then(data => {
           setCatalogos(c => ({ ...c, [key]: data }));
         })
-        .catch(() => {
-          // no interrumpe carga de alumno
-        });
+        .catch(() => {});
     });
   }, []);
 
@@ -78,10 +70,9 @@ export default function AlumnoDetail() {
       })
       .then(data => {
         data.becas = Array.isArray(data.becas) ? data.becas : [];
-        data.codigo_original = data.codigo; // respaldo del código original
+        data.codigo_original = data.codigo;
         setAlumno(data);
       })
-      
       .catch(err => {
         setError(err.message);
         setTimeout(() => navigate("/busqueda"), 3000);
@@ -89,7 +80,6 @@ export default function AlumnoDetail() {
       .finally(() => setLoading(false));
   }, [codigo, navigate]);
 
-  // 3) Handlers generales
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
     setAlumno(a => ({
@@ -120,7 +110,6 @@ export default function AlumnoDetail() {
     }));
   };
 
-  // 4) Guardar cambios
   const handleSave = () => {
     setSaving(true);
     setError("");
@@ -148,7 +137,6 @@ export default function AlumnoDetail() {
       .finally(() => setSaving(false));
   };
 
-  // 5) Eliminar alumno
   const handleDelete = () => {
     if (!window.confirm("¿Confirma eliminar este alumno?")) return;
     setSaving(true);
@@ -174,9 +162,7 @@ export default function AlumnoDetail() {
       .finally(() => setSaving(false));
   };
 
-  if (loading) {
-    return <div className="alumno-detail"><p>Cargando...</p></div>;
-  }
+  if (loading) return <div className="alumno-detail"><p>Cargando...</p></div>;
 
   if (!alumno) {
     return (
@@ -216,7 +202,7 @@ export default function AlumnoDetail() {
         alumno={alumno}
         onChange={handleChange}
         catalogos={{
-          programas: catalogos.programas || [],    // si incluyes este catálogo
+          programas: catalogos.programas || [],
           estados: catalogos.estados
         }}
       />
@@ -228,7 +214,8 @@ export default function AlumnoDetail() {
           tiposMovilidad: catalogos.tipos_movilidad,
           tiposDestino: catalogos.tipos_destino,
           paises: catalogos.paises,
-          estados: catalogos.estados
+          estados: catalogos.estados,
+          ciclos: catalogos.ciclos // ✅ agregado
         }}
       />
 
@@ -246,18 +233,10 @@ export default function AlumnoDetail() {
       />
 
       <div className="buttons">
-        <button
-          className="save-btn"
-          onClick={handleSave}
-          disabled={saving}
-        >
+        <button className="save-btn" onClick={handleSave} disabled={saving}>
           {saving ? "Guardando..." : "Guardar Cambios"}
         </button>
-        <button
-          className="danger"
-          onClick={handleDelete}
-          disabled={saving}
-        >
+        <button className="danger" onClick={handleDelete} disabled={saving}>
           Eliminar Alumno
         </button>
       </div>

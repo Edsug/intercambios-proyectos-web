@@ -9,11 +9,15 @@ import SeccionDatosBeca from "../components/registro/SeccionDatosBeca";
 import SeccionDatosAdicionales from "../components/registro/SeccionDatosAdicionales";
 import SeccionDatosAlumno from "../components/registro/SeccionDatosAlumno";
 
+
+
+
 const Registro = () => {
   const [activeSection, setActiveSection] = useState(1);
   const [formData, setFormData] = useState({
     ...initialFormData,
-    BECAS: []
+    BECAS: [],
+    CICLO: "", // ← Asegura que esté definido
   });
   const [errores, setErrores] = useState({});
 
@@ -65,12 +69,12 @@ const Registro = () => {
         if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
         if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";
         else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 3 || formData.SEMESTRE > 10)
-          errs.SEMESTRE = "El semestre debe ser un número entre 3 y 10.";
+          errs.SEMESTRE = "El semestre debe ser un número entre 0 y 12.";
         if (!formData.PROMEDIO) errs.PROMEDIO = "Ingrese promedio.";
         else if (isNaN(formData.PROMEDIO) || !/^\d+(\.\d+)?$/.test(formData.PROMEDIO))
           errs.PROMEDIO = "El promedio debe ser un número válido.";
-        else if (parseFloat(formData.PROMEDIO) <= 80)
-            errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor a 80 para continuar.";
+        else if (parseFloat(formData.PROMEDIO) < 80)
+            errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor o igual a 80 para continuar.";
         if (!formData.SEXO) errs.SEXO = "Seleccione género.";
         if (!formData.FECHA_NACIMIENTO) errs.FECHA_NACIMIENTO = "Ingrese fecha de nacimiento.";
         if (!formData.TIPO_SANGRE) errs.TIPO_SANGRE = "Seleccione tipo de sangre.";
@@ -86,17 +90,20 @@ const Registro = () => {
           errs.NOMBRE_CONTACTO_EMERGENCIA = "Ingrese nombre de contacto.";
         if (!formData.NSS) errs.NSS = "Ingrese NSS.";
         break;
-      case 3:
-        if (!formData.TIPO_MOVILIDAD) errs.TIPO_MOVILIDAD = "Seleccione tipo de movilidad.";
-        if (!formData.INSTITUCION_DESTINO) errs.INSTITUCION_DESTINO = "Ingrese institución destino.";
-        if (formData.TIPO_DESTINO === "INTERNACIONAL" && !formData.PAIS) errs.PAIS = "Seleccione país.";
-        if (formData.TIPO_DESTINO === "NACIONAL" && (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")) {
-          errs.ESTADO_REPUBLICA = "Seleccione estado.";
-        }
-        if (!formData.FECHA_INICIO) errs.FECHA_INICIO = "Ingrese fecha inicio.";
-        if (!formData.FECHA_FIN) errs.FECHA_FIN = "Ingrese fecha fin.";
-        else if (formData.FECHA_FIN < formData.FECHA_INICIO) errs.FECHA_FIN = "La fecha fin debe ser posterior.";
-        break;
+        case 3:
+          if (!formData.CICLO) errs.CICLO = "Seleccione un ciclo académico.";
+          if (!formData.TIPO_MOVILIDAD) errs.TIPO_MOVILIDAD = "Seleccione tipo de movilidad.";
+          if (!formData.INSTITUCION_DESTINO) errs.INSTITUCION_DESTINO = "Ingrese institución destino.";
+          if (formData.TIPO_DESTINO === "INTERNACIONAL" && !formData.PAIS) errs.PAIS = "Seleccione país.";
+          if (formData.TIPO_DESTINO === "NACIONAL" && (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")) {
+            errs.ESTADO_REPUBLICA = "Seleccione estado.";
+          }
+          if (!formData.FECHA_INICIO) errs.FECHA_INICIO = "Ingrese fecha inicio.";
+          if (!formData.FECHA_FIN) errs.FECHA_FIN = "Ingrese fecha fin.";
+          else if (formData.FECHA_FIN < formData.FECHA_INICIO) errs.FECHA_FIN = "La fecha fin debe ser posterior.";
+          break;
+
+        
       case 4:
         // Becas opcionales: sólo validamos si hay alguna
         if (formData.BECAS && formData.BECAS.length > 0) {
@@ -123,7 +130,9 @@ const Registro = () => {
     validarSeccion(1) &&
     validarSeccion(2) &&
     validarSeccion(3) &&
-    validarSeccion(4);
+    validarSeccion(4) &&
+    validarSeccion(5); // <- Faltaba
+  
 
   const nextSection = () => {
     if (!validarSeccion(activeSection)) {
@@ -162,11 +171,9 @@ const Registro = () => {
       const data = JSON.parse(text);
       if (data.status === "success") {
         toast.success("Alumno registrado correctamente");
-        resetForm();        <div className="dashboard-content">
-          <ToastContainer position="top-center" autoClose={3000} />
-          {/* ...el resto de tu contenido... */}
-        </div>
-      } else {
+        resetForm();
+      }
+       else {
         toast.error("Error al registrar: " + data.message);
       }
     } catch (err) {
@@ -187,8 +194,9 @@ const Registro = () => {
         pauseOnHover 
       />
 
-  return (
-    <div className="dashboard-content">
+      return (
+        <div className="dashboard-content">
+          <ToastContainer position="top-center" autoClose={3000} />
       
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
