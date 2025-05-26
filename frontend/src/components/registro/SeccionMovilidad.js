@@ -1,4 +1,3 @@
-// components/SeccionMovilidad.js
 import React, { useEffect, useState } from 'react';
 
 export default function SeccionMovilidad({
@@ -8,10 +7,10 @@ export default function SeccionMovilidad({
   nextSection,
   errores
 }) {
-  const [tiposMovilidad, setTiposMovilidad]     = useState([]);
-  const [paises, setPaises]                     = useState([]);
+  const [tiposMovilidad, setTiposMovilidad] = useState([]);
+  const [paises, setPaises] = useState([]);
   const [estadosRepublica, setEstadosRepublica] = useState([]);
-  const [ciclos, setCiclos]                     = useState([]);
+  const [ciclosAnio, setCiclosAnio] = useState([]); // años únicos
 
   useEffect(() => {
     fetch('http://localhost/basecambios/get_tipos_movilidad.php')
@@ -29,40 +28,27 @@ export default function SeccionMovilidad({
       .then(setEstadosRepublica)
       .catch(console.error);
 
-    // Obtener ciclos académicos
     fetch('http://localhost/basecambios/get_ciclos.php')
       .then(res => res.json())
-      .then(setCiclos)
+      .then(ciclos => {
+        const aniosUnicos = [...new Set(ciclos.map(c => c.substring(0, 4)))];
+        setCiclosAnio(aniosUnicos);
+
+        if (formData.CICLO && formData.CICLO.length === 5) {
+          const anio = formData.CICLO.slice(0, 4);
+          const ab = formData.CICLO.slice(4);
+          handleChange({ target: { name: "CICLO_SEMESTRAL_ANIO", value: anio } });
+          handleChange({ target: { name: "CICLO_SEMESTRAL_AB", value: ab } });
+          handleChange({ target: { name: "CICLO_SEMESTRAL", value: formData.CICLO } });
+        }
+      })
       .catch(console.error);
-  }, []);
+  }, [formData.CICLO, handleChange]);
 
   return (
     <div className="form-section">
       <h2 className="section-title">Datos de Movilidad</h2>
       <div className="section-content">
-
-        {/* Ciclo académico */}
-        <div className="form-row">
-          <label className="select-label">
-            CICLO:
-            <select
-              name="CICLO"
-              value={formData.CICLO}
-              onChange={handleChange}
-              required
-            >
-              <option value="">SELECCIONE CICLO</option>
-              {ciclos.map((ciclo, i) => (
-                <option key={i} value={ciclo}>{ciclo}</option>
-              ))}
-            </select>
-            {errores.CICLO && (
-              <span className="error-message">{errores.CICLO}</span>
-            )}
-          </label>
-        </div>
-
-        {/* Tipo de Movilidad */}
         <div className="form-row">
           <label className="select-label">
             TIPO DE MOVILIDAD:
@@ -78,9 +64,50 @@ export default function SeccionMovilidad({
               ))}
             </select>
           </label>
-          {errores.TIPO_MOVILIDAD && (
-            <span className="error-message">{errores.TIPO_MOVILIDAD}</span>
-          )}
+          {errores.TIPO_MOVILIDAD && <span className="error-message">{errores.TIPO_MOVILIDAD}</span>}
+
+          <label>
+            CICLO ACADÉMICO:
+            <div style={{ display: "flex", gap: "8px" }}>
+              <select
+                value={formData.CICLO_SEMESTRAL_ANIO || ""}
+                onChange={e => {
+                  const anio = e.target.value;
+                  const ab = formData.CICLO_SEMESTRAL_AB || "";
+                  const ciclo = anio && ab ? `${anio}${ab}` : "";
+                  handleChange({ target: { name: "CICLO_SEMESTRAL_ANIO", value: anio } });
+                  handleChange({ target: { name: "CICLO_SEMESTRAL", value: ciclo } });
+                  handleChange({ target: { name: "CICLO", value: ciclo } });
+                }}
+                required
+                style={{ flex: 1 }}
+              >
+                <option value="">Año</option>
+                {ciclosAnio.map((anio, i) => (
+                  <option key={i} value={anio}>{anio}</option>
+                ))}
+              </select>
+
+              <select
+                value={formData.CICLO_SEMESTRAL_AB || ""}
+                onChange={e => {
+                  const ab = e.target.value;
+                  const anio = formData.CICLO_SEMESTRAL_ANIO || "";
+                  const ciclo = anio && ab ? `${anio}${ab}` : "";
+                  handleChange({ target: { name: "CICLO_SEMESTRAL_AB", value: ab } });
+                  handleChange({ target: { name: "CICLO_SEMESTRAL", value: ciclo } });
+                  handleChange({ target: { name: "CICLO", value: ciclo } });
+                }}
+                required
+                style={{ flex: 1 }}
+              >
+                <option value="">Semestre</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+              </select>
+            </div>
+            {errores.CICLO && <span className="error-message">{errores.CICLO}</span>}
+          </label>
         </div>
 
         {/* Nacional vs Internacional */}
@@ -107,63 +134,54 @@ export default function SeccionMovilidad({
           </label>
         </div>
 
-        {/* Institución + País o Estado */}
+        {/* Institución destino + país o estado */}
         <div className="form-row">
           <label>
             INSTITUCIÓN DESTINO:
             <input
               type="text"
-              style={{ textTransform: "uppercase" }}
               name="INSTITUCION_DESTINO"
+              style={{ textTransform: "uppercase" }}
               value={formData.INSTITUCION_DESTINO}
               onChange={handleChange}
               required
             />
           </label>
-          {errores.INSTITUCION_DESTINO && (
-            <span className="error-message">{errores.INSTITUCION_DESTINO}</span>
-          )}
+          {errores.INSTITUCION_DESTINO && <span className="error-message">{errores.INSTITUCION_DESTINO}</span>}
 
-          {formData.TIPO_DESTINO === "INTERNACIONAL"
-            ? (
-              <label className="select-label">
-                PAÍS:
-                <select
-                  name="PAIS"
-                  value={formData.PAIS}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">SELECCIONE PAÍS</option>
-                  {paises.map((p, i) => (
-                    <option key={i} value={p}>{p}</option>
-                  ))}
-                </select>
-                {errores.PAIS && (
-                  <span className="error-message">{errores.PAIS}</span>
-                )}
-              </label>
-            )
-            : (
-              <label className="select-label">
-                ESTADO:
-                <select
-                  name="ESTADO_REPUBLICA"
-                  value={formData.ESTADO_REPUBLICA}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">SELECCIONE ESTADO</option>
-                  {estadosRepublica.map((e, i) => (
-                    <option key={i} value={e}>{e}</option>
-                  ))}
-                </select>
-                {errores.ESTADO_REPUBLICA && (
-                  <span className="error-message">{errores.ESTADO_REPUBLICA}</span>
-                )}
-              </label>
-            )
-          }
+          {formData.TIPO_DESTINO === "INTERNACIONAL" ? (
+            <label className="select-label">
+              PAÍS:
+              <select
+                name="PAIS"
+                value={formData.PAIS}
+                onChange={handleChange}
+                required
+              >
+                <option value="">SELECCIONE PAÍS</option>
+                {paises.map((p, i) => (
+                  <option key={i} value={p}>{p}</option>
+                ))}
+              </select>
+              {errores.PAIS && <span className="error-message">{errores.PAIS}</span>}
+            </label>
+          ) : (
+            <label className="select-label">
+              ESTADO:
+              <select
+                name="ESTADO_REPUBLICA"
+                value={formData.ESTADO_REPUBLICA}
+                onChange={handleChange}
+                required
+              >
+                <option value="">SELECCIONE ESTADO</option>
+                {estadosRepublica.map((e, i) => (
+                  <option key={i} value={e}>{e}</option>
+                ))}
+              </select>
+              {errores.ESTADO_REPUBLICA && <span className="error-message">{errores.ESTADO_REPUBLICA}</span>}
+            </label>
+          )}
         </div>
 
         {/* Fechas */}
@@ -177,9 +195,7 @@ export default function SeccionMovilidad({
               onChange={handleChange}
               required
             />
-            {errores.FECHA_INICIO && (
-              <span className="error-message">{errores.FECHA_INICIO}</span>
-            )}
+            {errores.FECHA_INICIO && <span className="error-message">{errores.FECHA_INICIO}</span>}
           </label>
           <label>
             FECHA FIN:
@@ -190,9 +206,7 @@ export default function SeccionMovilidad({
               onChange={handleChange}
               required
             />
-            {errores.FECHA_FIN && (
-              <span className="error-message">{errores.FECHA_FIN}</span>
-            )}
+            {errores.FECHA_FIN && <span className="error-message">{errores.FECHA_FIN}</span>}
           </label>
         </div>
 
@@ -201,8 +215,8 @@ export default function SeccionMovilidad({
           <label>
             OBSERVACIONES:
             <textarea
-              style={{ textTransform: "uppercase" }}
               name="OBSERVACIONES"
+              style={{ textTransform: "uppercase" }}
               value={formData.OBSERVACIONES}
               onChange={handleChange}
             />
