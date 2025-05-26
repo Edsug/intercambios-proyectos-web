@@ -4,27 +4,46 @@ import React from "react";
 import Section from "../common/Section";
 
 export default function Movilidad({ alumno, onChange, catalogos }) {
-  // Soportar camelCase y snake_case desde props
-  const tiposMov = catalogos.tiposMovilidad ?? catalogos.tipos_movilidad ?? [];
-  const tiposDest = catalogos.tiposDestino ?? catalogos.tipos_destino ?? [];
-  const paisesArr = catalogos.paises ?? [];
-  const estadosArr = catalogos.estados ?? [];
+  const tiposMov     = catalogos.tiposMovilidad ?? catalogos.tipos_movilidad ?? [];
+  const tiposDest    = catalogos.tiposDestino ?? catalogos.tipos_destino ?? [];
+  const paisesArr    = catalogos.paises ?? [];
+  const estadosArr   = catalogos.estados ?? [];
+  const ciclosArr    = catalogos.ciclos ?? []; // ✅ Ciclos académicos
 
-  // Normalizar arrays (string u objeto { nombre })
   const mapToNames = (arr) =>
     arr.map(item => (item && typeof item === 'object' && 'nombre' in item ? item.nombre : item));
-  const movilidadOptions = mapToNames(tiposMov);
-  const destinoOptions = mapToNames(tiposDest);
-  const paisOptions = mapToNames(paisesArr);
-  const estadoOptions = mapToNames(estadosArr);
 
-  // Comparar tipo_destino en minúsculas para cubrir mayúsculas
+  const movilidadOptions = mapToNames(tiposMov);
+  const destinoOptions   = mapToNames(tiposDest);
+  const paisOptions      = mapToNames(paisesArr);
+  const estadoOptions    = mapToNames(estadosArr);
+  const cicloOptions     = mapToNames(ciclosArr); // ✅ Normaliza ciclos
+
   const tipoDestSeleccionado = (alumno.tipo_destino || '').toLowerCase();
-  const esNacional = tipoDestSeleccionado === 'nacional';
+  const esNacional      = tipoDestSeleccionado === 'nacional';
   const esInternacional = tipoDestSeleccionado === 'internacional';
 
   return (
     <Section title="Movilidad" className="movilidad-section">
+      {/* Ciclo académico */}
+      <div className="form-row">
+        <label>
+          CICLO:
+          <select
+            name="ciclo"
+            value={alumno.ciclo || ""}
+            onChange={onChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {cicloOptions.map((c, i) => (
+              <option key={i} value={c}>{c}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {/* Tipo de movilidad y destino */}
       <div className="form-row">
         <label>
           TIPO DE MOVILIDAD:
@@ -58,6 +77,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
         </label>
       </div>
 
+      {/* Institución y país/estado */}
       <div className="form-row">
         <label>
           INSTITUCIÓN DESTINO:
@@ -104,6 +124,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
         )}
       </div>
 
+      {/* Fechas */}
       <div className="form-row">
         <label>
           FECHA INICIO:
@@ -126,6 +147,7 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
         </label>
       </div>
 
+      {/* Observaciones */}
       <div className="form-row">
         <label>
           OBSERVACIONES:

@@ -20,7 +20,8 @@
       carreras: [], programas: [], estados: [], actividades: [],
       semestres: [],
       niveles: [], maestrias: [], doctorados: [], sexos: [], destinos: [],
-      revalidaciones: ['Sí','No']
+      revalidaciones: ['Sí','No'],
+      ciclos: [] // ✅ nuevo
     });
     
     
@@ -28,7 +29,8 @@
       carrera: '', maestria: '', doctorado: '', programa: '', estado: '', actividad: '',
       semestre: '', nivel_academico: '', sexo: '',
       tipo_destino: '', revalidacion: '',
-      fechaInicioDesde: '', fechaInicioHasta: ''
+      fechaInicioDesde: '', fechaInicioHasta: '',
+      ciclo: '' // ✅ nuevo
     });
     // — Columnas para PDF/Excel (visibilidad controlable)
     const [columnasPDF, setColumnasPDF] = useState([
@@ -39,6 +41,7 @@
       { id: 'especialidad', label: 'Especialidad', visible: true },
       { id: 'semestre', label: 'Semestre', visible: true },
       { id: 'promedio', label: 'Promedio', visible: true },
+      { id: 'ciclo', label: 'Ciclo', visible: true },
       { id: 'sexo', label: 'Sexo', visible: true },
       { id: 'fecha_nacimiento', label: 'F. Nac.', visible: true },
       { id: 'tipo_sangre', label: 'Sangre', visible: true },
@@ -82,8 +85,10 @@
       { l: 'Nivel Académico', n: 'nivel_academico', opts: catalogos.niveles },
       { l: 'Sexo',            n: 'sexo',         opts: catalogos.sexos },
       { l: 'Tipo Destino',    n: 'tipo_destino', opts: catalogos.destinos },
-      { l: 'Revalidación',    n: 'revalidacion', opts: catalogos.revalidaciones }
+      { l: 'Revalidación',    n: 'revalidacion', opts: catalogos.revalidaciones },
+      { l: 'Ciclo',           n: 'ciclo',        opts: catalogos.ciclos } // ✅ nuevo
     ];
+    
 
     // — Carga inicial de catálogos
     useEffect(() => {
@@ -92,7 +97,7 @@
         .then(data => setCatalogos(prev => ({
           ...prev,
           carreras:      data.carreras       || prev.carreras,
-          doctorados: data.doctorados || prev.doctorados,
+          doctorados:    data.doctorados     || prev.doctorados,
           programas:     data.programas      || prev.programas,
           estados:       data.estados        || prev.estados,
           actividades:   data.actividades    || prev.actividades,
@@ -102,8 +107,10 @@
           maestrias:     data.maestrias      || prev.maestrias,
           sexos:         data.sexos          || prev.sexos,
           destinos:      data.destinos       || prev.destinos,
-          revalidaciones:data.revalidaciones|| prev.revalidaciones
+          revalidaciones:data.revalidaciones|| prev.revalidaciones,
+          ciclos:        data.ciclos         || prev.ciclos // ✅ nuevo
         })))
+        
         .catch(console.error);
     }, []);
 
