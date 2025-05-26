@@ -11,6 +11,7 @@ export default function SeccionMovilidad({
   const [paises, setPaises] = useState([]);
   const [estadosRepublica, setEstadosRepublica] = useState([]);
   const [ciclosAnio, setCiclosAnio] = useState([]); // años únicos
+  const [ciclosPorAnio, setCiclosPorAnio] = useState({}); // {2024: ['A','B'], 2025: ['A']...}
 
   useEffect(() => {
     fetch('http://localhost/basecambios/get_tipos_movilidad.php')
@@ -31,8 +32,19 @@ export default function SeccionMovilidad({
     fetch('http://localhost/basecambios/get_ciclos.php')
       .then(res => res.json())
       .then(ciclos => {
+        // ciclos es un array de strings tipo "2024A", "2024B", "2025A", etc.
         const aniosUnicos = [...new Set(ciclos.map(c => c.substring(0, 4)))];
         setCiclosAnio(aniosUnicos);
+
+        // Construir objeto {2024: ['A','B'], 2025: ['A'], ...}
+        const porAnio = {};
+        ciclos.forEach(c => {
+          const anio = c.substring(0, 4);
+          const ab = c.substring(4);
+          if (!porAnio[anio]) porAnio[anio] = [];
+          if (!porAnio[anio].includes(ab)) porAnio[anio].push(ab);
+        });
+        setCiclosPorAnio(porAnio);
 
         if (formData.CICLO && formData.CICLO.length === 5) {
           const anio = formData.CICLO.slice(0, 4);
@@ -44,6 +56,9 @@ export default function SeccionMovilidad({
       })
       .catch(console.error);
   }, [formData.CICLO, handleChange]);
+
+  // Obtener semestres disponibles para el año seleccionado
+  const semestresDisponibles = ciclosPorAnio[formData.CICLO_SEMESTRAL_ANIO] || [];
 
   return (
     <div className="form-section">
@@ -73,9 +88,10 @@ export default function SeccionMovilidad({
                 value={formData.CICLO_SEMESTRAL_ANIO || ""}
                 onChange={e => {
                   const anio = e.target.value;
-                  const ab = formData.CICLO_SEMESTRAL_AB || "";
-                  const ciclo = anio && ab ? `${anio}${ab}` : "";
+                  const ab = ""; // Limpiar semestre al cambiar año
+                  const ciclo = "";
                   handleChange({ target: { name: "CICLO_SEMESTRAL_ANIO", value: anio } });
+                  handleChange({ target: { name: "CICLO_SEMESTRAL_AB", value: ab } });
                   handleChange({ target: { name: "CICLO_SEMESTRAL", value: ciclo } });
                   handleChange({ target: { name: "CICLO", value: ciclo } });
                 }}
@@ -100,10 +116,21 @@ export default function SeccionMovilidad({
                 }}
                 required
                 style={{ flex: 1 }}
+                disabled={!formData.CICLO_SEMESTRAL_ANIO}
               >
                 <option value="">Semestre</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
+                {semestresDisponibles.length === 2 && (
+                  <>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                  </>
+                )}
+                {semestresDisponibles.length === 1 && semestresDisponibles[0] === "A" && (
+                  <option value="A">A</option>
+                )}
+                {semestresDisponibles.length === 1 && semestresDisponibles[0] === "B" && (
+                  <option value="B">B</option>
+                )}
               </select>
             </div>
             {errores.CICLO && <span className="error-message">{errores.CICLO}</span>}
