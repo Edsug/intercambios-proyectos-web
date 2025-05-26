@@ -15,7 +15,6 @@ import Paises from "../components/configuracion/Paises";
 import Nacionalidades from "../components/configuracion/Nacionalidades";
 import TiposDestino from "../components/configuracion/TiposDestino";
 import Actividades from "../components/configuracion/Actividades";
-import Ciclos from "../components/configuracion/Ciclos"; // <-- Nuevo import
 
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
@@ -61,7 +60,6 @@ const Configuracion = () => {
               <button className={`config-tab ${subTab === "nacionalidades" ? "active" : ""}`} onClick={() => setSubTab("nacionalidades")}>Nacionalidades</button>
               <button className={`config-tab ${subTab === "tiposDestino" ? "active" : ""}`} onClick={() => setSubTab("tiposDestino")}>Tipos de Destino</button>
               <button className={`config-tab ${subTab === "actividades" ? "active" : ""}`} onClick={() => setSubTab("actividades")}>Actividades</button>
-              <button className={`config-tab ${subTab === "ciclos" ? "active" : ""}`} onClick={() => setSubTab("ciclos")}>Ciclos</button> {/* Nuevo tab */}
             </div>
 
             <div className="subtab-content">
@@ -75,7 +73,6 @@ const Configuracion = () => {
               {subTab === "nacionalidades" && <Nacionalidades />}
               {subTab === "tiposDestino" && <TiposDestino />}
               {subTab === "actividades" && <Actividades />}
-              {subTab === "ciclos" && <Ciclos />} {/* Nuevo contenido */}
             </div>
           </div>
         )}

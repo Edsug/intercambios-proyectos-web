@@ -47,28 +47,16 @@ export default function SeccionDatosAlumno({
   }
 };
 
-useEffect(() => {
-  fetch('http://localhost/basecambios/get_carreras.php')
-    .then(r => r.json()).then(setCarreras).catch(console.error);
-
-  fetch('http://localhost/basecambios/get_maestrias.php')
-    .then(r => r.json()).then(setMaestrias).catch(console.error);
-
-  fetch('http://localhost/basecambios/get_doctorados.php')
-    .then(r => r.json()).then(setDoctorados).catch(console.error);
-
-  fetch('http://localhost/basecambios/get_nacionalidades.php')
-    .then(r => r.json())
-    .then(data => {
-      setNacionalidades(data);
-      if (!formData.NACIONALIDAD && data.includes("MEXICANA")) {
-        setFormData(prev => ({ ...prev, NACIONALIDAD: "MEXICANA" }));
-      }
-    })
-    .catch(console.error);
-}, [formData.NACIONALIDAD, setFormData]);
-
-
+  useEffect(() => {
+    fetch('http://localhost/basecambios/get_carreras.php')
+      .then(r => r.json()).then(setCarreras).catch(console.error);
+    fetch('http://localhost/basecambios/get_maestrias.php')
+      .then(r => r.json()).then(setMaestrias).catch(console.error);
+    fetch('http://localhost/basecambios/get_doctorados.php')
+      .then(r => r.json()).then(setDoctorados).catch(console.error);
+    fetch('http://localhost/basecambios/get_nacionalidades.php')
+      .then(r => r.json()).then(setNacionalidades).catch(console.error);
+  }, []);
 
   return (
     <div className="form-section">
@@ -275,7 +263,7 @@ useEffect(() => {
               type="number" name="SEMESTRE"
               value={formData.SEMESTRE}
               onChange={handleChange}
-              min="0" max="12" required />
+              min="3" max="10" required />
             {errores.SEMESTRE && <span className="error-message">{errores.SEMESTRE}</span>}
           </label>
           <label>
@@ -284,7 +272,7 @@ useEffect(() => {
               type="number" name="PROMEDIO"
               value={formData.PROMEDIO}
               onChange={handleChange}
-              step="0.01" min="" max="100" required />
+              step="0.01" min="0" max="100" required />
             {errores.PROMEDIO && <span className="error-message">{errores.PROMEDIO}</span>}
           </label>
         </div>

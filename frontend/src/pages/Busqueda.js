@@ -300,7 +300,6 @@ export default function Busqueda() {
                 <th>Especialidad</th>
                 <th>Semestre</th>
                 <th>Promedio</th>
-                <th>Ciclo</th> 
                 <th>Certif. Calif.</th>
                 <th>Seguro</th>
                 <th>Acciones</th>
@@ -328,7 +327,6 @@ export default function Busqueda() {
                     <td>{especialidad || <span className="empty-cell">-</span>}</td>
                     <td>{a.semestre || <span className="empty-cell">-</span>}</td>
                     <td>{a.promedio || <span className="empty-cell">-</span>}</td>
-                    <td>{a.ciclo || <span className="empty-cell">-</span>}</td>
                     <td>
                       {esVerdadero(a.certificado_calificaciones) ? (
                         <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
