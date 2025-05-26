@@ -117,7 +117,6 @@ const Registro = () => {
         break;
       case 3:
         if (!formData.TIPO_MOVILIDAD) errs.TIPO_MOVILIDAD = "Seleccione tipo de movilidad.";
-        if (!formData.CICLO_SEMESTRAL) errs.CICLO_SEMESTRAL = "Seleccione ciclo semestral.";                if (!formData.CICLO_SEMESTRAL) errs.CICLO_SEMESTRAL = "Seleccione ciclo semestral.";
         if (!formData.INSTITUCION_DESTINO) errs.INSTITUCION_DESTINO = "Ingrese institución destino.";
         if (formData.TIPO_DESTINO === "INTERNACIONAL" && !formData.PAIS) errs.PAIS = "Seleccione país.";
         if (formData.TIPO_DESTINO === "NACIONAL" && (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")) {
@@ -222,6 +221,10 @@ const Registro = () => {
         draggable
         pauseOnHover 
       />
+
+  return (
+    <div className="dashboard-content">
+      
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>
