@@ -9,20 +9,11 @@ import SeccionDatosBeca from "../components/registro/SeccionDatosBeca";
 import SeccionDatosAdicionales from "../components/registro/SeccionDatosAdicionales";
 import SeccionDatosAlumno from "../components/registro/SeccionDatosAlumno";
 
-
-
 const Registro = () => {
-
-  const [correoLocal, setCorreoLocal] = useState('');
-  const [correoDominio, setCorreoDominio] = useState('@alumnos.udg.mx');
-  const [otroDominio, setOtroDominio] = useState('');
-  const dominios = [
-    '@gmail.com',
-    '@hotmail.com',
-    '@alumnos.udg.mx',
-    '@academicos.udg.mx',
-    'Otro'
-  ];
+  const [correoLocal, setCorreoLocal] = useState("");
+  const [correoDominio, setCorreoDominio] = useState("@alumnos.udg.mx");
+  const [otroDominio, setOtroDominio] = useState("");
+  const dominios = ["@alumnos.udg.mx", "@cusur.udg.mx", "Otro"];
 
   const [activeSection, setActiveSection] = useState(1);
   const [formData, setFormData] = useState({
@@ -32,11 +23,17 @@ const Registro = () => {
   });
   const [errores, setErrores] = useState({});
 
+  useEffect(() => {
+    const dominioFinal = correoDominio === "Otro" ? otroDominio : correoDominio;
+    const correoCompleto = correoLocal && dominioFinal ? `${correoLocal}${dominioFinal}` : "";
+    setFormData((prev) => ({ ...prev, CORREO: correoCompleto }));
+  }, [correoLocal, correoDominio, otroDominio]);
+
   useEffect(() => setErrores({}), [activeSection]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => {
+    setFormData((prev) => {
       const next = { ...prev, [name]: type === "checkbox" ? checked : value };
       if (name === "NIVEL_ACADEMICO") {
         next.CARRERA = "";
@@ -46,31 +43,17 @@ const Registro = () => {
     });
   };
 
-  useEffect(() => {
-    if (correoDominio === 'Otro') {
-      setFormData(prev => ({
-        ...prev,
-        CORREO: correoLocal && otroDominio ? `${correoLocal}@${otroDominio.replace(/^@/, '')}` : ''
-      }));
-    } else {
-      setFormData(prev => ({
-      ...prev,
-      CORREO: correoLocal ? `${correoLocal}${correoDominio}` : ''
-      }));
-    }
-  }, [correoLocal, correoDominio, otroDominio]);
-
   const handleAddBeca = (beca) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      BECAS: [...prev.BECAS, beca]
+      BECAS: [...prev.BECAS, beca],
     }));
   };
 
   const handleRemoveBeca = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      BECAS: prev.BECAS.filter((_, i) => i !== index)
+      BECAS: prev.BECAS.filter((_, i) => i !== index),
     }));
   };
 
@@ -85,21 +68,21 @@ const Registro = () => {
         if (!formData.FOLIO) errs.FOLIO = "Ingrese el folio.";
         break;
       case 2:
+        if (!formData.FOTO) errs.FOTO = "Debe seleccionar una foto.";
         if (!formData.CODIGO) errs.CODIGO = "Ingrese el código.";
         if (!formData.NOMBRE) errs.NOMBRE = "Ingrese el nombre.";
         if (!formData.APELLIDOS) errs.APELLIDOS = "Ingrese los apellidos.";
         if (!formData.NIVEL_ACADEMICO) errs.NIVEL_ACADEMICO = "Seleccione nivel académico.";
         if (formData.NIVEL_ACADEMICO === "LICENCIATURA" && !formData.CARRERA) errs.CARRERA = "Seleccione carrera.";
         if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
-        if (formData.NIVEL_ACADEMICO === "DOCTORADO" && !formData.DOCTORADO) errs.DOCTORADO = "Seleccione doctorado.";
         if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";
         else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 3 || formData.SEMESTRE > 10)
-          errs.SEMESTRE = "El semestre debe ser un número entre 3 y 10.";
+          errs.SEMESTRE = "El semestre debe ser un número entre 0 y 12.";
         if (!formData.PROMEDIO) errs.PROMEDIO = "Ingrese promedio.";
         else if (isNaN(formData.PROMEDIO) || !/^\d+(\.\d+)?$/.test(formData.PROMEDIO))
           errs.PROMEDIO = "El promedio debe ser un número válido.";
-        else if (parseFloat(formData.PROMEDIO) <= 80)
-            errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor a 80 para continuar.";
+        else if (parseFloat(formData.PROMEDIO) < 80)
+          errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor o igual a 80 para continuar.";
         if (!formData.SEXO) errs.SEXO = "Seleccione género.";
         if (!formData.FECHA_NACIMIENTO) errs.FECHA_NACIMIENTO = "Ingrese fecha de nacimiento.";
         if (!formData.TIPO_SANGRE) errs.TIPO_SANGRE = "Seleccione tipo de sangre.";
@@ -116,30 +99,34 @@ const Registro = () => {
         if (!formData.NSS) errs.NSS = "Ingrese NSS.";
         break;
       case 3:
+        if (!formData.CICLO) errs.CICLO = "Seleccione un ciclo académico.";
         if (!formData.TIPO_MOVILIDAD) errs.TIPO_MOVILIDAD = "Seleccione tipo de movilidad.";
-        if (!formData.CICLO_SEMESTRAL) errs.CICLO_SEMESTRAL = "Seleccione ciclo semestral.";                if (!formData.CICLO_SEMESTRAL) errs.CICLO_SEMESTRAL = "Seleccione ciclo semestral.";
         if (!formData.INSTITUCION_DESTINO) errs.INSTITUCION_DESTINO = "Ingrese institución destino.";
         if (formData.TIPO_DESTINO === "INTERNACIONAL" && !formData.PAIS) errs.PAIS = "Seleccione país.";
-        if (formData.TIPO_DESTINO === "NACIONAL" && (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")) {
+        if (
+          formData.TIPO_DESTINO === "NACIONAL" &&
+          (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")
+        ) {
           errs.ESTADO_REPUBLICA = "Seleccione estado.";
         }
         if (!formData.FECHA_INICIO) errs.FECHA_INICIO = "Ingrese fecha inicio.";
         if (!formData.FECHA_FIN) errs.FECHA_FIN = "Ingrese fecha fin.";
         else if (formData.FECHA_FIN < formData.FECHA_INICIO) errs.FECHA_FIN = "La fecha fin debe ser posterior.";
         break;
+
       case 4:
         // Becas opcionales: sólo validamos si hay alguna
         if (formData.BECAS && formData.BECAS.length > 0) {
           formData.BECAS.forEach((beca, idx) => {
-            if (!beca.tipo)   errs[`BECAS_${idx}_tipo`]   = "Seleccione tipo de beca.";
+            if (!beca.tipo) errs[`BECAS_${idx}_tipo`] = "Seleccione tipo de beca.";
             if ((beca.tipo === "CGCI" || beca.tipo === "EXTERNA") && !beca.nombre)
-                               errs[`BECAS_${idx}_nombre`] = "Nombre requerido.";
+              errs[`BECAS_${idx}_nombre`] = "Nombre requerido.";
             if (beca.tipo === "CUSUR" && (!beca.monto || isNaN(beca.monto)))
-                                errs[`BECAS_${idx}_monto`]  = "Monto inválido.";
+              errs[`BECAS_${idx}_monto`] = "Monto inválido.";
           });
         }
         break;
-        
+
       default:
         break;
     }
@@ -155,17 +142,16 @@ const Registro = () => {
     validarSeccion(3) &&
     validarSeccion(4) &&
     validarSeccion(5); // <- Faltaba
-  
 
   const nextSection = () => {
     if (!validarSeccion(activeSection)) {
       window.scrollTo(0, 0);
       return;
     }
-    setActiveSection(prev => prev + 1);
+    setActiveSection((prev) => prev + 1);
   };
 
-  const prevSection = () => setActiveSection(prev => prev - 1);
+  const prevSection = () => setActiveSection((prev) => prev - 1);
 
   const resetForm = () => {
     setFormData({ ...initialFormData, BECAS: [] });
@@ -173,7 +159,7 @@ const Registro = () => {
     setErrores({});
   };
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validarCampos()) {
       window.scrollTo(0, 0);
@@ -184,7 +170,7 @@ const Registro = () => {
         method: "POST",
         mode: "cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
       const text = await resp.text();
       if (!resp.ok) {
@@ -194,10 +180,7 @@ const Registro = () => {
       const data = JSON.parse(text);
       if (data.status === "success") {
         toast.success("Alumno registrado correctamente");
-        resetForm();        <div className="dashboard-content">
-          <ToastContainer position="top-center" autoClose={3000} />
-          {/* ...el resto de tu contenido... */}
-        </div>
+        resetForm();
       } else {
         toast.error("Error al registrar: " + data.message);
       }
@@ -206,32 +189,22 @@ const Registro = () => {
     }
   };
 
-
-
   return (
     <div className="dashboard-content">
-        <ToastContainer 
-        position="top-left"
-        autoClose={3000}
-        closeButton={false}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover 
-      />
+      <ToastContainer position="top-center" autoClose={3000} />
+
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>
       </div>
 
       <div className="form-progress">
-        {[1, 2, 3, 4, 5].map(step => (
+        {[1, 2, 3, 4, 5].map((step) => (
           <div
             key={step}
-            className={`progress-step ${activeSection >= step ? "active" : ""} ${activeSection > step ? "completed" : ""}`}
+            className={`progress-step ${activeSection >= step ? "active" : ""} ${
+              activeSection > step ? "completed" : ""
+            }`}
             data-title={
               ["Programa", "Datos del Alumno", "Datos de Movilidad", "Datos de Beca", "Datos Adicionales"][step - 1]
             }

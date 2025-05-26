@@ -11,9 +11,7 @@ export default function SeccionMovilidad({
   const [tiposMovilidad, setTiposMovilidad]     = useState([]);
   const [paises, setPaises]                     = useState([]);
   const [estadosRepublica, setEstadosRepublica] = useState([]);
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let y = 2015; y <= currentYear + 3; y++) years.push(y);
+  const [ciclos, setCiclos]                     = useState([]);
 
   useEffect(() => {
     fetch('http://localhost/basecambios/get_tipos_movilidad.php')
@@ -34,6 +32,7 @@ export default function SeccionMovilidad({
     // Obtener ciclos académicos
     fetch('http://localhost/basecambios/get_ciclos.php')
       .then(res => res.json())
+      .then(setCiclos)
       .catch(console.error);
   }, []);
 
@@ -41,6 +40,28 @@ export default function SeccionMovilidad({
     <div className="form-section">
       <h2 className="section-title">Datos de Movilidad</h2>
       <div className="section-content">
+
+        {/* Ciclo académico */}
+        <div className="form-row">
+          <label className="select-label">
+            CICLO:
+            <select
+              name="CICLO"
+              value={formData.CICLO}
+              onChange={handleChange}
+              required
+            >
+              <option value="">SELECCIONE CICLO</option>
+              {ciclos.map((ciclo, i) => (
+                <option key={i} value={ciclo}>{ciclo}</option>
+              ))}
+            </select>
+            {errores.CICLO && (
+              <span className="error-message">{errores.CICLO}</span>
+            )}
+          </label>
+        </div>
+
         {/* Tipo de Movilidad */}
         <div className="form-row">
           <label className="select-label">
@@ -60,43 +81,6 @@ export default function SeccionMovilidad({
           {errores.TIPO_MOVILIDAD && (
             <span className="error-message">{errores.TIPO_MOVILIDAD}</span>
           )}
-          <label>
-            CICLO SEMESTRAL:
-            <div style={{ display: "flex", gap: "8px" }}>
-              <select
-                value={formData.CICLO_SEMESTRAL_ANIO || ""}
-                onChange={e => {
-                  const anio = e.target.value;
-                  const ab = formData.CICLO_SEMESTRAL_AB || "";
-                  handleChange({ target: { name: "CICLO_SEMESTRAL_ANIO", value: anio } });
-                  handleChange({ target: { name: "CICLO_SEMESTRAL", value: anio && ab ? `${anio}${ab}` : "" } });
-                }}
-                required
-                style={{ flex: 1 }}
-              >
-                <option value="">Año</option>
-                {years.map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <select
-                value={formData.CICLO_SEMESTRAL_AB || ""}
-                onChange={e => {
-                  const ab = e.target.value;
-                  const anio = formData.CICLO_SEMESTRAL_ANIO || "";
-                  handleChange({ target: { name: "CICLO_SEMESTRAL_AB", value: ab } });
-                  handleChange({ target: { name: "CICLO_SEMESTRAL", value: anio && ab ? `${anio}${ab}` : "" } });
-                }}
-                required
-                style={{ flex: 1 }}
-              >
-                <option value="">Semestre</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-              </select>
-            </div>
-            {errores.CICLO_SEMESTRAL && <span className="error-message">{errores.CICLO_SEMESTRAL}</span>}
-          </label>
         </div>
 
         {/* Nacional vs Internacional */}
