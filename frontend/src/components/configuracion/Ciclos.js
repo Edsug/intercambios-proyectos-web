@@ -3,7 +3,7 @@ import "../../styles/Configuracion.css";
 
 const Ciclos = () => {
   const [ciclos, setCiclos] = useState([]);
-  const [nuevoCiclo, setNuevoCiclo] = useState({ nombre: "", visible: 1 });
+  const [nuevoCiclo, setNuevoCiclo] = useState({ anio: "", ab: "", visible: 1 });
   const [editandoId, setEditandoId] = useState(null);
   const [nuevoNombre, setNuevoNombre] = useState("");
   const [nuevaVisibilidad, setNuevaVisibilidad] = useState(1);
@@ -24,15 +24,16 @@ const Ciclos = () => {
 
   const agregarCiclo = async (e) => {
     e.preventDefault();
+    const nombre = `${nuevoCiclo.anio}${nuevoCiclo.ab}`;
     try {
       const res = await fetch("http://localhost/basecambios/agregar_ciclo.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nuevoCiclo),
+        body: JSON.stringify({ nombre, visible: nuevoCiclo.visible }),
       });
       const data = await res.json();
       alert(data.message || data.error || "Error desconocido");
-      setNuevoCiclo({ nombre: "", visible: 1 });
+      setNuevoCiclo({ anio: "", ab: "", visible: 1 });
       obtenerCiclos();
     } catch (err) {
       console.error("Error al agregar ciclo:", err);
@@ -63,7 +64,7 @@ const Ciclos = () => {
   };
 
   const eliminarCiclo = async (id) => {
-    const confirmacion = window.confirm("⚠️ ¿Estás seguro de eliminar este ciclo? Esta acción es irreversible.");
+    const confirmacion = window.confirm("\u26a0\ufe0f ¿Estás seguro de eliminar este ciclo? Esta acción es irreversible.");
     if (!confirmacion) return;
 
     try {
@@ -85,13 +86,26 @@ const Ciclos = () => {
       <h3>Agregar Ciclo</h3>
       <form onSubmit={agregarCiclo} className="config-form">
         <div className="form-group">
-          <label>Nombre:</label>
+          <label>Año:</label>
           <input
-            type="text"
-            value={nuevoCiclo.nombre}
-            onChange={(e) => setNuevoCiclo({ ...nuevoCiclo, nombre: e.target.value })}
+            type="number"
+            min="2010"
+            value={nuevoCiclo.anio}
+            onChange={(e) => setNuevoCiclo({ ...nuevoCiclo, anio: e.target.value })}
             required
           />
+        </div>
+        <div className="form-group">
+          <label>Semestre:</label>
+          <select
+            value={nuevoCiclo.ab}
+            onChange={(e) => setNuevoCiclo({ ...nuevoCiclo, ab: e.target.value })}
+            required
+          >
+            <option value="">--</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+          </select>
         </div>
         <div className="form-group">
           <label>Visible:</label>
