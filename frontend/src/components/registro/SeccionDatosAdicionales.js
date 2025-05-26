@@ -40,33 +40,6 @@ export default function SeccionDatosAdicionales({
             </label>
           </div>
         )}
-                {/* Cambio de estatus SIIAU */}
-        <div className="form-row checkbox-row">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              name="CAMBIO_ESTATUS_SIIAU"
-              checked={formData.CAMBIO_ESTATUS_SIIAU}
-              onChange={handleChange}
-            />
-            Cambio de estatus SIIAU
-          </label>
-        </div>
-        {formData.CAMBIO_ESTATUS_SIIAU && (
-          <div className="form-row">
-            <label>
-              DETALLES CAMBIO DE ESTATUS:
-              <textarea
-                name="DETALLES_CAMBIO_ESTATUS_SIIAU"
-                value={formData.DETALLES_CAMBIO_ESTATUS_SIIAU}
-                onChange={handleChange}
-                placeholder="Ingrese detalles sobre el cambio de estatus"
-                rows="3"
-                style={{ textTransform: "uppercase" }}
-              />
-            </label>
-          </div>
-        )}
 
         {/* Discapacidad */}
         <div className="form-row checkbox-row">

@@ -10,28 +10,13 @@ export default function SeccionDatosBeca({
   onRemoveBeca
 }) {
   const [catalogoBecas, setCatalogoBecas] = useState([]);
-  const [montoInput, setMontoInput] = useState('');
-    const handleMontoChange = (e) => {
-      const value = e.target.value.replace(/[^0-9]/g, '');
-      setMontoInput(value);
-      setNewBeca(prev => ({ ...prev, monto: value }));
-    };
-    const handleMontoBlur = () => {
-      if (montoInput) {
-        const num = parseFloat(montoInput);
-        setMontoInput(num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
-      }
-    };
-    const handleMontoFocus = () => {
-      setMontoInput(newBeca.monto || '');
-    };
-  const [showAddError, setShowAddError] = useState(false);
   const [newBeca, setNewBeca] = useState({
     tipo: '',
     monto: '',
     nombre: '',
     detalles: ''
   });
+
   // Cargar catálogo desde PHP
   useEffect(() => {
     fetch('http://localhost/basecambios/get_becas_catalogo.php')
@@ -70,11 +55,11 @@ export default function SeccionDatosBeca({
 
   const agregarBeca = () => {
     if (!newBeca.tipo || !newBeca.nombre || !newBeca.monto || isNaN(newBeca.monto)) {
-      setShowAddError(true);
       toast.error("Complete todos los campos correctamente.");
+
       return;
     }
-    setShowAddError(false);
+
     onAddBeca(newBeca);
     setNewBeca({
       tipo: tiposDisponibles[0] || '',
@@ -83,7 +68,6 @@ export default function SeccionDatosBeca({
       detalles: ''
     });
   };
-
 
   return (
     <div className="form-section">
@@ -104,15 +88,12 @@ export default function SeccionDatosBeca({
           <label>
             Monto:
             <input
-              type="text"
+              type="number"
               name="monto"
-              value={montoInput}
-              onChange={handleMontoChange}
-              onBlur={handleMontoBlur}
-              onFocus={handleMontoFocus}
-              placeholder="$ 0.00"
+              value={newBeca.monto}
+              onChange={handleNewBecaChange}
+              placeholder="Monto"
               min="0"
-              autoComplete="off"
             />
           </label>
 
@@ -157,11 +138,9 @@ export default function SeccionDatosBeca({
             </ul>
           </div>
         ) : (
-          showAddError && (
-            <div className="form-row error-message">
-               Debe agregar al menos una beca antes de agregar otra.
-            </div>
-          )
+          <div className="form-row error-message">
+            {errores.BECAS && "Debe agregar al menos una beca"}
+          </div>
         )}
       </div>
 

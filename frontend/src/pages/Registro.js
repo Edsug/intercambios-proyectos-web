@@ -9,21 +9,7 @@ import SeccionDatosBeca from "../components/registro/SeccionDatosBeca";
 import SeccionDatosAdicionales from "../components/registro/SeccionDatosAdicionales";
 import SeccionDatosAlumno from "../components/registro/SeccionDatosAlumno";
 
-
-
 const Registro = () => {
-
-  const [correoLocal, setCorreoLocal] = useState('');
-  const [correoDominio, setCorreoDominio] = useState('@alumnos.udg.mx');
-  const [otroDominio, setOtroDominio] = useState('');
-  const dominios = [
-    '@gmail.com',
-    '@hotmail.com',
-    '@alumnos.udg.mx',
-    '@academicos.udg.mx',
-    'Otro'
-  ];
-
   const [activeSection, setActiveSection] = useState(1);
   const [formData, setFormData] = useState({
     ...initialFormData,
@@ -44,20 +30,6 @@ const Registro = () => {
       return next;
     });
   };
-
-  useEffect(() => {
-    if (correoDominio === 'Otro') {
-      setFormData(prev => ({
-        ...prev,
-        CORREO: correoLocal && otroDominio ? `${correoLocal}@${otroDominio.replace(/^@/, '')}` : ''
-      }));
-    } else {
-      setFormData(prev => ({
-      ...prev,
-      CORREO: correoLocal ? `${correoLocal}${correoDominio}` : ''
-      }));
-    }
-  }, [correoLocal, correoDominio, otroDominio]);
 
   const handleAddBeca = (beca) => {
     setFormData(prev => ({
@@ -84,21 +56,21 @@ const Registro = () => {
         if (!formData.FOLIO) errs.FOLIO = "Ingrese el folio.";
         break;
       case 2:
+        if (!formData.FOTO) errs.FOTO = "Debe seleccionar una foto.";
         if (!formData.CODIGO) errs.CODIGO = "Ingrese el código.";
         if (!formData.NOMBRE) errs.NOMBRE = "Ingrese el nombre.";
         if (!formData.APELLIDOS) errs.APELLIDOS = "Ingrese los apellidos.";
         if (!formData.NIVEL_ACADEMICO) errs.NIVEL_ACADEMICO = "Seleccione nivel académico.";
         if (formData.NIVEL_ACADEMICO === "LICENCIATURA" && !formData.CARRERA) errs.CARRERA = "Seleccione carrera.";
         if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
-        if (formData.NIVEL_ACADEMICO === "DOCTORADO" && !formData.DOCTORADO) errs.DOCTORADO = "Seleccione doctorado.";
         if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";
-        else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 2 || formData.SEMESTRE > 10)
-          errs.SEMESTRE = "El semestre debe ser un número entre 2 y 10.";
+        else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 3 || formData.SEMESTRE > 10)
+          errs.SEMESTRE = "El semestre debe ser un número entre 3 y 10.";
         if (!formData.PROMEDIO) errs.PROMEDIO = "Ingrese promedio.";
         else if (isNaN(formData.PROMEDIO) || !/^\d+(\.\d+)?$/.test(formData.PROMEDIO))
           errs.PROMEDIO = "El promedio debe ser un número válido.";
-        else if (parseFloat(formData.PROMEDIO) < 80)
-          errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor o igual a 80 para continuar.";
+        else if (parseFloat(formData.PROMEDIO) <= 80)
+            errs.PROMEDIO = "Promedio insuficiente. Debe ser mayor a 80 para continuar.";
         if (!formData.SEXO) errs.SEXO = "Seleccione género.";
         if (!formData.FECHA_NACIMIENTO) errs.FECHA_NACIMIENTO = "Ingrese fecha de nacimiento.";
         if (!formData.TIPO_SANGRE) errs.TIPO_SANGRE = "Seleccione tipo de sangre.";
@@ -116,7 +88,6 @@ const Registro = () => {
         break;
       case 3:
         if (!formData.TIPO_MOVILIDAD) errs.TIPO_MOVILIDAD = "Seleccione tipo de movilidad.";
-        if (!formData.CICLO_SEMESTRAL) errs.CICLO_SEMESTRAL = "Seleccione ciclo semestral.";
         if (!formData.INSTITUCION_DESTINO) errs.INSTITUCION_DESTINO = "Ingrese institución destino.";
         if (formData.TIPO_DESTINO === "INTERNACIONAL" && !formData.PAIS) errs.PAIS = "Seleccione país.";
         if (formData.TIPO_DESTINO === "NACIONAL" && (!formData.ESTADO_REPUBLICA || formData.ESTADO_REPUBLICA === "0" || formData.ESTADO_REPUBLICA.trim() === "")) {
@@ -191,7 +162,10 @@ const Registro = () => {
       const data = JSON.parse(text);
       if (data.status === "success") {
         toast.success("Alumno registrado correctamente");
-        resetForm();        
+        resetForm();        <div className="dashboard-content">
+          <ToastContainer position="top-center" autoClose={3000} />
+          {/* ...el resto de tu contenido... */}
+        </div>
       } else {
         toast.error("Error al registrar: " + data.message);
       }
@@ -200,11 +174,7 @@ const Registro = () => {
     }
   };
 
-
-
-  return (
-    <div className="dashboard-content">
-        <ToastContainer 
+  <ToastContainer 
         position="top-left"
         autoClose={3000}
         closeButton={false}
@@ -216,6 +186,10 @@ const Registro = () => {
         draggable
         pauseOnHover 
       />
+
+  return (
+    <div className="dashboard-content">
+      
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>
@@ -252,13 +226,6 @@ const Registro = () => {
             prevSection={prevSection}
             nextSection={nextSection}
             errores={errores}
-            correoLocal={correoLocal}
-            setCorreoLocal={setCorreoLocal}
-            correoDominio={correoDominio}
-            setCorreoDominio={setCorreoDominio}
-            otroDominio={otroDominio}
-            setOtroDominio={setOtroDominio}
-            dominios={dominios}
           />
         )}
         {activeSection === 3 && (
