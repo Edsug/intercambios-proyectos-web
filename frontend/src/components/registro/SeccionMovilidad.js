@@ -14,6 +14,7 @@ export default function SeccionMovilidad({
   const currentYear = new Date().getFullYear();
   const years = [];
   for (let y = 2015; y <= currentYear + 3; y++) years.push(y);
+  const [ciclos, setCiclos]                     = useState([]);
 
   useEffect(() => {
     fetch('http://localhost/basecambios/get_tipos_movilidad.php')
@@ -34,6 +35,7 @@ export default function SeccionMovilidad({
     // Obtener ciclos académicos
     fetch('http://localhost/basecambios/get_ciclos.php')
       .then(res => res.json())
+      .then(setCiclos)
       .catch(console.error);
   }, []);
 
@@ -41,6 +43,28 @@ export default function SeccionMovilidad({
     <div className="form-section">
       <h2 className="section-title">Datos de Movilidad</h2>
       <div className="section-content">
+
+        {/* Ciclo académico */}
+        <div className="form-row">
+          <label className="select-label">
+            CICLO:
+            <select
+              name="CICLO"
+              value={formData.CICLO}
+              onChange={handleChange}
+              required
+            >
+              <option value="">SELECCIONE CICLO</option>
+              {ciclos.map((ciclo, i) => (
+                <option key={i} value={ciclo}>{ciclo}</option>
+              ))}
+            </select>
+            {errores.CICLO && (
+              <span className="error-message">{errores.CICLO}</span>
+            )}
+          </label>
+        </div>
+
         {/* Tipo de Movilidad */}
         <div className="form-row">
           <label className="select-label">
