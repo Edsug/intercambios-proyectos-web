@@ -7,8 +7,16 @@ export default function SeccionDatosAlumno({
   setFormData,
   errores,
   prevSection,
-  nextSection
+  nextSection,
+  correoLocal,
+  setCorreoLocal,
+  correoDominio,
+  setCorreoDominio,
+  otroDominio,
+  setOtroDominio,
+  dominios
 }) {
+
   const [carreras, setCarreras] = useState([]);
   const [maestria, setMaestrias] = useState([]);
   const [doctorados, setDoctorados] = useState([]);
@@ -282,6 +290,7 @@ export default function SeccionDatosAlumno({
               <option value="">—Seleccione—</option>
               <option value="M">MASCULINO</option>
               <option value="F">FEMENINO</option>
+              <option value="O">OTRO</option>
             </select>
             {errores.SEXO && <span className="error-message">{errores.SEXO}</span>}
           </label>
@@ -335,46 +344,41 @@ export default function SeccionDatosAlumno({
         <div className="form-row">
           <label>
             CORREO:
-            <input
-              type="email" name="CORREO"
-              value={formData.CORREO}
-              onChange={handleChange}
-              required
-            />
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                type="text"
+                name="CORREO_LOCAL"
+                placeholder="usuario"
+                value={correoLocal}
+                onChange={e => setCorreoLocal(e.target.value)}
+                required
+                style={{ flex: 2 }}
+              />
+              <select
+                name="CORREO_DOMINIO"
+                value={correoDominio}
+                onChange={e => setCorreoDominio(e.target.value)}
+                style={{ flex: 2 }}
+              >
+                {dominios.map((dom, i) => (
+                  <option key={i} value={dom}>{dom === 'Otro' ? 'Otro...' : dom}</option>
+                ))}
+              </select>
+              {correoDominio === 'Otro' && (
+                <input
+                  type="text"
+                  name="OTRO_DOMINIO"
+                  placeholder="dominio.com"
+                  value={otroDominio}
+                  onChange={e => setOtroDominio(e.target.value)}
+                  required
+                  style={{ flex: 2 }}
+                />
+              )}
+            </div>
             {errores.CORREO && <span className="error-message">{errores.CORREO}</span>}
           </label>
-          <label>
-            CONTACTO EMERGENCIA:
-            <input
-              type="tel" name="CONTACTO_EMERGENCIA"
-              value={formData.CONTACTO_EMERGENCIA}
-              onChange={handleChange}
-              maxLength={10} required
-            />
-            {errores.CONTACTO_EMERGENCIA && <span className="error-message">{errores.CONTACTO_EMERGENCIA}</span>}
-          </label>
-        </div>
-
-        {/* 9️⃣ Nombre contacto emergencia (si existe teléfono) */}
-        {formData.CONTACTO_EMERGENCIA && (
-          <div className="form-row">
-            <label>
-              NOMBRE CONTACTO:
-              <input
-                style={{ textTransform: "uppercase" }}
-                type="text" name="NOMBRE_CONTACTO_EMERGENCIA"
-                value={formData.NOMBRE_CONTACTO_EMERGENCIA}
-                onChange={handleChange}
-                required
-              />
-              {errores.NOMBRE_CONTACTO_EMERGENCIA &&
-               <span className="error-message">{errores.NOMBRE_CONTACTO_EMERGENCIA}</span>}
-            </label>
-          </div>
-        )}
-
-        {/* 🔟 NSS */}
-        <div className="form-row">
+         
           <label>
             NÚMERO DE SEGURO SOCIAL (NSS):
             <input
@@ -388,6 +392,37 @@ export default function SeccionDatosAlumno({
           </label>
         </div>
 
+                {/* 9️⃣ Nombre contacto emergencia (si existe teléfono) */}
+        <div className="form-row">
+          <label>
+            NOMBRE CONTACTO DE EMERGENCIA:
+            <input
+              style={{ textTransform: "uppercase" }}
+              type="text"
+              name="NOMBRE_CONTACTO_EMERGENCIA"
+              value={formData.NOMBRE_CONTACTO_EMERGENCIA}
+              onChange={handleChange}
+              required
+            />
+            {errores.NOMBRE_CONTACTO_EMERGENCIA &&
+              <span className="error-message">{errores.NOMBRE_CONTACTO_EMERGENCIA}</span>}
+          </label>
+          {formData.NOMBRE_CONTACTO_EMERGENCIA && (
+            <label>
+              CONTACTO EMERGENCIA:
+              <input
+                type="tel"
+                name="CONTACTO_EMERGENCIA"
+                value={formData.CONTACTO_EMERGENCIA}
+                onChange={handleChange}
+                maxLength={10}
+                required
+              />
+              {errores.CONTACTO_EMERGENCIA &&
+                <span className="error-message">{errores.CONTACTO_EMERGENCIA}</span>}
+            </label>
+          )}
+        </div>
       </div>
 
       <div className="form-navigation">
