@@ -8,7 +8,7 @@ import SeccionMovilidad from "../components/registro/SeccionMovilidad";
 import SeccionDatosBeca from "../components/registro/SeccionDatosBeca";
 import SeccionDatosAdicionales from "../components/registro/SeccionDatosAdicionales";
 import SeccionDatosAlumno from "../components/registro/SeccionDatosAlumno";
-
+//Edgar nooooooooooo
 const Registro = () => {
   const [activeSection, setActiveSection] = useState(1);
   const [formData, setFormData] = useState({
