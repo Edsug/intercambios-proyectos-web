@@ -11,6 +11,9 @@ export default function SeccionMovilidad({
   const [tiposMovilidad, setTiposMovilidad]     = useState([]);
   const [paises, setPaises]                     = useState([]);
   const [estadosRepublica, setEstadosRepublica] = useState([]);
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = 2015; y <= currentYear + 3; y++) years.push(y);
 
   useEffect(() => {
     // 1) Obtener tipos de movilidad
@@ -56,6 +59,43 @@ export default function SeccionMovilidad({
           {errores.TIPO_MOVILIDAD && (
             <span className="error-message">{errores.TIPO_MOVILIDAD}</span>
           )}
+          <label>
+            CICLO SEMESTRAL:
+            <div style={{ display: "flex", gap: "8px" }}>
+              <select
+                value={formData.CICLO_SEMESTRAL_ANIO || ""}
+                onChange={e => {
+                  const anio = e.target.value;
+                  const ab = formData.CICLO_SEMESTRAL_AB || "";
+                  handleChange({ target: { name: "CICLO_SEMESTRAL_ANIO", value: anio } });
+                  handleChange({ target: { name: "CICLO_SEMESTRAL", value: anio && ab ? `${anio}${ab}` : "" } });
+                }}
+                required
+                style={{ flex: 1 }}
+              >
+                <option value="">Año</option>
+                {years.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <select
+                value={formData.CICLO_SEMESTRAL_AB || ""}
+                onChange={e => {
+                  const ab = e.target.value;
+                  const anio = formData.CICLO_SEMESTRAL_ANIO || "";
+                  handleChange({ target: { name: "CICLO_SEMESTRAL_AB", value: ab } });
+                  handleChange({ target: { name: "CICLO_SEMESTRAL", value: anio && ab ? `${anio}${ab}` : "" } });
+                }}
+                required
+                style={{ flex: 1 }}
+              >
+                <option value="">Semestre</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+              </select>
+            </div>
+            {errores.CICLO_SEMESTRAL && <span className="error-message">{errores.CICLO_SEMESTRAL}</span>}
+          </label>
         </div>
 
         {/* Nacional vs Internacional */}
