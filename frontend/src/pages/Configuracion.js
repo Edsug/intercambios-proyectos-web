@@ -15,70 +15,139 @@ import Paises from "../components/configuracion/Paises";
 import Nacionalidades from "../components/configuracion/Nacionalidades";
 import TiposDestino from "../components/configuracion/TiposDestino";
 import Actividades from "../components/configuracion/Actividades";
-import Ciclos from "../components/configuracion/Ciclos"; // <-- Nuevo import
+import Ciclos from "../components/configuracion/Ciclos";
 
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
   const [subTab, setSubTab] = useState("carreras");
 
+  // Configuración de tabs principales
+  const mainTabs = [
+    {
+      id: "sistema",
+      title: "🔧 Configuración del Sistema",
+      description: "Gestiona catálogos y parámetros del sistema"
+    },
+    {
+      id: "usuarios",
+      title: "👥 Gestión de Usuarios",
+      description: "Administra usuarios y permisos"
+    }
+  ];
+
+  // Configuración de subtabs del sistema
+  const systemSubTabs = [
+    { id: "carreras", title: "🎓 Carreras", component: <Carreras /> },
+    { id: "maestrias", title: "📚 Maestrías", component: <Maestrias /> },
+    { id: "doctorados", title: "🎖️ Doctorados", component: <Doctorados /> },
+    { id: "programas", title: "📋 Programas", component: <Programas /> },
+    { id: "becas", title: "💰 Becas", component: <Becas /> },
+    { id: "estados", title: "🗺️ Estados", component: <Estados /> },
+    { id: "paises", title: "🌍 Países", component: <Paises /> },
+    { id: "nacionalidades", title: "🏳️ Nacionalidades", component: <Nacionalidades /> },
+    { id: "tiposDestino", title: "📍 Tipos de Destino", component: <TiposDestino /> },
+    { id: "actividades", title: "🎯 Actividades", component: <Actividades /> },
+    { id: "ciclos", title: "📅 Ciclos", component: <Ciclos /> }
+  ];
+
+  const handleMainTabChange = (tabId) => {
+    setCurrentTab(tabId);
+    // Reset subtab cuando cambiamos de tab principal
+    if (tabId === "sistema") {
+      setSubTab("carreras");
+    }
+  };
+
+  const getCurrentTabInfo = () => {
+    return mainTabs.find(tab => tab.id === currentTab);
+  };
+
+  const getCurrentSubTabComponent = () => {
+    const subTabConfig = systemSubTabs.find(tab => tab.id === subTab);
+    return subTabConfig ? subTabConfig.component : null;
+  };
+
   return (
     <div className="dashboard-content">
+      {/* Cabecera principal con información dinámica */}
       <div className="content-header">
-        <h1>⚙️ Configuración</h1>
-        <p>Administra tu cuenta y configura el sistema.</p>
+        <h1>⚙️ Configuración del Sistema</h1>
+        <p>
+          {currentTab === "sistema" 
+            ? "Administra catálogos, configuraciones y parámetros del sistema de movilidad estudiantil."
+            : "Gestiona usuarios, permisos y accesos al sistema de forma segura."
+          }
+        </p>
       </div>
 
-      {/* Tabs principales */}
+      {/* Navegación principal */}
       <div className="config-tabs main-tabs">
-        <button
-          className={`config-tab ${currentTab === "sistema" ? "active" : ""}`}
-          onClick={() => setCurrentTab("sistema")}
-        >
-          Configuración del Sistema
-        </button>
-        <button
-          className={`config-tab ${currentTab === "usuarios" ? "active" : ""}`}
-          onClick={() => setCurrentTab("usuarios")}
-        >
-          Gestión de Usuarios
-        </button>
+        {mainTabs.map(tab => (
+          <button
+            key={tab.id}
+            className={`config-tab ${currentTab === tab.id ? "active" : ""}`}
+            onClick={() => handleMainTabChange(tab.id)}
+            title={tab.description}
+          >
+            {tab.title}
+          </button>
+        ))}
       </div>
 
-      {/* Contenido */}
+      {/* Contenido principal */}
       <div className="config-content">
-        {currentTab === "usuarios" && <Usuarios />}
+        {/* Sección de Usuarios */}
+        {currentTab === "usuarios" && (
+          <div className="config-container">
+            <Usuarios />
+          </div>
+        )}
 
+        {/* Sección de Sistema con subtabs */}
         {currentTab === "sistema" && (
           <div className="config-container">
+            {/* Navegación de subtabs */}
             <div className="config-tabs sub-tabs">
-              <button className={`config-tab ${subTab === "carreras" ? "active" : ""}`} onClick={() => setSubTab("carreras")}>Carreras</button>
-              <button className={`config-tab ${subTab === "maestrias" ? "active" : ""}`} onClick={() => setSubTab("maestrias")}>Maestrías</button>
-              <button className={`config-tab ${subTab === "doctorados" ? "active" : ""}`} onClick={() => setSubTab("doctorados")}>Doctorados</button>
-              <button className={`config-tab ${subTab === "programas" ? "active" : ""}`} onClick={() => setSubTab("programas")}>Programas</button>
-              <button className={`config-tab ${subTab === "becas" ? "active" : ""}`} onClick={() => setSubTab("becas")}>Becas</button>
-              <button className={`config-tab ${subTab === "estados" ? "active" : ""}`} onClick={() => setSubTab("estados")}>Estados</button>
-              <button className={`config-tab ${subTab === "paises" ? "active" : ""}`} onClick={() => setSubTab("paises")}>Países</button>
-              <button className={`config-tab ${subTab === "nacionalidades" ? "active" : ""}`} onClick={() => setSubTab("nacionalidades")}>Nacionalidades</button>
-              <button className={`config-tab ${subTab === "tiposDestino" ? "active" : ""}`} onClick={() => setSubTab("tiposDestino")}>Tipos de Destino</button>
-              <button className={`config-tab ${subTab === "actividades" ? "active" : ""}`} onClick={() => setSubTab("actividades")}>Actividades</button>
-              <button className={`config-tab ${subTab === "ciclos" ? "active" : ""}`} onClick={() => setSubTab("ciclos")}>Ciclos</button> {/* Nuevo tab */}
+              {systemSubTabs.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`config-tab ${subTab === tab.id ? "active" : ""}`}
+                  onClick={() => setSubTab(tab.id)}
+                  title={`Gestionar ${tab.title}`}
+                >
+                  {tab.title}
+                </button>
+              ))}
             </div>
 
+            {/* Contenido del subtab activo */}
             <div className="subtab-content">
-              {subTab === "carreras" && <Carreras />}
-              {subTab === "maestrias" && <Maestrias />}
-              {subTab === "doctorados" && <Doctorados />}
-              {subTab === "programas" && <Programas />}
-              {subTab === "becas" && <Becas />}
-              {subTab === "estados" && <Estados />}
-              {subTab === "paises" && <Paises />}
-              {subTab === "nacionalidades" && <Nacionalidades />}
-              {subTab === "tiposDestino" && <TiposDestino />}
-              {subTab === "actividades" && <Actividades />}
-              {subTab === "ciclos" && <Ciclos />} {/* Nuevo contenido */}
+              {getCurrentSubTabComponent()}
             </div>
           </div>
         )}
+      </div>
+
+      {/* Información adicional del contexto */}
+      <div className="config-footer">
+        <div className="config-info">
+          <small style={{ 
+            color: 'var(--text-lighter)', 
+            fontSize: '0.85rem',
+            display: 'block',
+            textAlign: 'center',
+            marginTop: '2rem',
+            padding: '1rem',
+            background: 'var(--section-bg)',
+            borderRadius: 'var(--border-radius)',
+            border: '1px solid var(--border-color)'
+          }}>
+            {currentTab === "sistema" 
+              ? `Configurando: ${systemSubTabs.find(t => t.id === subTab)?.title || ''} • ${systemSubTabs.length} módulos disponibles`
+              : "Gestión de usuarios • Permisos y accesos del sistema"
+            }
+          </small>
+        </div>
       </div>
     </div>
   );
