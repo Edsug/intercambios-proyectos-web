@@ -68,7 +68,37 @@ useEffect(() => {
     .catch(console.error);
 }, [formData.NACIONALIDAD, setFormData]);
 
+const handleNext = async () => {
+  // Solo sube si hay foto nueva (tipo File)
+  if (formData.FOTO && formData.FOTO instanceof File) {
+    if (!formData.CODIGO) {
+      toast.error("Primero ingresa el código del alumno.");
+      return;
+    }
+    const formDataFoto = new FormData();
+    formDataFoto.append("foto", formData.FOTO);
+    formDataFoto.append("codigo", formData.CODIGO);
 
+    try {
+      const resp = await fetch("http://localhost/basecambios/upload_foto.php", {
+        method: "POST",
+        body: formDataFoto,
+      });
+      const data = await resp.json();
+      if (data.success) {
+        // Guarda solo el nombre/ruta en formData
+        setFormData(prev => ({ ...prev, FOTO: data.ruta }));
+        nextSection();
+      } else {
+        toast.error(data.error || "Error al subir la foto.");
+      }
+    } catch (err) {
+      toast.error("Error de conexión al subir la foto.");
+    }
+  } else {
+    nextSection();
+  }
+};
 
   return (
     <div className="form-section">
@@ -441,7 +471,7 @@ useEffect(() => {
         <button type="button" onClick={prevSection} className="prev-button">
           Anterior
         </button>
-        <button type="button" onClick={nextSection} className="next-button">
+        <button type="button" onClick={handleNext} className="next-button">
           Siguiente
         </button>
       </div>
