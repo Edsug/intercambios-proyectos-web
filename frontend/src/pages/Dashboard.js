@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Bar, Pie } from "react-chartjs-2";
+import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import "../styles/Dashboard.css";
+
+Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -7,6 +11,17 @@ const Dashboard = () => {
     nuevosRegistros: 0,
     cursosActivos: 0,
   });
+  const [nivelesData, setNivelesData] = useState(null);
+  const [promedioSemestreData, setPromedioSemestreData] = useState(null);
+  const [carrerasData, setCarrerasData] = useState(null);
+  const [maestriasData, setMaestriasData] = useState(null);
+  const [doctoradosData, setDoctoradosData] = useState(null);
+  const [generoData, setGeneroData] = useState(null);
+  const [nacionalidadData, setNacionalidadData] = useState(null);
+  const [estadosData, setEstadosData] = useState(null);
+  const [programasData, setProgramasData] = useState(null);
+  const [tiposMovilidadData, setTiposMovilidadData] = useState(null);
+  const [becasData, setBecasData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +36,160 @@ const Dashboard = () => {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    // Cargar datos para gráfica de niveles académicos
+    fetch("http://localhost/basecambios/get_grafica_niveles.php")
+      .then(res => res.json())
+      .then(data => {
+        setNivelesData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por nivel académico",
+            data: data.map(d => d.total),
+            backgroundColor: ["#3498db", "#2ecc71", "#e67e22"]
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de promedio por semestre
+    fetch("http://localhost/basecambios/get_grafica_promedio_semestre.php")
+      .then(res => res.json())
+      .then(data => {
+        setPromedioSemestreData({
+          labels: data.map(d => `Semestre ${d.semestre}`),
+          datasets: [{
+            label: "Promedio por semestre",
+            data: data.map(d => d.promedio),
+            backgroundColor: "#9b59b6"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de carreras
+    fetch("http://localhost/basecambios/get_grafica_carreras.php")
+      .then(res => res.json())
+      .then(data => {
+        setCarrerasData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por carrera (Licenciatura)",
+            data: data.map(d => d.total),
+            backgroundColor: "#2980b9"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de maestrías
+    fetch("http://localhost/basecambios/get_grafica_maestrias.php")
+      .then(res => res.json())
+      .then(data => {
+        setMaestriasData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por maestría",
+            data: data.map(d => d.total),
+            backgroundColor: "#27ae60"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de doctorados
+    fetch("http://localhost/basecambios/get_grafica_doctorados.php")
+      .then(res => res.json())
+      .then(data => {
+        setDoctoradosData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por doctorado",
+            data: data.map(d => d.total),
+            backgroundColor: "#e67e22"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de género
+    fetch("http://localhost/basecambios/get_grafica_genero.php")
+      .then(res => res.json())
+      .then(data => {
+        setGeneroData({
+          labels: data.map(d => d.sexo === "M" ? "Masculino" : "Femenino"),
+          datasets: [{
+            label: "Alumnos por género",
+            data: data.map(d => d.total),
+            backgroundColor: ["#2980b9", "#e84393"]
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de nacionalidad
+    fetch("http://localhost/basecambios/get_grafica_nacionalidad.php")
+      .then(res => res.json())
+      .then(data => {
+        setNacionalidadData({
+          labels: data.map(d => d.tipo),
+          datasets: [{
+            label: "Alumnos por nacionalidad",
+            data: data.map(d => d.total),
+            backgroundColor: ["#8e44ad", "#f39c12"]
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de estados
+    fetch("http://localhost/basecambios/get_grafica_estados.php")
+      .then(res => res.json())
+      .then(data => {
+        setEstadosData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos nacionales por estado",
+            data: data.map(d => d.total),
+            backgroundColor: "#16a085"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de programas
+    fetch("http://localhost/basecambios/get_grafica_programas.php")
+      .then(res => res.json())
+      .then(data => {
+        setProgramasData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por programa",
+            data: data.map(d => d.total),
+            backgroundColor: "#8e44ad"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de tipos de movilidad
+    fetch("http://localhost/basecambios/get_grafica_tipos_movilidad.php")
+      .then(res => res.json())
+      .then(data => {
+        setTiposMovilidadData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por tipo de movilidad",
+            data: data.map(d => d.total),
+            backgroundColor: "#e84393"
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de becas
+    fetch("http://localhost/basecambios/get_grafica_becas.php")
+      .then(res => res.json())
+      .then(data => {
+        setBecasData({
+          labels: data.map(d => d.nombre),
+          datasets: [{
+            label: "Alumnos por tipo de beca",
+            data: data.map(d => d.total),
+            backgroundColor: "#f1c40f"
+          }]
+        });
+      });
   }, []);
 
   if (loading) {
@@ -51,6 +220,72 @@ const Dashboard = () => {
           <h3>Cursos activos</h3>
           <p className="stat-number">{stats.cursosActivos}</p>
         </div>
+      </div>
+
+      {/* Gráfica de niveles académicos */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por nivel académico</h3>
+        {nivelesData && <Bar data={nivelesData} />}
+      </div>
+
+      {/* Gráfica de promedio por semestre */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Promedio por semestre</h3>
+        {promedioSemestreData && <Bar data={promedioSemestreData} />}
+      </div>
+
+      {/* Gráfica de carreras */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por carrera (Licenciatura)</h3>
+        {carrerasData && <Bar data={carrerasData} />}
+      </div>
+
+      {/* Gráfica de maestrías */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por maestría</h3>
+        {maestriasData && <Bar data={maestriasData} />}
+      </div>
+
+      {/* Gráfica de doctorados */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por doctorado</h3>
+        {doctoradosData && <Bar data={doctoradosData} />}
+      </div>
+
+      {/* Gráfica de género */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por género</h3>
+        {generoData && <Pie data={generoData} />}
+      </div>
+
+      {/* Gráfica de nacionalidad */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por nacionalidad</h3>
+        {nacionalidadData && <Pie data={nacionalidadData} />}
+      </div>
+
+      {/* Gráfica de estados */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos nacionales por estado</h3>
+        {estadosData && <Pie data={estadosData} />}
+      </div>
+
+      {/* Gráfica de programas */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por programa</h3>
+        {programasData && <Pie data={programasData} />}
+      </div>
+
+      {/* Gráfica de tipos de movilidad */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por tipo de movilidad</h3>
+        {tiposMovilidadData && <Pie data={tiposMovilidadData} />}
+      </div>
+
+      {/* Gráfica de becas */}
+      <div style={{ maxWidth: 600, margin: "40px auto" }}>
+        <h3>Alumnos por tipo de beca</h3>
+        {becasData && <Pie data={becasData} />}
       </div>
     </div>
   );
