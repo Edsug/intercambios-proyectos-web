@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import userDefault from '../../assets/user.png'; // Asegúrate de tener esta imagen
 
 export default function SeccionDatosAlumno({
   formData,
@@ -21,56 +22,91 @@ export default function SeccionDatosAlumno({
   const [maestria, setMaestrias] = useState([]);
   const [doctorados, setDoctorados] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
-  const [previewFoto, setPreviewFoto] = useState(formData.FOTO ? URL.createObjectURL(formData.FOTO) : null);
+  const [previewFoto, setPreviewFoto] = useState(formData.FOTO ? URL.createObjectURL(formData.FOTO) : userDefault);
+
+  // Recorta la imagen a cuadrado usando canvas
+  const cropToSquare = (file, callback) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new window.Image();
+      img.onload = function () {
+        const size = Math.min(img.width, img.height);
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(
+          img,
+          (img.width - size) / 2,
+          (img.height - size) / 2,
+          size,
+          size,
+          0,
+          0,
+          size,
+          size
+        );
+        canvas.toBlob(blob => {
+          const croppedFile = new File([blob], file.name, { type: file.type });
+          callback(croppedFile, URL.createObjectURL(blob));
+        }, file.type);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleFotoChange = (e) => {
-  const file = e.target.files[0];
-  
-  if (file) {
-    // Validar tamaño de archivo (5MB máximo)
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validar tamaño y tipo
     if (file.size > 5 * 1024 * 1024) {
       toast.error('El archivo es demasiado grande. El tamaño máximo es 5MB.');
       e.target.value = '';
       return;
     }
-    
-    // Validar tipo de archivo
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     if (!validTypes.includes(file.type)) {
       toast.error('Formato de archivo no válido. Use JPG, PNG o GIF.');
       e.target.value = '';
       return;
     }
-    
-    setFormData(prev => ({ ...prev, FOTO: file }));
-    setPreviewFoto(URL.createObjectURL(file));
-  }
-};
 
-useEffect(() => {
-  fetch('http://localhost/basecambios/get_carreras.php')
-    .then(r => r.json()).then(setCarreras).catch(console.error);
+    // Recortar y actualizar
+    cropToSquare(file, (croppedFile, previewUrl) => {
+      setFormData(prev => ({ ...prev, FOTO: croppedFile }));
+      setPreviewFoto(previewUrl);
+    });
+  };
 
-  fetch('http://localhost/basecambios/get_maestrias.php')
-    .then(r => r.json()).then(setMaestrias).catch(console.error);
+  useEffect(() => {
+    fetch('http://localhost/basecambios/get_carreras.php')
+      .then(r => r.json()).then(setCarreras).catch(console.error);
 
-  fetch('http://localhost/basecambios/get_doctorados.php')
-    .then(r => r.json()).then(setDoctorados).catch(console.error);
+    fetch('http://localhost/basecambios/get_maestrias.php')
+      .then(r => r.json()).then(setMaestrias).catch(console.error);
 
-  fetch('http://localhost/basecambios/get_nacionalidades.php')
-    .then(r => r.json())
-    .then(data => {
-      setNacionalidades(data);
-      if (!formData.NACIONALIDAD && data.includes("MEXICANA")) {
-        setFormData(prev => ({ ...prev, NACIONALIDAD: "MEXICANA" }));
-      }
-    })
-    .catch(console.error);
-}, [formData.NACIONALIDAD, setFormData]);
+    fetch('http://localhost/basecambios/get_doctorados.php')
+      .then(r => r.json()).then(setDoctorados).catch(console.error);
 
-const handleNext = async () => {
-  // Solo sube si hay foto nueva (tipo File)
-  if (formData.FOTO && formData.FOTO instanceof File) {
+    fetch('http://localhost/basecambios/get_nacionalidades.php')
+      .then(r => r.json())
+      .then(data => {
+        setNacionalidades(data);
+        if (!formData.NACIONALIDAD && data.includes("MEXICANA")) {
+          setFormData(prev => ({ ...prev, NACIONALIDAD: "MEXICANA" }));
+        }
+      })
+      .catch(console.error);
+  }, [formData.NACIONALIDAD, setFormData]);
+
+  const handleNext = async () => {
+    // Si no hay foto, no guardar ni avanzar
+    if (!formData.FOTO || !(formData.FOTO instanceof File)) {
+      toast.error("Debes seleccionar una foto del alumno.");
+      return;
+    }
     if (!formData.CODIGO) {
       toast.error("Primero ingresa el código del alumno.");
       return;
@@ -86,7 +122,6 @@ const handleNext = async () => {
       });
       const data = await resp.json();
       if (data.success) {
-        // Guarda solo el nombre/ruta en formData
         setFormData(prev => ({ ...prev, FOTO: data.ruta }));
         nextSection();
       } else {
@@ -95,10 +130,7 @@ const handleNext = async () => {
     } catch (err) {
       toast.error("Error de conexión al subir la foto.");
     }
-  } else {
-    nextSection();
-  }
-};
+  };
 
   return (
     <div className="form-section">
@@ -109,61 +141,44 @@ const handleNext = async () => {
         <div className="form-row">
           <label style={{ alignItems: "center" }}>
             FOTO DEL ALUMNO:
-            <div className={`foto-upload-container ${previewFoto ? 'has-image' : ''}`}>
-              {!previewFoto ? (
-                <div>
-                  <button 
-                    type="button" 
-                    className="foto-upload-button"
-                    onClick={() => document.querySelector('input[name="FOTO"]').click()}
-                  >
-                    <svg className="foto-upload-icon" viewBox="0 0 24 24">
-                      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                    </svg>
-                    Seleccionar Foto
-                  </button>
-                  <div className="foto-upload-text">
-                    Formatos soportados: JPG, PNG, GIF<br/>
-                    Tamaño máximo: 5MB
-                  </div>
-                </div>
-              ) : (
-                <div className="foto-preview-container">
-                  <img
-                    src={previewFoto}
-                    alt="Vista previa"
-                    className="foto-preview"
-                  />
-                  <div className="foto-success-indicator">
-                    <svg className="foto-check-icon" viewBox="0 0 24 24">
-                      <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
-                    </svg>
-                    Foto cargada correctamente
-                  </div>
-                  <button 
-                    type="button" 
-                    className="foto-upload-button foto-change-button"
-                    onClick={() => document.querySelector('input[name="FOTO"]').click()}
-                  >
-                    <svg className="foto-upload-icon" viewBox="0 0 24 24">
-                      <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7Z"/>
-                    </svg>
-                    Cambiar Foto
-                  </button>
-                </div>
-              )}
-            
+            <div className={`foto-upload-container ${previewFoto !== userDefault ? 'has-image' : ''}`}>
+              <div className="foto-preview-container">
+                <img
+                  src={previewFoto}
+                  alt="Vista previa"
+                  className="foto-preview"
+                  style={{
+                    width: 180,
+                    height: 180,
+                    objectFit: "cover",
+                    borderRadius: "16px",
+                    border: "2px solid #3498db",
+                    background: "#f4f8fb",
+                    boxShadow: "0 2px 8px rgba(52, 152, 219, 0.08)",
+                    marginBottom: "8px",
+                    transition: "box-shadow 0.2s"
+                  }}
+                  onError={e => { e.target.src = userDefault; }}
+                />
+                <button
+                  type="button"
+                  className="foto-upload-button foto-change-button"
+                  onClick={() => document.querySelector('input[name="FOTO"]').click()}
+                >
+                  Cambiar Foto
+                </button>
+              </div>
               <input
                 type="file"
                 name="FOTO"
                 accept="image/*"
                 onChange={handleFotoChange}
                 className="foto-input-hidden"
-                required
+                style={{ display: "none" }}
               />
-            </div>             
+            </div>
             {errores.FOTO && <span className="error-message">{errores.FOTO}</span>}
-          </label> 
+          </label>
         </div>
         <div className="form-row">
           <label>

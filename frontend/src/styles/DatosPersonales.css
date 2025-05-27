@@ -118,6 +118,40 @@ section input[name="contacto_aseguradora"] {
   margin-bottom: 15px;
 }
 
+/* Contenedor de la foto del alumno */
+.foto-alumno-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 24px;
+  margin-right: 24px;
+  min-width: 140px;
+}
+
+/* Imagen de la foto del alumno (más grande) */
+.foto-alumno-img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 2px solid #3498db;
+  background: #f4f8fb;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+  margin-bottom: 6px;
+  transition: box-shadow 0.2s;
+}
+
+.foto-alumno-img:hover {
+  box-shadow: 0 4px 16px rgba(52, 152, 219, 0.18);
+}
+
+.foto-alumno-label {
+  font-size: 13px;
+  color: #888;
+  margin-top: 2px;
+  text-align: center;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   section {
@@ -138,6 +172,15 @@ section input[name="contacto_aseguradora"] {
   section input[type="date"],
   section textarea {
     font-size: 16px; /* Evita zoom en iOS */
+  }
+  
+  .foto-alumno-container {
+    margin: 0 auto 16px auto;
+    min-width: 100px;
+  }
+  .foto-alumno-img {
+    width: 120px;
+    height: 120px;
   }
 }
 

@@ -1,8 +1,10 @@
-// src/components/detalleAlumno/DatosPersonales.js
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Section from "../common/Section";
+import userDefault from "../../assets/user.png";
+import { toast } from "react-toastify";
+import "../../styles/DatosPersonales.css";
 
-export default function DatosPersonales({ alumno, onChange, catalogos }) {
+export default function DatosPersonales({ alumno, onChange, catalogos, onFotoChange }) {
   const {
     niveles,
     carreras,
@@ -13,16 +15,173 @@ export default function DatosPersonales({ alumno, onChange, catalogos }) {
     nacionalidades
   } = catalogos;
 
+  const fileInputRef = useRef();
+  const [subiendoFoto, setSubiendoFoto] = useState(false);
+  const [fotoUrl, setFotoUrl] = useState(userDefault);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  useEffect(() => {
+    if (previewUrl) {
+      setFotoUrl(previewUrl);
+      return;
+    }
+    if (!alumno.codigo) {
+      setFotoUrl(userDefault);
+      return;
+    }
+
+    const exts = ["jpg", "jpeg", "png", "gif"];
+    let found = false;
+
+    exts.reduce((promise, ext) => {
+      return promise.then(() => {
+        if (found) return;
+        return new Promise((resolve) => {
+          const testUrl = `http://localhost/basecambios/images/${alumno.codigo}.${ext}?t=${Date.now()}`;
+          const img = new window.Image();
+          img.onload = () => {
+            if (!found) {
+              setFotoUrl(testUrl);
+              found = true;
+            }
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = testUrl;
+        });
+      });
+    }, Promise.resolve()).then(() => {
+      if (!found) setFotoUrl(userDefault);
+    });
+  }, [alumno.codigo, previewUrl]);
+
+  // Crop cuadrado
+  const cropToSquare = (file, callback) => {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const size = Math.min(img.width, img.height);
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(
+          img,
+          (img.width - size) / 2,
+          (img.height - size) / 2,
+          size,
+          size,
+          0,
+          0,
+          size,
+          size
+        );
+        canvas.toBlob(blob => {
+          const croppedFile = new File([blob], file.name, { type: file.type });
+          callback(croppedFile, URL.createObjectURL(blob));
+        }, file.type);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file || !alumno.codigo) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("El archivo es demasiado grande. Máximo 5MB.");
+      return;
+    }
+
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Formato no válido. Usa JPG, PNG o GIF.");
+      return;
+    }
+
+    cropToSquare(file, (croppedFile, localPreviewUrl) => {
+      setPreviewUrl(localPreviewUrl); // Muestra preview antes de guardar
+      const formData = new FormData();
+      formData.append("foto", croppedFile);
+      formData.append("codigo", alumno.codigo);
+
+      setSubiendoFoto(true);
+      fetch("http://localhost/basecambios/upload_foto.php", {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            toast.success("Foto guardada correctamente.");
+            onFotoChange({ target: { name: "FOTO", value: data.ruta } });
+            setPreviewUrl(null); // Limpia el preview para volver a cargar desde el servidor
+            setFotoUrl(`http://localhost/basecambios/images/${alumno.codigo}.jpg?t=${Date.now()}`);
+          } else {
+            toast.error(data.error || "Error al subir la foto.");
+          }
+        })
+        .catch(() => {
+          toast.error("Error de conexión al subir la foto.");
+        })
+        .finally(() => {
+          setSubiendoFoto(false);
+        });
+    });
+  };
+
   return (
     <Section title="Datos Personales" className="datos-personales-section">
-      {/* Código original oculto */}
       <input
         type="hidden"
         name="codigo_original"
         value={alumno.codigo_original || alumno.codigo || ""}
       />
 
-      {/* Código y Nombre */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24 }}>
+        <div className="foto-alumno-container">
+          <img
+            className="foto-alumno-img"
+            src={fotoUrl}
+            alt="Foto del alumno"
+            style={{
+              width: 180,
+              height: 180,
+              objectFit: "cover",
+              borderRadius: "16px",
+              border: "2px solid #3498db",
+              background: "#f4f8fb",
+              boxShadow: "0 2px 8px rgba(52, 152, 219, 0.08)",
+              marginBottom: "8px"
+            }}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = userDefault;
+            }}
+          />
+          <button
+            type="button"
+            className="foto-upload-button foto-change-button"
+            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+            disabled={subiendoFoto}
+          >
+            {subiendoFoto ? "Subiendo..." : "Cambiar Foto"}
+          </button>
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFotoChange}
+          />
+          <span className="foto-alumno-label">Foto</span>
+        </div>
+      </div>
+
+      {/* Campos del formulario: código, nombre, etc. (igual que antes) */}
       <div className="form-row">
         <label>
           CÓDIGO:
