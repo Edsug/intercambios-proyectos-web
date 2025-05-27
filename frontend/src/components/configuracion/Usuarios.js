@@ -31,6 +31,10 @@ const Usuarios = () => {
 
   const agregarUsuario = async (e) => {
     e.preventDefault();
+    if (nuevoUsuario.contrasena.length < 8) {
+      alert("La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
     try {
       const res = await fetch("http://localhost/basecambios/agregar_usuario.php", {
         method: "POST",
@@ -71,6 +75,10 @@ const Usuarios = () => {
   };
 
   const guardarEdicion = async () => {
+    if (nuevaContrasena && nuevaContrasena.length < 8) {
+      alert("La nueva contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
     try {
       const payload = {
         ...editandoUsuario,
