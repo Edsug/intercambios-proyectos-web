@@ -223,69 +223,73 @@ const Dashboard = () => {
       </div>
 
       {/* Gráfica de niveles académicos */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por nivel académico</h3>
-        {nivelesData && <Bar data={nivelesData} />}
-      </div>
-
-      {/* Gráfica de promedio por semestre */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Promedio por semestre</h3>
-        {promedioSemestreData && <Bar data={promedioSemestreData} />}
-      </div>
-
-      {/* Gráfica de carreras */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por carrera (Licenciatura)</h3>
-        {carrerasData && <Bar data={carrerasData} />}
-      </div>
-
-      {/* Gráfica de maestrías */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por maestría</h3>
-        {maestriasData && <Bar data={maestriasData} />}
-      </div>
-
-      {/* Gráfica de doctorados */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por doctorado</h3>
-        {doctoradosData && <Bar data={doctoradosData} />}
-      </div>
-
-      {/* Gráfica de género */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por género</h3>
-        {generoData && <Pie data={generoData} />}
-      </div>
-
-      {/* Gráfica de nacionalidad */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por nacionalidad</h3>
-        {nacionalidadData && <Pie data={nacionalidadData} />}
-      </div>
-
-      {/* Gráfica de estados */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos nacionales por estado</h3>
-        {estadosData && <Pie data={estadosData} />}
-      </div>
-
-      {/* Gráfica de programas */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por programa</h3>
-        {programasData && <Pie data={programasData} />}
-      </div>
-
-      {/* Gráfica de tipos de movilidad */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por tipo de movilidad</h3>
-        {tiposMovilidadData && <Pie data={tiposMovilidadData} />}
-      </div>
-
-      {/* Gráfica de becas */}
-      <div style={{ maxWidth: 600, margin: "40px auto" }}>
-        <h3>Alumnos por tipo de beca</h3>
-        {becasData && <Pie data={becasData} />}
+      <div className="dashboard-graphics-grid">
+        {nivelesData && nivelesData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por nivel académico</h3>
+            <Bar data={nivelesData} />
+          </div>
+        )}
+        {promedioSemestreData && promedioSemestreData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Promedio por semestre</h3>
+            <Bar data={promedioSemestreData} />
+          </div>
+        )}
+        {carrerasData && carrerasData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por carrera (Licenciatura)</h3>
+            <Bar data={carrerasData} />
+          </div>
+        )}
+        {maestriasData && maestriasData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por maestría</h3>
+            <Bar data={maestriasData} />
+          </div>
+        )}
+        {doctoradosData && doctoradosData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por doctorado</h3>
+            <Bar data={doctoradosData} />
+          </div>
+        )}
+        {generoData && generoData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por género</h3>
+            <Pie data={generoData} />
+          </div>
+        )}
+        {nacionalidadData && nacionalidadData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por nacionalidad</h3>
+            <Pie data={nacionalidadData} />
+          </div>
+        )}
+        {estadosData && estadosData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos nacionales por estado</h3>
+            <Pie data={estadosData} />
+          </div>
+        )}
+        {programasData && programasData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por programa</h3>
+            <Pie data={programasData} />
+          </div>
+        )}
+        {tiposMovilidadData && tiposMovilidadData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por tipo de movilidad</h3>
+            <Pie data={tiposMovilidadData} />
+          </div>
+        )}
+        {becasData && becasData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos por tipo de beca</h3>
+            <Pie data={becasData} />
+          </div>
+        )}
       </div>
     </div>
   );
