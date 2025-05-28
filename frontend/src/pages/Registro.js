@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "../styles/FrmRegistro.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,7 +31,7 @@ const Registro = () => {
 
   useEffect(() => setErrores({}), [activeSection]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => {
       const next = { ...prev, [name]: type === "checkbox" ? checked : value };
@@ -41,7 +41,7 @@ const Registro = () => {
       }
       return next;
     });
-  };
+  }, []);
 
   const handleAddBeca = (beca) => {
     setFormData((prev) => ({

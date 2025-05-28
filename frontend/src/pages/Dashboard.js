@@ -192,6 +192,34 @@ const Dashboard = () => {
       });
   }, []);
 
+  // Opciones para mostrar la cantidad en el centro de cada sección del pastel
+  const pieOptions = {
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom",
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.parsed || 0;
+            return `${label}: ${value}`;
+          }
+        }
+      },
+      datalabels: {
+        color: '#222',
+        font: { weight: 'bold', size: 14 },
+        formatter: (value, context) => {
+          return value;
+        },
+        anchor: 'center',
+        align: 'center',
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="dashboard-content">
@@ -222,7 +250,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Gráfica de niveles académicos */}
       <div className="dashboard-graphics-grid">
         {nivelesData && nivelesData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
@@ -257,37 +284,37 @@ const Dashboard = () => {
         {generoData && generoData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por género</h3>
-            <Pie data={generoData} />
+            <Pie data={generoData} options={pieOptions} />
           </div>
         )}
         {nacionalidadData && nacionalidadData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por nacionalidad</h3>
-            <Pie data={nacionalidadData} />
+            <Pie data={nacionalidadData} options={pieOptions} />
           </div>
         )}
         {estadosData && estadosData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos nacionales por estado</h3>
-            <Pie data={estadosData} />
+            <Pie data={estadosData} options={pieOptions} />
           </div>
         )}
         {programasData && programasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por programa</h3>
-            <Pie data={programasData} />
+            <Pie data={programasData} options={pieOptions} />
           </div>
         )}
         {tiposMovilidadData && tiposMovilidadData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por tipo de movilidad</h3>
-            <Pie data={tiposMovilidadData} />
+            <Pie data={tiposMovilidadData} options={pieOptions} />
           </div>
         )}
         {becasData && becasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por tipo de beca</h3>
-            <Pie data={becasData} />
+            <Pie data={becasData} options={pieOptions} />
           </div>
         )}
       </div>
