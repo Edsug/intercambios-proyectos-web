@@ -22,7 +22,26 @@ export default function SeccionDatosAlumno({
   const [maestria, setMaestrias] = useState([]);
   const [doctorados, setDoctorados] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
-  const [previewFoto, setPreviewFoto] = useState(formData.FOTO ? URL.createObjectURL(formData.FOTO) : userDefault);
+  const [previewFoto, setPreviewFoto] = useState(
+    formData.FOTO
+      ? (formData.FOTO instanceof File
+          ? URL.createObjectURL(formData.FOTO)
+          : formData.FOTO)
+      : userDefault
+  );
+
+    useEffect(() => {
+    let url;
+    if (formData.FOTO instanceof File) {
+      url = URL.createObjectURL(formData.FOTO);
+      setPreviewFoto(url);
+      return () => URL.revokeObjectURL(url);
+    } else if (typeof formData.FOTO === "string") {
+      setPreviewFoto(formData.FOTO);
+    } else {
+      setPreviewFoto(userDefault);
+    }
+  }, [formData.FOTO]);
 
   // Recorta la imagen a cuadrado usando canvas
   const cropToSquare = (file, callback) => {
