@@ -133,6 +133,54 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
     });
   };
 
+  const handleValidatedChange = (e) => {
+    const { name, value } = e.target;
+
+    // Validación para selects obligatorios
+    const requiredSelects = [
+      "nivel_academico",
+      "carrera",
+      "maestria",
+      "doctorado",
+      "sexo",
+      "nacionalidad"
+    ];
+    if (requiredSelects.includes(name) && value === "") {
+      toast.error("Este campo es obligatorio.");
+      return;
+    }
+
+    // Validación para código del alumno: obligatorio y numérico
+    if (name === "codigo") {
+      if (value === "") {
+        toast.error("El código del alumno es obligatorio.");
+        return;
+      }
+      if (!/^\d+$/.test(value)) {
+        toast.error("El código del alumno debe ser numérico.");
+        return;
+      }
+    }
+
+    // Validación para promedio: entre 80 y 100
+    if (name === "promedio") {
+      if (value !== "" && (Number(value) < 80 || Number(value) > 100)) {
+        toast.error("El promedio debe estar entre 80 y 100.");
+        return;
+      }
+    }
+
+    // Validación para semestre: entre 0 y 12
+    if (name === "semestre") {
+      if (value !== "" && (Number(value) < 0 || Number(value) > 12)) {
+        toast.error("El semestre debe estar entre 0 y 12.");
+        return;
+      }
+    }
+
+    onChange(e);
+  };
+
   return (
     <Section title="Datos Personales" className="datos-personales-section">
       <input
@@ -189,7 +237,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             type="text"
             name="codigo"
             value={alumno.codigo || ""}
-            onChange={onChange}
+            onChange={handleValidatedChange}
             style={{ textTransform: "uppercase" }}
             maxLength={9}
             required
@@ -226,12 +274,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="nivel_academico"
             value={alumno.nivel_academico || ""}
-            onChange={e => {
-              onChange({ target: { name: 'nivel_academico', value: e.target.value } });
-              onChange({ target: { name: 'carrera', value: '' } });
-              onChange({ target: { name: 'maestria', value: '' } });
-              onChange({ target: { name: 'doctorado', value: '' } });
-            }}
+            onChange={handleValidatedChange}
             disabled
             required
           >
@@ -251,7 +294,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             <select
               name="carrera"
               value={alumno.carrera || ""}
-              onChange={onChange}
+              onChange={handleValidatedChange}
               required
             >
               <option value="">—Seleccione—</option>
@@ -269,7 +312,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             <select
               name="maestria"
               value={alumno.maestria || ""}
-              onChange={onChange}
+              onChange={handleValidatedChange}
               required
             >
               <option value="">—Seleccione—</option>
@@ -287,7 +330,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             <select
               name="doctorado"
               value={alumno.doctorado || ""}
-              onChange={onChange}
+              onChange={handleValidatedChange}
               required
             >
               <option value="">—Seleccione—</option>
@@ -306,7 +349,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="sexo"
             value={alumno.sexo || ""}
-            onChange={onChange}
+            onChange={handleValidatedChange}
             required
           >
             <option value="">—Seleccione—</option>
@@ -333,7 +376,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="nacionalidad"
             value={alumno.nacionalidad || ""}
-            onChange={onChange}
+            onChange={handleValidatedChange}
             required
           >
             <option value="">—Seleccione—</option>
@@ -362,9 +405,9 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             type="number"
             name="semestre"
             value={alumno.semestre || ""}
-            onChange={onChange}
-            min="1"
-            max="20"
+            onChange={handleValidatedChange}
+            min="0"
+            max="12"
           />
         </label>
         <label>
@@ -373,9 +416,9 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             type="number"
             name="promedio"
             value={alumno.promedio || ""}
-            onChange={onChange}
+            onChange={handleValidatedChange}
             step="0.01"
-            min="0"
+            min="80"
             max="100"
           />
         </label>
