@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import userDefault from '../../assets/user.png'; // Asegúrate de tener esta imagen
+import userDefault from '../../assets/user.png';
 
 export default function SeccionDatosAlumno({
   formData,
@@ -17,31 +17,48 @@ export default function SeccionDatosAlumno({
   setOtroDominio,
   dominios
 }) {
-
   const [carreras, setCarreras] = useState([]);
   const [maestria, setMaestrias] = useState([]);
   const [doctorados, setDoctorados] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
-  const [previewFoto, setPreviewFoto] = useState(
-    formData.FOTO
-      ? (formData.FOTO instanceof File
-          ? URL.createObjectURL(formData.FOTO)
-          : formData.FOTO)
-      : userDefault
-  );
+  const [previewFoto, setPreviewFoto] = useState(userDefault);
 
-    useEffect(() => {
-    let url;
+  // Carga la imagen del alumno según el código, si existe, si no deja el userDefault
+  useEffect(() => {
     if (formData.FOTO instanceof File) {
-      url = URL.createObjectURL(formData.FOTO);
+      const url = URL.createObjectURL(formData.FOTO);
       setPreviewFoto(url);
       return () => URL.revokeObjectURL(url);
-    } else if (typeof formData.FOTO === "string") {
+    } else if (typeof formData.FOTO === "string" && formData.FOTO) {
       setPreviewFoto(formData.FOTO);
+    } else if (formData.CODIGO) {
+      // Intenta cargar la imagen del servidor usando el código
+      const exts = ["jpg", "jpeg", "png", "gif"];
+      let found = false;
+      exts.reduce((promise, ext) => {
+        return promise.then(() => {
+          if (found) return;
+          return new Promise((resolve) => {
+            const testUrl = `http://localhost/basecambios/images/${formData.CODIGO}.${ext}?t=${Date.now()}`;
+            const img = new window.Image();
+            img.onload = () => {
+              if (!found) {
+                setPreviewFoto(testUrl);
+                found = true;
+              }
+              resolve();
+            };
+            img.onerror = () => resolve();
+            img.src = testUrl;
+          });
+        });
+      }, Promise.resolve()).then(() => {
+        if (!found) setPreviewFoto(userDefault);
+      });
     } else {
       setPreviewFoto(userDefault);
     }
-  }, [formData.FOTO]);
+  }, [formData.FOTO, formData.CODIGO]);
 
   // Recorta la imagen a cuadrado usando canvas
   const cropToSquare = (file, callback) => {
@@ -79,7 +96,6 @@ export default function SeccionDatosAlumno({
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validar tamaño y tipo
     if (file.size > 5 * 1024 * 1024) {
       toast.error('El archivo es demasiado grande. El tamaño máximo es 5MB.');
       e.target.value = '';
@@ -92,7 +108,6 @@ export default function SeccionDatosAlumno({
       return;
     }
 
-    // Recortar y actualizar
     cropToSquare(file, (croppedFile, previewUrl) => {
       setFormData(prev => ({ ...prev, FOTO: croppedFile }));
       setPreviewFoto(previewUrl);
@@ -120,34 +135,35 @@ export default function SeccionDatosAlumno({
       .catch(console.error);
   }, [formData.NACIONALIDAD, setFormData]);
 
+  // La foto ya no es obligatoria
   const handleNext = async () => {
-    // Si no hay foto, no guardar ni avanzar
-    if (!formData.FOTO || !(formData.FOTO instanceof File)) {
-      toast.error("Debes seleccionar una foto del alumno.");
-      return;
-    }
     if (!formData.CODIGO) {
       toast.error("Primero ingresa el código del alumno.");
       return;
     }
-    const formDataFoto = new FormData();
-    formDataFoto.append("foto", formData.FOTO);
-    formDataFoto.append("codigo", formData.CODIGO);
+    // Si hay foto y es un File, súbela, si no, solo avanza
+    if (formData.FOTO && formData.FOTO instanceof File) {
+      const formDataFoto = new FormData();
+      formDataFoto.append("foto", formData.FOTO);
+      formDataFoto.append("codigo", formData.CODIGO);
 
-    try {
-      const resp = await fetch("http://localhost/basecambios/upload_foto.php", {
-        method: "POST",
-        body: formDataFoto,
-      });
-      const data = await resp.json();
-      if (data.success) {
-        setFormData(prev => ({ ...prev, FOTO: data.ruta }));
-        nextSection();
-      } else {
-        toast.error(data.error || "Error al subir la foto.");
+      try {
+        const resp = await fetch("http://localhost/basecambios/upload_foto.php", {
+          method: "POST",
+          body: formDataFoto,
+        });
+        const data = await resp.json();
+        if (data.success) {
+          setFormData(prev => ({ ...prev, FOTO: data.ruta }));
+          nextSection();
+        } else {
+          toast.error(data.error || "Error al subir la foto.");
+        }
+      } catch (err) {
+        toast.error("Error de conexión al subir la foto.");
       }
-    } catch (err) {
-      toast.error("Error de conexión al subir la foto.");
+    } else {
+      nextSection();
     }
   };
 
