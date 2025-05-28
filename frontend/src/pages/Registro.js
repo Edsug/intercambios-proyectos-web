@@ -68,7 +68,6 @@ const Registro = () => {
         if (!formData.FOLIO) errs.FOLIO = "Ingrese el folio.";
         break;
       case 2:
-        if (!formData.FOTO) errs.FOTO = "Debe seleccionar una foto.";
         if (!formData.CODIGO) errs.CODIGO = "Ingrese el código.";
         if (!formData.NOMBRE) errs.NOMBRE = "Ingrese el nombre.";
         if (!formData.APELLIDOS) errs.APELLIDOS = "Ingrese los apellidos.";
