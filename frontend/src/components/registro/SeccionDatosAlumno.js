@@ -15,7 +15,9 @@ export default function SeccionDatosAlumno({
   setCorreoDominio,
   otroDominio,
   setOtroDominio,
-  dominios
+  dominios,
+  fotoFile,
+  setFotoFile
 }) {
   const [carreras, setCarreras] = useState([]);
   const [maestria, setMaestrias] = useState([]);
@@ -23,26 +25,34 @@ export default function SeccionDatosAlumno({
   const [nacionalidades, setNacionalidades] = useState([]);
   const [previewFoto, setPreviewFoto] = useState(userDefault);
 
-  // Carga la imagen del alumno según el código, si existe, si no deja el userDefault
+  // Siempre que el input código cambie y no esté vacío, intenta cargar la imagen del servidor
   useEffect(() => {
+    if (fotoFile instanceof File) {
+      // Si hay una foto seleccionada por el usuario, mostrarla siempre
+      const url = URL.createObjectURL(fotoFile);
+      setPreviewFoto(url);
+      return () => URL.revokeObjectURL(url);
+    }
     if (formData.FOTO instanceof File) {
       const url = URL.createObjectURL(formData.FOTO);
       setPreviewFoto(url);
       return () => URL.revokeObjectURL(url);
-    } else if (typeof formData.FOTO === "string" && formData.FOTO) {
+    }
+    if (typeof formData.FOTO === "string" && formData.FOTO) {
       setPreviewFoto(formData.FOTO);
-    } else if (formData.CODIGO) {
-      // Intenta cargar la imagen del servidor usando el código
+      return;
+    }
+    if (formData.CODIGO && String(formData.CODIGO).trim() !== "") {
       const exts = ["jpg", "jpeg", "png", "gif"];
       let found = false;
-      exts.reduce((promise, ext) => {
-        return promise.then(() => {
-          if (found) return;
-          return new Promise((resolve) => {
-            const testUrl = `http://localhost/basecambios/images/${formData.CODIGO}.${ext}?t=${Date.now()}`;
+      let cancelled = false;
+      (async () => {
+        for (let ext of exts) {
+          const testUrl = `http://localhost/basecambios/images/${formData.CODIGO}.${ext}?t=${Date.now()}`;
+          await new Promise((resolve) => {
             const img = new window.Image();
             img.onload = () => {
-              if (!found) {
+              if (!found && !cancelled) {
                 setPreviewFoto(testUrl);
                 found = true;
               }
@@ -51,14 +61,15 @@ export default function SeccionDatosAlumno({
             img.onerror = () => resolve();
             img.src = testUrl;
           });
-        });
-      }, Promise.resolve()).then(() => {
-        if (!found) setPreviewFoto(userDefault);
-      });
-    } else {
-      setPreviewFoto(userDefault);
+          if (found) break;
+        }
+        if (!found && !cancelled) setPreviewFoto(userDefault);
+      })();
+      return () => { cancelled = true; };
     }
-  }, [formData.FOTO, formData.CODIGO]);
+    setPreviewFoto(userDefault);
+  // Solo depende de formData.CODIGO, fotoFile y formData.FOTO
+  }, [formData.CODIGO, fotoFile, formData.FOTO]);
 
   // Recorta la imagen a cuadrado usando canvas
   const cropToSquare = (file, callback) => {
@@ -111,6 +122,7 @@ export default function SeccionDatosAlumno({
     cropToSquare(file, (croppedFile, previewUrl) => {
       setFormData(prev => ({ ...prev, FOTO: croppedFile }));
       setPreviewFoto(previewUrl);
+      if (setFotoFile) setFotoFile(croppedFile);
     });
   };
 
@@ -141,30 +153,7 @@ export default function SeccionDatosAlumno({
       toast.error("Primero ingresa el código del alumno.");
       return;
     }
-    // Si hay foto y es un File, súbela, si no, solo avanza
-    if (formData.FOTO && formData.FOTO instanceof File) {
-      const formDataFoto = new FormData();
-      formDataFoto.append("foto", formData.FOTO);
-      formDataFoto.append("codigo", formData.CODIGO);
-
-      try {
-        const resp = await fetch("http://localhost/basecambios/upload_foto.php", {
-          method: "POST",
-          body: formDataFoto,
-        });
-        const data = await resp.json();
-        if (data.success) {
-          setFormData(prev => ({ ...prev, FOTO: data.ruta }));
-          nextSection();
-        } else {
-          toast.error(data.error || "Error al subir la foto.");
-        }
-      } catch (err) {
-        toast.error("Error de conexión al subir la foto.");
-      }
-    } else {
-      nextSection();
-    }
+    nextSection();
   };
 
   return (
@@ -219,11 +208,15 @@ export default function SeccionDatosAlumno({
           <label>
             CÓDIGO:
             <input
-              type="text" name="CODIGO"
+              type="NUMBER"
+              name="CODIGO"
               value={formData.CODIGO}
-              onChange={handleChange}
+              onChange={e => {
+                handleChange(e);
+              }}
               style={{ textTransform: "uppercase" }}
-              maxLength={9} required />
+              maxLength={9}
+              required />
             {errores.CODIGO && <span className="error-message">{errores.CODIGO}</span>}
           </label>
           <label>
