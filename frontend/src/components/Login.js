@@ -57,7 +57,7 @@ const Login = ({ setIsAuthenticated }) => {
       <div className="login-box">
         <div className="login-info">
           <h1>Bienvenido</h1>
-          <p>Plataforma de intercambios escolares del Centro Universitario del Sur</p>
+          <p>Accede a todos los recursos de nuestra plataforma</p>
           <div className="illustration-container">
             <img src={loginIllustration} alt="Ilustración de login" />
           </div>

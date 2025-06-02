@@ -216,7 +216,7 @@ export default function SeccionDatosAlumno({
           <label>
             CÓDIGO:
             <input
-              type="TEXT"
+              type="NUMBER"
               name="CODIGO"
               value={formData.CODIGO}
               onChange={e => {
@@ -470,7 +470,7 @@ export default function SeccionDatosAlumno({
           <label>
             TELÉFONO:
             <input
-              type="NUMBER" name="TELEFONO"
+              type="tel" name="TELEFONO"
               value={formData.TELEFONO}
               onChange={handleChange}
               maxLength={10} required
