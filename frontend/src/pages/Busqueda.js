@@ -134,12 +134,9 @@ export default function Busqueda() {
                   value={filtros.discapacidad || ''}
                   onChange={handleFilterChange}
                 >
-                  <option value="">Todas</option>
-                  <option value="NINGUNA">Ninguna</option>
-                  {/* Si tienes un catálogo de discapacidades, mapea aquí */}
-                  {/* {discapacidades.map(d => (
-                    <option key={d.id} value={d.id}>{d.nombre}</option>
-                  ))} */}
+                  <option value="">Todos</option>
+                  <option value="SI">Sí (con discapacidad)</option>
+                  <option value="NO">No (sin discapacidad)</option>
                 </select>
               </div>
 

@@ -93,10 +93,6 @@
       { l: 'Tipo Destino',    n: 'tipo_destino', opts: catalogos.destinos },
       { l: 'Revalidación',    n: 'revalidacion', opts: catalogos.revalidaciones },
       { l: 'Ciclo',           n: 'ciclo',        opts: catalogos.ciclos },
-      // ↓↓↓ NUEVO ↓↓↓
-      { l: 'Discapacidad',    n: 'discapacidad', opts: ['NINGUNA', ...catalogos.discapacidades.map(d => d.nombre)] },
-      { l: 'Comunidad Nativa', n: 'pertenece_comunidad', opts: ['1', '0'] }
-      // ↑↑↑ NUEVO ↑↑↑
     ];
     
 
