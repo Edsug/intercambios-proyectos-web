@@ -18,9 +18,8 @@ export default function Busqueda() {
     handleExportExcel,
     handleExportPDF,
     columnasPDF, setColumnasPDF,
-    incluirBecas, setIncluirBecas // ← ✅ AÑADE ESTO
+    incluirBecas, setIncluirBecas
   } = useBusquedaConfig();
-  
 
   return (
     <div className="dashboard-content">
@@ -47,9 +46,9 @@ export default function Busqueda() {
             onChange={e => setSearchValue(e.target.value)}
           />
 
-          <div class="search-actions">
+          <div className="search-actions">
             <button 
-              class="btn btn-primary" 
+              className="btn btn-primary" 
               onClick={handleSearch} 
               disabled={loading}
             >
@@ -101,8 +100,8 @@ export default function Busqueda() {
                   name="semestre"
                   value={filtros.semestre}
                   onChange={handleFilterChange}
-                  min="3"
-                  max="10"
+                  min="1"
+                  max="12"
                 />
               </div>
 
@@ -126,6 +125,37 @@ export default function Busqueda() {
                   onChange={handleFilterChange}
                 />
               </div>
+
+              {/* Nuevo filtro: Discapacidad */}
+              <div className="filter-item">
+                <label>Discapacidad:</label>
+                <select
+                  name="discapacidad"
+                  value={filtros.discapacidad || ''}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">Todas</option>
+                  <option value="NINGUNA">Ninguna</option>
+                  {/* Si tienes un catálogo de discapacidades, mapea aquí */}
+                  {/* {discapacidades.map(d => (
+                    <option key={d.id} value={d.id}>{d.nombre}</option>
+                  ))} */}
+                </select>
+              </div>
+
+              {/* Nuevo filtro: Comunidad nativa */}
+              <div className="filter-item">
+                <label>Comunidad Nativa:</label>
+                <select
+                  name="pertenece_comunidad"
+                  value={filtros.pertenece_comunidad || ''}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">Todas</option>
+                  <option value="1">Sí</option>
+                  <option value="0">No</option>
+                </select>
+              </div>
             </div>
 
             <div className="filter-actions">
@@ -144,7 +174,7 @@ export default function Busqueda() {
               </button>
             </div>
           </div>
-      )}
+        )}
       </section>
 
       {alumnos.length > 0 && (
@@ -197,8 +227,6 @@ export default function Busqueda() {
               </div>
             </div>
 
-
-
             {mostrarColumnas && (
               <div className="column-selector">
                 <div className="column-controls">
@@ -219,7 +247,7 @@ export default function Busqueda() {
                         visible: !allVisible
                       }));
                       setColumnasPDF(updated);
-                      setIncluirBecas(!allVisible); // también alternar el checkbox de becas
+                      setIncluirBecas(!allVisible);
                     }}
                   >
                     <i className="fas fa-check-square"></i>{" "}
@@ -245,7 +273,7 @@ export default function Busqueda() {
                     </label>
                   ))}
 
-                  {/* ✅ Checkbox para becas */}
+                  {/* Checkbox para becas */}
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '8px 0' }}>
                     <input
                       type="checkbox"
@@ -254,14 +282,41 @@ export default function Busqueda() {
                     />
                     Mostrar becas en reporte
                   </label>
+                  {/* Checkbox para discapacidad */}
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '8px 0' }}>
+                    <input
+                      type="checkbox"
+                      checked={!!columnasPDF.find(c => c.key === 'discapacidad' && c.visible)}
+                      onChange={e => {
+                        const updated = columnasPDF.map(col =>
+                          col.key === 'discapacidad'
+                            ? { ...col, visible: e.target.checked }
+                            : col
+                        );
+                        setColumnasPDF(updated);
+                      }}
+                    />
+                    Mostrar discapacidad
+                  </label>
+                  {/* Checkbox para comunidad nativa */}
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '8px 0' }}>
+                    <input
+                      type="checkbox"
+                      checked={!!columnasPDF.find(c => c.key === 'comunidad_nativa' && c.visible)}
+                      onChange={e => {
+                        const updated = columnasPDF.map(col =>
+                          col.key === 'comunidad_nativa'
+                            ? { ...col, visible: e.target.checked }
+                            : col
+                        );
+                        setColumnasPDF(updated);
+                      }}
+                    />
+                    Mostrar comunidad nativa
+                  </label>
                 </div>
               </div>
             )}
-
-
-
-
-
           </div>
         </section>
       )}
@@ -290,69 +345,83 @@ export default function Busqueda() {
         )}
         {alumnos.length > 0 && (
           <div className="table-responsive">
-          <table id="alumnos-table" className="data-table">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Nivel</th>
-                <th>Especialidad</th>
-                <th>Semestre</th>
-                <th>Promedio</th>
-                <th>Ciclo</th> 
-                <th>Certif. Calif.</th>
-                <th>Seguro</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {alumnos.map((a, i) => {
-                const especialidad =
-                  a.nivel_academico === 'LICENCIATURA'
-                    ? a.carrera
-                    : a.nivel_academico === 'MAESTRÍA'
-                    ? a.maestria
-                    : a.nivel_academico === 'DOCTORADO'
-                    ? a.doctorado
-                    : '';
+            <table id="alumnos-table" className="data-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Nivel</th>
+                  <th>Especialidad</th>
+                  <th>Semestre</th>
+                  <th>Promedio</th>
+                  <th>Ciclo</th>
+                  <th>Certif. Calif.</th>
+                  <th>Seguro</th>
+                  <th>Discapacidad</th>
+                  <th>Comunidad Nativa</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {alumnos.map((a, i) => {
+                  const especialidad =
+                    a.nivel_academico === 'LICENCIATURA'
+                      ? a.carrera
+                      : a.nivel_academico === 'MAESTRÍA'
+                      ? a.maestria
+                      : a.nivel_academico === 'DOCTORADO'
+                      ? a.doctorado
+                      : '';
 
-                const esVerdadero = val => parseInt(val) === 1;
+                  const esVerdadero = val => parseInt(val) === 1;
 
-                return (
-                  <tr key={i}>
-                    <td className="highlight-cell">{a.codigo || <span className="empty-cell">-</span>}</td>
-                    <td>{a.nombre || <span className="empty-cell">-</span>}</td>
-                    <td>{a.apellidos || <span className="empty-cell">-</span>}</td>
-                    <td>{a.nivel_academico || <span className="empty-cell">-</span>}</td>
-                    <td>{especialidad || <span className="empty-cell">-</span>}</td>
-                    <td>{a.semestre || <span className="empty-cell">-</span>}</td>
-                    <td>{a.promedio || <span className="empty-cell">-</span>}</td>
-                    <td>{a.ciclo || <span className="empty-cell">-</span>}</td>
-                    <td>
-                      {esVerdadero(a.certificado_calificaciones) ? (
-                        <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
-                      ) : (
-                        <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
-                      )}
-                    </td>
-                    <td>
-                      {esVerdadero(a.seguro_viaje) ? (
-                        <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
-                      ) : (
-                        <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
-                      )}
-                    </td>
-                    <td>
-                      <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
-                        <i className="fas fa-eye"></i> Ver
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                  return (
+                    <tr key={i}>
+                      <td className="highlight-cell">{a.codigo || <span className="empty-cell">-</span>}</td>
+                      <td>{a.nombre || <span className="empty-cell">-</span>}</td>
+                      <td>{a.apellidos || <span className="empty-cell">-</span>}</td>
+                      <td>{a.nivel_academico || <span className="empty-cell">-</span>}</td>
+                      <td>{especialidad || <span className="empty-cell">-</span>}</td>
+                      <td>{a.semestre || <span className="empty-cell">-</span>}</td>
+                      <td>{a.promedio || <span className="empty-cell">-</span>}</td>
+                      <td>{a.ciclo || <span className="empty-cell">-</span>}</td>
+                      <td>
+                        {esVerdadero(a.certificado_calificaciones) ? (
+                          <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
+                        ) : (
+                          <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
+                        )}
+                      </td>
+                      <td>
+                        {esVerdadero(a.seguro_viaje) ? (
+                          <span className="indicator yes"><i className="fas fa-check-circle"></i> Sí</span>
+                        ) : (
+                          <span className="indicator no"><i className="fas fa-times-circle"></i> No</span>
+                        )}
+                      </td>
+                      <td>
+                        {a.discapacidad
+                          ? a.discapacidad
+                          : <span className="empty-cell">-</span>}
+                      </td>
+                      <td>
+                        {a.pertenece_comunidad === 1 && a.comunidad_nativa
+                          ? a.comunidad_nativa
+                          : a.pertenece_comunidad === 1
+                          ? 'Sí'
+                          : <span className="empty-cell">-</span>}
+                      </td>
+                      <td>
+                        <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
+                          <i className="fas fa-eye"></i> Ver
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

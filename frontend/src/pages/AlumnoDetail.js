@@ -34,6 +34,7 @@ export default function AlumnoDetail() {
   useEffect(() => {
     const endpoints = {
       niveles:         "get_niveles_academicos.php",
+      discapacidades  : "get_discapacidades.php",
       carreras:        "get_carreras.php",
       doctorados:      "get_doctorados.php",
       maestrias:       "get_maestrias.php",
@@ -45,7 +46,7 @@ export default function AlumnoDetail() {
       paises:          "get_paises.php",
       estados:         "get_estados.php",
       becas_catalogo:  "get_becas_catalogo.php",
-      ciclos:          "get_ciclos.php" // ✅ agregado
+      ciclos:          "get_ciclos.php" // 
     };
     Object.entries(endpoints).forEach(([key, file]) => {
       fetch(`${BASE_URL}/${file}`)
@@ -188,13 +189,14 @@ export default function AlumnoDetail() {
         alumno={alumno}
         onChange={handleChange}
         catalogos={{
-          niveles: catalogos.niveles,
-          carreras: catalogos.carreras,
-          doctorados: catalogos.doctorados,
-          maestrias: catalogos.maestrias,
-          sexos: catalogos.sexos,
-          tipos_sangre: catalogos.tipos_sangre,
-          nacionalidades: catalogos.nacionalidades
+          niveles: catalogos.niveles || [],
+          carreras: catalogos.carreras || [],
+          doctorados: catalogos.doctorados || [],
+          maestrias: catalogos.maestrias || [],
+          sexos: catalogos.sexos || [],
+          tipos_sangre: catalogos.tipos_sangre || [],
+          nacionalidades: catalogos.nacionalidades || [],
+          discapacidades: catalogos.discapacidades || [] // si usas discapacidades
         }}
       />
 

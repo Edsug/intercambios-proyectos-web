@@ -23,6 +23,7 @@ export default function SeccionDatosAlumno({
   const [maestria, setMaestrias] = useState([]);
   const [doctorados, setDoctorados] = useState([]);
   const [nacionalidades, setNacionalidades] = useState([]);
+  const [discapacidades, setDiscapacidades] = useState([]);
   const [previewFoto, setPreviewFoto] = useState(userDefault);
 
   // Siempre que el input código cambie y no esté vacío, intenta cargar la imagen del servidor
@@ -46,21 +47,25 @@ export default function SeccionDatosAlumno({
       const exts = ["jpg", "jpeg", "png", "gif"];
       let found = false;
       let cancelled = false;
+
+      const testImage = (testUrl) =>
+        new Promise((resolve) => {
+          const img = new window.Image();
+          img.onload = () => {
+            if (!found && !cancelled) {
+              setPreviewFoto(testUrl);
+              found = true;
+            }
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = testUrl;
+        });
+
       (async () => {
         for (let ext of exts) {
           const testUrl = `http://localhost/basecambios/images/${formData.CODIGO}.${ext}?t=${Date.now()}`;
-          await new Promise((resolve) => {
-            const img = new window.Image();
-            img.onload = () => {
-              if (!found && !cancelled) {
-                setPreviewFoto(testUrl);
-                found = true;
-              }
-              resolve();
-            };
-            img.onerror = () => resolve();
-            img.src = testUrl;
-          });
+          await testImage(testUrl);
           if (found) break;
         }
         if (!found && !cancelled) setPreviewFoto(userDefault);
@@ -145,6 +150,9 @@ export default function SeccionDatosAlumno({
         }
       })
       .catch(console.error);
+
+    fetch('http://localhost/basecambios/get_discapacidades.php')
+      .then(r => r.json()).then(setDiscapacidades).catch(console.error);
   }, [formData.NACIONALIDAD, setFormData]);
 
   // La foto ya no es obligatoria
@@ -338,6 +346,52 @@ export default function SeccionDatosAlumno({
             </select>
             {errores.NACIONALIDAD && <span className="error-message">{errores.NACIONALIDAD}</span>}
           </label>
+        </div>
+
+        {/* 4️⃣ BIS: Discapacidad y Comunidad Nativa */}
+        <div className="form-row">
+          <label className="select-label">
+            DISCAPACIDAD:
+            <select
+              name="DISCAPACIDAD_ID"
+              value={formData.DISCAPACIDAD_ID || ""}
+              onChange={handleChange}
+              required
+            >
+              <option value="">—Seleccione—</option>
+              {discapacidades.map((d, i) => (
+                <option key={i} value={d.id}>{d.nombre}</option>
+              ))}
+            </select>
+            {errores.DISCAPACIDAD_ID && <span className="error-message">{errores.DISCAPACIDAD_ID}</span>}
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              name="PERTENECE_COMUNIDAD"
+              checked={!!formData.PERTENECE_COMUNIDAD}
+              onChange={e => setFormData(prev => ({
+                ...prev,
+                PERTENECE_COMUNIDAD: e.target.checked,
+                COMUNIDAD_NATIVA: e.target.checked ? prev.COMUNIDAD_NATIVA : ""
+              }))}
+            />
+            ¿PERTENECE A COMUNIDAD NATIVA?
+          </label>
+          {formData.PERTENECE_COMUNIDAD && (
+            <label>
+              NOMBRE DE LA COMUNIDAD:
+              <input
+                type="text"
+                name="COMUNIDAD_NATIVA"
+                value={formData.COMUNIDAD_NATIVA || ""}
+                onChange={handleChange}
+                style={{ textTransform: "uppercase" }}
+                required
+              />
+              {errores.COMUNIDAD_NATIVA && <span className="error-message">{errores.COMUNIDAD_NATIVA}</span>}
+            </label>
+          )}
         </div>
 
         {/* 5️⃣ Semestre / Promedio */}

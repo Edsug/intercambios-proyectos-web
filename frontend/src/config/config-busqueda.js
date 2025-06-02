@@ -1,4 +1,4 @@
-  // config-busqueda.js
+// config-busqueda.js
   // config-busqueda.js
   import { useState, useEffect } from 'react';
   import jsPDF from 'jspdf';
@@ -21,7 +21,8 @@
       semestres: [],
       niveles: [], maestrias: [], doctorados: [], sexos: [], destinos: [],
       revalidaciones: ['Sí','No'],
-      ciclos: [] // ✅ nuevo
+      ciclos: [],
+      discapacidades: [] // <-- nuevo catálogo
     });
     
     
@@ -30,7 +31,9 @@
       semestre: '', nivel_academico: '', sexo: '',
       tipo_destino: '', revalidacion: '',
       fechaInicioDesde: '', fechaInicioHasta: '',
-      ciclo: '' // ✅ nuevo
+      ciclo: '',
+      discapacidad: '', // <-- nuevo filtro
+      pertenece_comunidad: '' // <-- nuevo filtro
     });
     // — Columnas para PDF/Excel (visibilidad controlable)
     const [columnasPDF, setColumnasPDF] = useState([
@@ -62,8 +65,11 @@
       { id: 'revalidacion', label: 'Reval. Mat', visible: true },
       { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
       { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
-      { id: 'cuenta_discapacidad', label: 'Disp.', visible: true },
-      { id: 'datos_discapacidad', label: 'Datos Disp.', visible: true },
+      // ↓↓↓ NUEVO ↓↓↓
+      { id: 'discapacidad', label: 'Discapacidad', visible: true },
+      { id: 'pertenece_comunidad', label: '¿Comunidad Nativa?', visible: true },
+      { id: 'comunidad_nativa', label: 'Nombre Comunidad', visible: true },
+      // ↑↑↑ NUEVO ↑↑↑
       { id: 'seguro_viaje', label: 'Seguro', visible: true },
       { id: 'aseguradora', label: 'Aseguradora', visible: true },
       { id: 'poliza', label: 'Póliza', visible: true },
@@ -86,7 +92,11 @@
       { l: 'Sexo',            n: 'sexo',         opts: catalogos.sexos },
       { l: 'Tipo Destino',    n: 'tipo_destino', opts: catalogos.destinos },
       { l: 'Revalidación',    n: 'revalidacion', opts: catalogos.revalidaciones },
-      { l: 'Ciclo',           n: 'ciclo',        opts: catalogos.ciclos } // ✅ nuevo
+      { l: 'Ciclo',           n: 'ciclo',        opts: catalogos.ciclos },
+      // ↓↓↓ NUEVO ↓↓↓
+      { l: 'Discapacidad',    n: 'discapacidad', opts: ['NINGUNA', ...catalogos.discapacidades.map(d => d.nombre)] },
+      { l: 'Comunidad Nativa', n: 'pertenece_comunidad', opts: ['1', '0'] }
+      // ↑↑↑ NUEVO ↑↑↑
     ];
     
 
@@ -107,8 +117,9 @@
           maestrias:     data.maestrias      || prev.maestrias,
           sexos:         data.sexos          || prev.sexos,
           destinos:      data.destinos       || prev.destinos,
-          revalidaciones:data.revalidaciones|| prev.revalidaciones,
-          ciclos:        data.ciclos         || prev.ciclos // ✅ nuevo
+          revalidaciones:data.revalidaciones || prev.revalidaciones,
+          ciclos:        data.ciclos         || prev.ciclos,
+          discapacidades: data.discapacidades || prev.discapacidades // nuevo
         })))
         
         .catch(console.error);
@@ -124,8 +135,12 @@
     const resetFiltros = () => {
       setFiltros({
         carrera: '', maestria: '', doctorado: '', programa: '', estado: '', actividad: '',
-        semestre: '', anio: '', nivel_academico: '', sexo: '',
-        tipo_destino: '', revalidacion: ''
+        semestre: '', nivel_academico: '', sexo: '',
+        tipo_destino: '', revalidacion: '',
+        fechaInicioDesde: '', fechaInicioHasta: '',
+        ciclo: '',
+        discapacidad: '',
+        pertenece_comunidad: ''
       });
       setSearchValue('');
       setHasSearched(false);
@@ -372,7 +387,7 @@ const handleExportExcel = async () => {
       catalogos, filtros,
       columnasPDF, setColumnasPDF,
       selectFields,
-      incluirBecas, setIncluirBecas, // ✅ AGREGADO
+      incluirBecas, setIncluirBecas,
       // Handlers
       handleFilterChange,
       resetFiltros,

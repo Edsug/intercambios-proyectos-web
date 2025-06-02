@@ -68,34 +68,7 @@ export default function SeccionDatosAdicionales({
           </div>
         )}
 
-        {/* Discapacidad */}
-        <div className="form-row checkbox-row">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              name="CUENTA_CON_ALGUNA_DISCAPACIDAD"
-              checked={formData.CUENTA_CON_ALGUNA_DISCAPACIDAD}
-              onChange={handleChange}
-            /> 
-            Cuenta con alguna Discapacidad
-          </label>
-        </div>
-        {formData.CUENTA_CON_ALGUNA_DISCAPACIDAD && (
-          <div className="form-row">
-            <label>
-              DATOS DISCAPACIDAD:
-              <textarea
-                name="DATOS_DISCAPACIDAD"
-                value={formData.DATOS_DISCAPACIDAD}
-                onChange={handleChange}
-                placeholder="Ingrese detalles sobre la discapacidad"
-                rows="3"
-                style={{ textTransform: "uppercase" }}
-              />
-            </label>
-          </div>
-        )}
-
+        
         {/* Seguro de Viaje */}
         <div className="form-row checkbox-row">
           <label className="checkbox-label">

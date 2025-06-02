@@ -12,7 +12,8 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
     doctorados,
     sexos,
     tipos_sangre: tiposSangre,
-    nacionalidades
+    nacionalidades,
+    discapacidades // <-- nuevo catálogo
   } = catalogos;
 
   const fileInputRef = useRef();
@@ -134,7 +135,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
   };
 
   const handleValidatedChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, checked } = e.target; // ← elimina 'type'
 
     // Validación para selects obligatorios
     const requiredSelects = [
@@ -143,7 +144,8 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
       "maestria",
       "doctorado",
       "sexo",
-      "nacionalidad"
+      "nacionalidad",
+      "discapacidad_id"
     ];
     if (requiredSelects.includes(name) && value === "") {
       toast.error("Este campo es obligatorio.");
@@ -176,6 +178,25 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
         toast.error("El semestre debe estar entre 0 y 12.");
         return;
       }
+    }
+
+    // Checkbox para comunidad nativa
+    if (name === "pertenece_comunidad") {
+      onChange({
+        target: {
+          name,
+          value: checked ? 1 : 0
+        }
+      });
+      if (!checked) {
+        onChange({
+          target: {
+            name: "comunidad_nativa",
+            value: ""
+          }
+        });
+      }
+      return;
     }
 
     onChange(e);
@@ -422,6 +443,46 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             max="100"
           />
         </label>
+      </div>
+
+      {/* NUEVO: Discapacidad y Comunidad Nativa */}
+      <div className="form-row">
+        <label>
+          DISCAPACIDAD:
+          <select
+            name="discapacidad_id"
+            value={alumno.discapacidad_id || ""}
+            onChange={handleValidatedChange}
+            required
+          >
+            <option value="">—Seleccione—</option>
+            {discapacidades.map((d, i) => (
+              <option key={i} value={d.id}>{d.nombre}</option>
+            ))}
+          </select>
+        </label>
+        <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <input
+            type="checkbox"
+            name="pertenece_comunidad"
+            checked={!!alumno.pertenece_comunidad}
+            onChange={handleValidatedChange}
+          />
+          ¿PERTENECE A COMUNIDAD NATIVA?
+        </label>
+        {alumno.pertenece_comunidad ? (
+          <label>
+            NOMBRE DE LA COMUNIDAD:
+            <input
+              type="text"
+              name="comunidad_nativa"
+              value={alumno.comunidad_nativa || ""}
+              onChange={onChange}
+              style={{ textTransform: "uppercase" }}
+              required
+            />
+          </label>
+        ) : null}
       </div>
     </Section>
   );

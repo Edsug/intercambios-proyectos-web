@@ -19,7 +19,10 @@ const Registro = () => {
   const [formData, setFormData] = useState({
     ...initialFormData,
     BECAS: [],
-    CICLO: "", // ← Asegura que esté definido
+    CICLO: "",
+    DISCAPACIDAD_ID: "",
+    PERTENECE_COMUNIDAD: false,
+    COMUNIDAD_NATIVA: "",
   });
   const [errores, setErrores] = useState({});
 
@@ -34,11 +37,20 @@ const Registro = () => {
   const handleChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => {
-      const next = { ...prev, [name]: type === "checkbox" ? checked : value };
+      let next = { ...prev, [name]: type === "checkbox" ? checked : value };
+
+      // Reset campos según nivel académico
       if (name === "NIVEL_ACADEMICO") {
         next.CARRERA = "";
         next.MAESTRIA = "";
+        next.DOCTORADO = "";
       }
+
+      // Si se desmarca comunidad nativa, limpia el nombre
+      if (name === "PERTENECE_COMUNIDAD" && !checked) {
+        next.COMUNIDAD_NATIVA = "";
+      }
+
       return next;
     });
   }, []);
@@ -74,8 +86,13 @@ const Registro = () => {
         if (!formData.NIVEL_ACADEMICO) errs.NIVEL_ACADEMICO = "Seleccione nivel académico.";
         if (formData.NIVEL_ACADEMICO === "LICENCIATURA" && !formData.CARRERA) errs.CARRERA = "Seleccione carrera.";
         if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
+        if (formData.NIVEL_ACADEMICO === "DOCTORADO" && !formData.DOCTORADO) errs.DOCTORADO = "Seleccione doctorado.";
+        if (!formData.NACIONALIDAD) errs.NACIONALIDAD = "Seleccione nacionalidad.";
+        if (!formData.DISCAPACIDAD_ID) errs.DISCAPACIDAD_ID = "Seleccione discapacidad.";
+        if (formData.PERTENECE_COMUNIDAD && !formData.COMUNIDAD_NATIVA)
+          errs.COMUNIDAD_NATIVA = "Ingrese el nombre de la comunidad.";
         if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";
-        else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 3 || formData.SEMESTRE > 10)
+        else if (isNaN(formData.SEMESTRE) || formData.SEMESTRE < 0 || formData.SEMESTRE > 12)
           errs.SEMESTRE = "El semestre debe ser un número entre 0 y 12.";
         if (!formData.PROMEDIO) errs.PROMEDIO = "Ingrese promedio.";
         else if (isNaN(formData.PROMEDIO) || !/^\d+(\.\d+)?$/.test(formData.PROMEDIO))
@@ -130,7 +147,6 @@ const Registro = () => {
         break;
     }
 
-    console.log("Errores detectados en sección", section, errs); // <- línea agregada
     setErrores(errs);
     return Object.keys(errs).length === 0;
   };
@@ -140,7 +156,7 @@ const Registro = () => {
     validarSeccion(2) &&
     validarSeccion(3) &&
     validarSeccion(4) &&
-    validarSeccion(5); // <- Faltaba
+    validarSeccion(5);
 
   const nextSection = () => {
     if (!validarSeccion(activeSection)) {
@@ -153,7 +169,13 @@ const Registro = () => {
   const prevSection = () => setActiveSection((prev) => prev - 1);
 
   const resetForm = () => {
-    setFormData({ ...initialFormData, BECAS: [] });
+    setFormData({
+      ...initialFormData,
+      BECAS: [],
+      DISCAPACIDAD_ID: "",
+      PERTENECE_COMUNIDAD: false,
+      COMUNIDAD_NATIVA: "",
+    });
     setActiveSection(1);
     setErrores({});
   };

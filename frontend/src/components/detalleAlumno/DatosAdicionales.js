@@ -46,28 +46,7 @@ export default function DatosAdicionales({ alumno, onChange }) {
           </label>
         </div>
 
-        {/* Discapacidad */}
-        <div className="checkbox-container">
-          <input
-            type="checkbox"
-            id="cuenta_discapacidad"
-            name="cuenta_discapacidad"
-            checked={alumno.cuenta_discapacidad || false}
-            onChange={onChange}
-          />
-          <label htmlFor="cuenta_discapacidad">Cuenta con discapacidad</label>
-        </div>
-        {alumno.cuenta_discapacidad && (
-          <div className="conditional-field">
-            <label htmlFor="datos_discapacidad">Detalles de discapacidad:</label>
-            <textarea
-              id="datos_discapacidad"
-              name="datos_discapacidad"
-              value={alumno.datos_discapacidad || ""}
-              onChange={onChange}
-            />
-          </div>
-        )}
+        {/* SE ELIMINA DISCAPACIDAD DE ESTA SECCIÓN */}
 
         {/* Seguro de viaje */}
         <div className="checkbox-container">
