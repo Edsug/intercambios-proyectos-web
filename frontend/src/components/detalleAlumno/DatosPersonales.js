@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import Section from "../common/Section";
 import userDefault from "../../assets/user.png";
 import { toast } from "react-toastify";
-import "../../styles/DatosPersonales.css";
 
 export default function DatosPersonales({ alumno, onChange, catalogos, onFotoChange }) {
   const {
@@ -246,7 +245,6 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             style={{ display: "none" }}
             onChange={handleFotoChange}
           />
-          <span className="foto-alumno-label">Foto</span>
         </div>
       </div>
 
