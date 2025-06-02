@@ -88,7 +88,6 @@ const Registro = () => {
         if (formData.NIVEL_ACADEMICO === "MAESTRÍA" && !formData.MAESTRIA) errs.MAESTRIA = "Seleccione maestría.";
         if (formData.NIVEL_ACADEMICO === "DOCTORADO" && !formData.DOCTORADO) errs.DOCTORADO = "Seleccione doctorado.";
         if (!formData.NACIONALIDAD) errs.NACIONALIDAD = "Seleccione nacionalidad.";
-        if (!formData.DISCAPACIDAD_ID) errs.DISCAPACIDAD_ID = "Seleccione discapacidad.";
         if (formData.PERTENECE_COMUNIDAD && !formData.COMUNIDAD_NATIVA)
           errs.COMUNIDAD_NATIVA = "Ingrese el nombre de la comunidad.";
         if (!formData.SEMESTRE) errs.SEMESTRE = "Ingrese semestre.";

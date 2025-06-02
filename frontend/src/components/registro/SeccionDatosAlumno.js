@@ -356,9 +356,8 @@ export default function SeccionDatosAlumno({
               name="DISCAPACIDAD_ID"
               value={formData.DISCAPACIDAD_ID || ""}
               onChange={handleChange}
-              required
             >
-              <option value="">—Seleccione—</option>
+              <option value="">NINGUNA</option>
               {discapacidades.map((d, i) => (
                 <option key={i} value={d.id}>{d.nombre}</option>
               ))}
