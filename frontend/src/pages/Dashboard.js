@@ -158,7 +158,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por programa",
             data: data.map(d => d.total),
-            backgroundColor: "#8e44ad"
+            backgroundColor: palette1.slice(0, data.length)
           }]
         });
       });
@@ -172,7 +172,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por tipo de movilidad",
             data: data.map(d => d.total),
-            backgroundColor: "#e84393"
+            backgroundColor: palette2.slice(0, data.length)
           }]
         });
       });
@@ -186,11 +186,19 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por tipo de beca",
             data: data.map(d => d.total),
-            backgroundColor: "#f1c40f"
+            backgroundColor: palette1.slice(0, data.length)
           }]
         });
       });
   }, []);
+
+  // Paletas de colores para las gráficas
+  const palette1 = [
+    "#8e44ad", "#e84393", "#f1c40f", "#16a085", "#2980b9", "#e67e22", "#2ecc71", "#9b59b6", "#f39c12", "#27ae60", "#3498db"
+  ];
+  const palette2 = [
+    "#ff7675", "#00b894", "#fdcb6e", "#0984e3", "#fd79a8", "#636e72", "#00cec9", "#fab1a0", "#6c5ce7", "#d35400", "#b2bec3"
+  ];
 
   // Opciones para mostrar la cantidad en el centro de cada sección del pastel
   const pieOptions = {
