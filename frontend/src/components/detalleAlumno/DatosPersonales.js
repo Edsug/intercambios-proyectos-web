@@ -224,7 +224,6 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             style={{ display: "none" }}
             onChange={handleFotoChange}
           />
-          <span className="foto-alumno-label">Foto</span>
         </div>
       </div>
 
