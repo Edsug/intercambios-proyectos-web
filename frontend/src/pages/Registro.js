@@ -211,8 +211,7 @@ const Registro = () => {
 
   return (
     <div className="dashboard-content">
-      <ToastContainer position="top-center" autoClose={3000} />
-
+      <ToastContainer position="top-left" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="content-header">
         <h1>REGISTRAR ALUMNO</h1>
         <p>COMPLETE TODOS LOS CAMPOS PARA REGISTRAR UN NUEVO ALUMNO</p>

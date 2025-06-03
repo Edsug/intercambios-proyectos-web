@@ -349,7 +349,7 @@ export default function SeccionDatosAlumno({
         </div>
 
         {/* 4️⃣ BIS: Discapacidad y Comunidad Nativa */}
-        <div className="form-row">
+        <div className="form-row ">
           <label className="select-label">
             DISCAPACIDAD:
             <select
@@ -371,7 +371,7 @@ export default function SeccionDatosAlumno({
             </select>
             {errores.DISCAPACIDAD_ID && <span className="error-message">{errores.DISCAPACIDAD_ID}</span>}
           </label>
-          <label>
+          <label className="checkbox-label">
             <input
               type="checkbox"
               name="PERTENECE_COMUNIDAD"

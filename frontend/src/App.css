@@ -82,6 +82,9 @@ body {
   padding: 25px;
   padding-top: calc(var(--header-height) + 40px);
   transition: all var(--transition-speed) var(--transition-function);
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Secciones y tarjetas */
@@ -512,6 +515,43 @@ body {
 
 .data-table tbody tr:hover {
   background-color: rgba(91, 146, 229, 0.05);
+}
+
+/* Cambia el fondo, borde y color del toast */
+.Toastify__toast {
+  box-shadow: 0 4px 24px rgba(52, 152, 219, 0.10);
+  border-radius: 12px;
+  background: #fff6f6; /* O el color que prefieras */
+  color: #c0392b;
+  padding: 16px 24px;
+  min-height: unset;
+}
+.Toastify__toast-body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Cambia el color del icono de error */
+.Toastify__toast--error {
+  border-left: 6px solid #e74c3c;
+  background: #fff6f6;
+  color: #c0392b;
+}
+
+/* Cambia el color del icono de éxito */
+.Toastify__toast--success {
+  border-left: 6px solid #27ae60;
+  background: #f6fff8;
+  color: #14532d;
+}
+
+/* Cambia el color de la barra de progreso */
+.Toastify__progress-bar {
+  background: #3498db;
+}
+
+.Toastify__close-button {
+  display: none !important;
 }
 
 /* Diseño responsivo */

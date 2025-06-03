@@ -11,7 +11,7 @@ import Doctorados from "../components/configuracion/Doctorado";
 import Programas from "../components/configuracion/Programas";
 import Becas from "../components/configuracion/Becas";
 import Estados from "../components/configuracion/Estados";
-import Paises from "../components/configuracion/paises";
+import Paises from "../components/configuracion/Paises";
 import Nacionalidades from "../components/configuracion/Nacionalidades";
 import TiposDestino from "../components/configuracion/TiposDestino";
 import Actividades from "../components/configuracion/Actividades";
