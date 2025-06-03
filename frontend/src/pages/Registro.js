@@ -141,6 +141,19 @@ const Registro = () => {
           });
         }
         break;
+       case 5:
+        if (formData.SEGURO_VIAJE) {
+          if (!formData.NOMBRE_ASEGURADORA)
+            errs.NOMBRE_ASEGURADORA = "Ingrese el nombre de la aseguradora.";
+          if (!formData.NUMERO_POLIZA)
+            errs.NUMERO_POLIZA = "Ingrese el número de póliza.";
+          if (!formData.FECHA_INICIO_SEGURO)
+            errs.FECHA_INICIO_SEGURO = "Ingrese la fecha de inicio del seguro.";
+          if (!formData.CONTACTO_ASEGURADORA)
+            errs.CONTACTO_ASEGURADORA = "Ingrese el contacto de la aseguradora.";
+        }
+        break;
+
 
       default:
         break;
