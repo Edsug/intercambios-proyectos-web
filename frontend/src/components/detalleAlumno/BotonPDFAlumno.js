@@ -11,13 +11,15 @@ export default function BotonPDFAlumno({ alumno }) {
     const marginX = 20;
     let y = 12;
 
-    // Logo grande (centrado y proporcional)
+    // Logo grande (centrado y proporcional, lo más grande posible sin afectar el diseño)
     const logoImg = new window.Image();
     logoImg.src = logoCompleto;
     await new Promise(resolve => (logoImg.onload = resolve));
-    const maxLogoW = 80;
+    // Calcula el máximo ancho permitido (casi todo el ancho de la hoja, dejando márgenes)
+    const maxLogoW = pageWidth - marginX * 2; // Usa casi todo el ancho disponible
+    const logoAspect = logoImg.width / logoImg.height;
     const logoW = Math.min(maxLogoW, logoImg.width * 0.264583); // px to mm
-    const logoH = logoW * (logoImg.height / logoImg.width);
+    const logoH = logoW / logoAspect;
     const logoX = (pageWidth - logoW) / 2;
     doc.addImage(logoCompleto, "PNG", logoX, y, logoW, logoH);
     y += logoH + 4;
@@ -53,7 +55,6 @@ export default function BotonPDFAlumno({ alumno }) {
     if (alumno.codigo) {
       const extensions = ["jpg", "jpeg", "png", "gif"];
       for (let ext of extensions) {
-        // USAR AQUI
         const url = `http://localhost/basecambios/ver_foto.php?codigo=${alumno.codigo}&ext=${ext}`;
         try {
           const res = await fetch(url, { method: "GET" });
@@ -96,14 +97,13 @@ export default function BotonPDFAlumno({ alumno }) {
         startY: y + 4,
         styles: { fontSize: 10 },
         theme: "grid",
-        margin: { left: marginX, right: marginX, bottom: 25 }, // <-- margen inferior para el pie
+        margin: { left: marginX, right: marginX, bottom: 25 },
         tableWidth: 170,
         body: rows.map(([label, val]) => [
           { content: `${label}:`, styles: { fontStyle: "bold" } },
           { content: val || "" }
         ]),
         didDrawPage: (data) => {
-          // Pie de página en cada hoja
           const pageHeight = doc.internal.pageSize.getHeight();
           doc.setDrawColor(200);
           doc.setLineWidth(0.2);
