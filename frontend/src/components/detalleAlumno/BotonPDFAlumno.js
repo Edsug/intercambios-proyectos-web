@@ -96,12 +96,22 @@ export default function BotonPDFAlumno({ alumno }) {
         startY: y + 4,
         styles: { fontSize: 10 },
         theme: "grid",
-        margin: { left: marginX },
+        margin: { left: marginX, right: marginX, bottom: 25 }, // <-- margen inferior para el pie
         tableWidth: 170,
         body: rows.map(([label, val]) => [
           { content: `${label}:`, styles: { fontStyle: "bold" } },
           { content: val || "" }
-        ])
+        ]),
+        didDrawPage: (data) => {
+          // Pie de página en cada hoja
+          const pageHeight = doc.internal.pageSize.getHeight();
+          doc.setDrawColor(200);
+          doc.setLineWidth(0.2);
+          doc.line(marginX, pageHeight - 22, 210 - marginX, pageHeight - 22);
+          doc.setFontSize(10);
+          doc.setTextColor(120);
+          doc.text("Sistema de Intercambios - CUSUR", 105, pageHeight - 15, { align: "center" });
+        }
       });
       y = doc.lastAutoTable.finalY + 10;
     };
@@ -182,14 +192,6 @@ export default function BotonPDFAlumno({ alumno }) {
       ["Experiencia compartida", alumno.experiencia_compartida ? "Sí" : "No"],
       ["Detalles experiencia", alumno.detalles_experiencia]
     ]);
-
-    // Pie institucional
-    doc.setDrawColor(200);
-    doc.setLineWidth(0.2);
-    doc.line(marginX, 285, 210 - marginX, 285);
-    doc.setFontSize(10);
-    doc.setTextColor(120);
-    doc.text("Sistema de Intercambios - CUSUR", 105, 290, { align: "center" });
 
     doc.save(`alumno_${alumno.codigo || "perfil"}.pdf`);
   };
