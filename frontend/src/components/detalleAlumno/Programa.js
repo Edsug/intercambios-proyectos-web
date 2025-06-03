@@ -5,12 +5,18 @@ import Section from "../common/Section";
 
 export default function Programa({ alumno, onChange }) {
   const [programas, setProgramas] = useState([]);
+  const [estados, setEstados] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost/basecambios/get_programas.php")
       .then(res => res.json())
       .then(data => setProgramas(data))
       .catch(err => console.error("Error cargando programas:", err));
+
+    fetch("http://localhost/basecambios/get_estado_programa.php")
+      .then(res => res.json())
+      .then(data => setEstados(data))
+      .catch(err => console.error("Error cargando estados de programa:", err));
   }, []);
 
   return (
@@ -49,11 +55,14 @@ export default function Programa({ alumno, onChange }) {
             name="estado_programa"
             value={alumno.estado_programa || ""}
             onChange={onChange}
+            required
           >
             <option value="">—Seleccione—</option>
-            <option value="ACTIVO">ACTIVO</option>
-            <option value="CANCELADO">CANCELADO</option>
-            <option value="RECHAZADO">RECHAZADO</option>
+            {estados.map((estado) => (
+              <option key={estado.id} value={estado.nombre}>
+                {estado.nombre}
+              </option>
+            ))}
           </select>
         </label>
       </div>

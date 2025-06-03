@@ -16,6 +16,8 @@ import Nacionalidades from "../components/configuracion/Nacionalidades";
 import TiposDestino from "../components/configuracion/TiposDestino";
 import Actividades from "../components/configuracion/Actividades";
 import Ciclos from "../components/configuracion/Ciclos";
+import Discapacidades from "../components/configuracion/Discapacidades";
+import EstadosPrograma from "../components/configuracion/EstadosPrograma";
 
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
@@ -47,7 +49,9 @@ const Configuracion = () => {
     { id: "nacionalidades", title: "🏳️ Nacionalidades", component: <Nacionalidades /> },
     { id: "tiposDestino", title: "📍 Tipos de Destino", component: <TiposDestino /> },
     { id: "actividades", title: "🎯 Actividades", component: <Actividades /> },
-    { id: "ciclos", title: "📅 Ciclos", component: <Ciclos /> }
+    { id: "ciclos", title: "📅 Ciclos", component: <Ciclos /> },
+    { id: "discapacidades", title: "♿ Discapacidades", component: <Discapacidades /> },
+    { id: "estadosPrograma", title: "📑 Estados Programa", component: <EstadosPrograma /> }
   ];
 
   const handleMainTabChange = (tabId) => {
