@@ -1,13 +1,11 @@
 // src/components/detalleAlumno/DatosAdicionales.js
 import React from "react";
 import "../../styles/DatosAdicionales.css";
+import Section from "../common/Section";
 
 export default function DatosAdicionales({ alumno, onChange }) {
   return (
-    <section className="app-section datos-adicionales-section">
-      <header className="section-header">
-        <h3>Datos Adicionales</h3>
-      </header>
+    <Section title="Datos Adicionales" className="programa-section">
       <div className="section-content">
         {/* Revalidación de materias */}
         <div className="checkbox-container">
@@ -139,6 +137,6 @@ export default function DatosAdicionales({ alumno, onChange }) {
           </div>
         )}
       </div>
-    </section>
+    </Section>
   );
 }

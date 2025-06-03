@@ -1,6 +1,8 @@
 // components/detalleAlumno/BecasSection.js
 import React, { useState, useEffect } from "react";
 import "../../styles/BecasSection.css";
+import Section from "../common/Section";
+
 
 export default function BecasSection({
   alumno,
@@ -34,8 +36,7 @@ export default function BecasSection({
       .map(b => b.nombre);
 
   return (
-    <section>
-      <h3>Becas</h3>
+    <Section title="Becas" className="programa-section">
 
       {alumno.becas.length === 0 && (
         <p>No hay becas registradas para este alumno.</p>
@@ -102,6 +103,6 @@ export default function BecasSection({
       <button type="button" onClick={onAdd} className="add-beca">
         + Agregar Beca
       </button>
-    </section>
+    </Section>
   );
 }
