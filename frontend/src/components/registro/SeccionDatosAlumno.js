@@ -128,7 +128,36 @@ export default function SeccionDatosAlumno({
       setFormData(prev => ({ ...prev, FOTO: croppedFile }));
       setPreviewFoto(previewUrl);
       if (setFotoFile) setFotoFile(croppedFile);
+
+      // Si ya hay código, sube la foto automáticamente
+      if (formData.CODIGO && String(formData.CODIGO).trim() !== "") {
+        subirFotoServidor(croppedFile, formData.CODIGO);
+      }
     });
+  };
+
+  const subirFotoServidor = async (file, codigo) => {
+    const formData = new FormData();
+    formData.append('foto', file);
+    formData.append('codigo', codigo);
+
+    try {
+      const res = await fetch('http://localhost/basecambios/upload_foto.php', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPreviewFoto(`http://localhost/basecambios/${data.ruta}?t=${Date.now()}`);
+        setFormData(prev => ({ ...prev, FOTO: data.ruta }));
+        if (setFotoFile) setFotoFile(null); // Limpia el file local si quieres
+        toast.success('Foto subida correctamente');
+      } else {
+        toast.error(data.error || 'Error al subir la foto');
+      }
+    } catch (err) {
+      toast.error('Error de red al subir la foto');
+    }
   };
 
   useEffect(() => {
@@ -160,6 +189,9 @@ export default function SeccionDatosAlumno({
     if (!formData.CODIGO) {
       toast.error("Primero ingresa el código del alumno.");
       return;
+    }
+    if (formData.FOTO instanceof File) {
+      await subirFotoServidor(formData.FOTO, formData.CODIGO);
     }
     nextSection();
   };
@@ -349,20 +381,13 @@ export default function SeccionDatosAlumno({
         </div>
 
         {/* 4️⃣ BIS: Discapacidad y Comunidad Nativa */}
-        <div className="form-row ">
+        <div className="form-row">
           <label className="select-label">
             DISCAPACIDAD:
             <select
               name="DISCAPACIDAD_ID"
               value={formData.DISCAPACIDAD_ID || ""}
-              onChange={e => {
-                // Si selecciona "NINGUNA", envía null
-                const value = e.target.value === "" ? null : e.target.value;
-                setFormData(prev => ({
-                  ...prev,
-                  DISCAPACIDAD_ID: value
-                }));
-              }}
+              onChange={handleChange}
             >
               <option value="">NINGUNA</option>
               {discapacidades.map((d, i) => (
@@ -371,7 +396,7 @@ export default function SeccionDatosAlumno({
             </select>
             {errores.DISCAPACIDAD_ID && <span className="error-message">{errores.DISCAPACIDAD_ID}</span>}
           </label>
-          <label className="checkbox-label">
+          <label>
             <input
               type="checkbox"
               name="PERTENECE_COMUNIDAD"
