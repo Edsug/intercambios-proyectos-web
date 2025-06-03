@@ -5,11 +5,19 @@ import "../styles/Dashboard.css";
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
+// Paletas de colores para las gráficas (fuera del componente)
+const palette1 = [
+  "#8e44ad", "#e84393", "#f1c40f", "#16a085", "#2980b9", "#e67e22", "#2ecc71", "#9b59b6", "#f39c12", "#27ae60", "#3498db"
+];
+const palette2 = [
+  "#ff7675", "#00b894", "#fdcb6e", "#0984e3", "#fd79a8", "#636e72", "#00cec9", "#fab1a0", "#6c5ce7", "#d35400", "#b2bec3"
+];
+
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalAlumnos: 0,
     nuevosRegistros: 0,
-    cursosActivos: 0,
+    // cursosActivos: 0, // Eliminado
   });
   const [nivelesData, setNivelesData] = useState(null);
   const [promedioSemestreData, setPromedioSemestreData] = useState(null);
@@ -22,6 +30,8 @@ const Dashboard = () => {
   const [programasData, setProgramasData] = useState(null);
   const [tiposMovilidadData, setTiposMovilidadData] = useState(null);
   const [becasData, setBecasData] = useState(null);
+  const [discapacidadData, setDiscapacidadData] = useState(null);
+  const [comunidadData, setComunidadData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +41,7 @@ const Dashboard = () => {
         setStats({
           totalAlumnos: data.totalAlumnos,
           nuevosRegistros: data.nuevosRegistros,
-          cursosActivos: data.cursosActivos,
+          // cursosActivos: data.cursosActivos, // Eliminado
         });
       })
       .catch(console.error)
@@ -108,18 +118,36 @@ const Dashboard = () => {
       });
 
     // Cargar datos para gráfica de género
-    fetch("http://localhost/basecambios/get_grafica_genero.php")
-      .then(res => res.json())
-      .then(data => {
-        setGeneroData({
-          labels: data.map(d => d.sexo === "M" ? "Masculino" : "Femenino"),
-          datasets: [{
-            label: "Alumnos por género",
-            data: data.map(d => d.total),
-            backgroundColor: ["#2980b9", "#e84393"]
-          }]
-        });
-      });
+    // Cargar datos para gráfica de género
+// Cargar datos para gráfica de género
+fetch("http://localhost/basecambios/get_grafica_genero.php")
+  .then(res => res.json())
+  .then(data => {
+    // Agrupar por nombre de género (ignorando ID)
+    const resumen = {};
+
+    data.forEach(d => {
+      const genero = d.sexo.trim(); // Usamos el nombre tal como viene
+      if (!resumen[genero]) {
+        resumen[genero] = 0;
+      }
+      resumen[genero] += parseInt(d.total);
+    });
+
+    const labels = Object.keys(resumen);
+    const valores = Object.values(resumen);
+
+    setGeneroData({
+      labels,
+      datasets: [{
+        label: "Alumnos por género",
+        data: valores,
+        backgroundColor: palette1.slice(0, labels.length)
+      }]
+    });
+  });
+
+
 
     // Cargar datos para gráfica de nacionalidad
     fetch("http://localhost/basecambios/get_grafica_nacionalidad.php")
@@ -190,15 +218,35 @@ const Dashboard = () => {
           }]
         });
       });
-  }, []);
 
-  // Paletas de colores para las gráficas
-  const palette1 = [
-    "#8e44ad", "#e84393", "#f1c40f", "#16a085", "#2980b9", "#e67e22", "#2ecc71", "#9b59b6", "#f39c12", "#27ae60", "#3498db"
-  ];
-  const palette2 = [
-    "#ff7675", "#00b894", "#fdcb6e", "#0984e3", "#fd79a8", "#636e72", "#00cec9", "#fab1a0", "#6c5ce7", "#d35400", "#b2bec3"
-  ];
+    // Cargar datos para gráfica de discapacidad
+    fetch("http://localhost/basecambios/get_grafica_discapacidad.php")
+      .then(res => res.json())
+      .then(data => {
+        setDiscapacidadData({
+          labels: data.map(d => d.tipo),
+          datasets: [{
+            label: "Alumnos con discapacidad",
+            data: data.map(d => d.total),
+            backgroundColor: palette2.slice(0, data.length)
+          }]
+        });
+      });
+
+    // Cargar datos para gráfica de comunidad nativa
+    fetch("http://localhost/basecambios/get_grafica_comunidad.php")
+      .then(res => res.json())
+      .then(data => {
+        setComunidadData({
+          labels: data.map(d => d.tipo),
+          datasets: [{
+            label: "Alumnos de comunidad nativa",
+            data: data.map(d => d.total),
+            backgroundColor: palette1.slice(0, data.length)
+          }]
+        });
+      });
+  }, []);
 
   // Opciones para mostrar la cantidad en el centro de cada sección del pastel
   const pieOptions = {
@@ -252,10 +300,10 @@ const Dashboard = () => {
           <h3>Registros nuevos (últ. 7d)</h3>
           <p className="stat-number">{stats.nuevosRegistros}</p>
         </div>
-        <div className="stat-card">
+        {/* <div className="stat-card">
           <h3>Cursos activos</h3>
           <p className="stat-number">{stats.cursosActivos}</p>
-        </div>
+        </div> */}
       </div>
 
       <div className="dashboard-graphics-grid">
@@ -323,6 +371,18 @@ const Dashboard = () => {
           <div className="dashboard-graphic-card">
             <h3>Alumnos por tipo de beca</h3>
             <Pie data={becasData} options={pieOptions} />
+          </div>
+        )}
+        {discapacidadData && discapacidadData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos con discapacidad</h3>
+            <Pie data={discapacidadData} options={pieOptions} />
+          </div>
+        )}
+        {comunidadData && comunidadData.labels.length > 0 && (
+          <div className="dashboard-graphic-card">
+            <h3>Alumnos de comunidad nativa</h3>
+            <Pie data={comunidadData} options={pieOptions} />
           </div>
         )}
       </div>
