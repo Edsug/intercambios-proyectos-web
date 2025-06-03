@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 
 export default function SeccionPrograma({ formData, handleChange, nextSection, errores }) {
   const [programas, setProgramas] = useState([]);
+  const [estados, setEstados] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost/basecambios/get_programas.php')
       .then(res => res.json())
       .then(data => setProgramas(data))
       .catch(err => console.error("Error al cargar programas:", err));
+
+    fetch('http://localhost/basecambios/get_estado_programa.php')
+      .then(res => res.json())
+      .then(data => setEstados(data))
+      .catch(err => console.error("Error al cargar estados de programa:", err));
   }, []);
 
   return (
@@ -52,11 +58,14 @@ export default function SeccionPrograma({ formData, handleChange, nextSection, e
               name="ESTADO"
               value={formData.ESTADO}
               onChange={handleChange}
+              required
             >
-              <option value="ACTIVO">ACTIVO</option>
-              <option value="CANCELADO">CANCELADO</option>
-              <option value="RECHAZADO">RECHAZADO</option>
+              <option value="">SELECCIONE UN ESTADO</option>
+              {estados.map((estado) => (
+                <option key={estado.id} value={estado.nombre}>{estado.nombre}</option>
+              ))}
             </select>
+            {errores.ESTADO && <span className="error-message">{errores.ESTADO}</span>}
           </label>
         </div>
       </div>
