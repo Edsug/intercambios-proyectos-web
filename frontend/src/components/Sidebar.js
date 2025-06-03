@@ -14,7 +14,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   } else if (cargo === "Asistente") {
     items.push("dashboard", "registro", "busqueda");
   } else if (cargo === "Supervisor") {
-    items.push("busqueda");
+    items.push("dashboard","busqueda");
   }
 
   const itemComponents = {

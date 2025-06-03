@@ -37,11 +37,24 @@
     });
     // — Columnas para PDF/Excel (visibilidad controlable)
     const [columnasPDF, setColumnasPDF] = useState([
+      { id: 'folio', label: 'Folio', visible: true },
       { id: 'codigo', label: 'Código', visible: true },
       { id: 'nombre', label: 'Nombre', visible: true },
       { id: 'apellidos', label: 'Apellidos', visible: true },
       { id: 'nivel_academico', label: 'Nivel', visible: true },
       { id: 'especialidad', label: 'Especialidad', visible: true },
+
+      // ↓↓↓ Movilidad después de especialidad ↓↓↓
+      { id: 'programa', label: 'Programa', visible: true },
+      { id: 'estado_programa', label: 'Est. Programa', visible: true },
+      { id: 'actividad', label: 'Actividad', visible: true },
+      { id: 'tipo_destino', label: 'Tipo Dest.', visible: true },
+      { id: 'estado_pais', label: 'Estado/País', visible: true }, // <-- NUEVA COLUMNA
+      { id: 'fecha_inicio_movilidad', label: 'F. Inicio movilidad', visible: true },
+      { id: 'fecha_fin_movilidad', label: 'F. Fin movilidad', visible: true },
+      { id: 'observaciones_movilidad', label: 'Obs. Mov.', visible: true },
+      // ↑↑↑ Fin de sección de movilidad ↑↑↑
+
       { id: 'semestre', label: 'Semestre', visible: true },
       { id: 'promedio', label: 'Promedio', visible: true },
       { id: 'ciclo', label: 'Ciclo', visible: true },
@@ -53,23 +66,13 @@
       { id: 'contacto_emergencia', label: 'Cont. Emerg.', visible: true },
       { id: 'nombre_contacto_emergencia', label: 'Nom. Cont.', visible: true },
       { id: 'nss', label: 'NSS', visible: true },
-      { id: 'programa', label: 'Programa', visible: true },
-      { id: 'folio', label: 'Folio', visible: true },
-      { id: 'estado_programa', label: 'Est. Programa', visible: true },
-      { id: 'actividad', label: 'Actividad', visible: true },
-      { id: 'tipo_destino', label: 'Tipo Dest.', visible: true },
-      { id: 'fecha_inicio_movilidad', label: 'F. Inicio movilidad', visible: true },
-      { id: 'fecha_fin_movilidad', label: 'F. Fin movilidad', visible: true },
-      { id: 'observaciones_movilidad', label: 'Obs. Mov.', visible: true },
       { id: 'tiene_beca', label: 'Becado', visible: true },
       { id: 'revalidacion', label: 'Reval. Mat', visible: true },
       { id: 'datos_revalidacion', label: 'Datos Reval.', visible: true },
       { id: 'certificado_calificaciones', label: 'Certif. Calif.', visible: true },
-      // ↓↓↓ NUEVO ↓↓↓
       { id: 'discapacidad', label: 'Discapacidad', visible: true },
       { id: 'pertenece_comunidad', label: '¿Comunidad Nativa?', visible: true },
       { id: 'comunidad_nativa', label: 'Nombre Comunidad', visible: true },
-      // ↑↑↑ NUEVO ↑↑↑
       { id: 'seguro_viaje', label: 'Seguro', visible: true },
       { id: 'aseguradora', label: 'Aseguradora', visible: true },
       { id: 'poliza', label: 'Póliza', visible: true },
@@ -79,6 +82,7 @@
       { id: 'experiencia_compartida', label: 'Experiencia compartida', visible: true },
       { id: 'detalles_experiencia', label: 'detalles_experiencia', visible: true }
     ]);
+
 
     // — Campos dinámicos de filtro
     const selectFields = [
@@ -207,6 +211,15 @@ const handleExportExcel = async () => {
           ? a.doctorado
           : '';
       }
+      // Lógica para mostrar estado o país según tipo_destino
+      if (c.id === 'estado_pais') {
+        if (a.tipo_destino === 'NACIONAL') {
+          return a.estado_destino || '';
+        } else if (a.tipo_destino === 'INTERNACIONAL') {
+          return a.pais_destino || '';
+        }
+        return '';
+      }
       return a[c.id] ?? '';
     });
 
@@ -321,6 +334,14 @@ const handleExportExcel = async () => {
               : alumno.nivel_academico === 'DOCTORADO'
               ? alumno.doctorado
               : '';
+          }
+          if (c.id === 'estado_pais') {
+            if (alumno.tipo_destino === 'NACIONAL') {
+              return alumno.estado_destino || '';
+            } else if (alumno.tipo_destino === 'INTERNACIONAL') {
+              return alumno.pais_destino || '';
+            }
+            return '';
           }
           return alumno[c.id] ?? '';
         });

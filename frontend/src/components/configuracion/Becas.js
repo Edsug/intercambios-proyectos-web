@@ -85,6 +85,12 @@ const Becas = () => {
     }
   };
 
+  const becasAgrupadas = becas.reduce((acc, beca) => {
+    if (!acc[beca.tipo]) acc[beca.tipo] = [];
+    acc[beca.tipo].push(beca);
+    return acc;
+  }, {});
+
   return (
     <div className="becas-admin">
       <h3>Agregar Beca</h3>
@@ -120,75 +126,72 @@ const Becas = () => {
         <button type="submit" className="save-button">Agregar Beca</button>
       </form>
 
-      <h3>Listado de Becas</h3>
-      {becas.length === 0 ? (
+      <h3>Listado de Becas por Tipo</h3>
+      {Object.keys(becasAgrupadas).length === 0 ? (
         <p>No hay becas registradas.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Tipo</th>
-              <th>Nombre</th>
-              <th>Visible</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {becas.map((b) => (
-              <tr key={b.id}>
-                <td>
-                  {editandoId === b.id ? (
-                    <input value={nuevoTipo} onChange={(e) => setNuevoTipo(e.target.value)} />
-                  ) : (
-                    b.tipo
-                  )}
-                </td>
-                <td>
-                  {editandoId === b.id ? (
-                    <input value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
-                  ) : (
-                    b.nombre
-                  )}
-                </td>
-                <td>
-                  {editandoId === b.id ? (
-                    <select value={nuevaVisibilidad} onChange={(e) => setNuevaVisibilidad(parseInt(e.target.value))}>
-                      <option value={1}>Sí</option>
-                      <option value={0}>No</option>
-                    </select>
-                  ) : (
-                    <span className={`etiqueta ${Number(b.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
-                      {Number(b.visible) === 1 ? "Sí" : "No"}
-                    </span>
-                  )}
-                </td>
-                <td>
-                  {editandoId === b.id ? (
-                    <>
-                      <button onClick={() => guardarEdicion(b.id)}>Guardar</button>
-                      <button onClick={() => setEditandoId(null)}>Cancelar</button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="edit-button"
-                        onClick={() => {
-                          setEditandoId(b.id);
-                          setNuevoTipo(b.tipo);
-                          setNuevoNombre(b.nombre);
-                          setNuevaVisibilidad(Number(b.visible));
-                        }}
-                      >
-                        Editar
-                      </button>
-                      <button className="delete-button" onClick={() => eliminarBeca(b.id)}>Eliminar</button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        Object.entries(becasAgrupadas).map(([tipo, becasDelTipo]) => (
+          <div key={tipo} className="grupo-tipo">
+            <h4>{tipo}</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Visible</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {becasDelTipo.map((b) => (
+                  <tr key={b.id}>
+                    <td>
+                      {editandoId === b.id ? (
+                        <input value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
+                      ) : (
+                        b.nombre
+                      )}
+                    </td>
+                    <td>
+                      {editandoId === b.id ? (
+                        <select value={nuevaVisibilidad} onChange={(e) => setNuevaVisibilidad(parseInt(e.target.value))}>
+                          <option value={1}>Sí</option>
+                          <option value={0}>No</option>
+                        </select>
+                      ) : (
+                        <span className={`etiqueta ${Number(b.visible) === 1 ? "etiqueta-si" : "etiqueta-no"}`}>
+                          {Number(b.visible) === 1 ? "Sí" : "No"}
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      {editandoId === b.id ? (
+                        <>
+                          <button onClick={() => guardarEdicion(b.id)}>Guardar</button>
+                          <button onClick={() => setEditandoId(null)}>Cancelar</button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="edit-button"
+                            onClick={() => {
+                              setEditandoId(b.id);
+                              setNuevoTipo(b.tipo);
+                              setNuevoNombre(b.nombre);
+                              setNuevaVisibilidad(Number(b.visible));
+                            }}
+                          >
+                            Editar
+                          </button>
+                          <button className="delete-button" onClick={() => eliminarBeca(b.id)}>Eliminar</button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))
       )}
     </div>
   );

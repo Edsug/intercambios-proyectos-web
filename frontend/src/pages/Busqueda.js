@@ -21,6 +21,9 @@ export default function Busqueda() {
     incluirBecas, setIncluirBecas
   } = useBusquedaConfig();
 
+  const userRole = localStorage.getItem("cargo"); // corregido
+
+
   return (
     <div className="dashboard-content">
       <header className="content-header">
@@ -410,9 +413,15 @@ export default function Busqueda() {
                           : <span className="empty-cell">-</span>}
                       </td>
                       <td>
-                        <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
-                          <i className="fas fa-eye"></i> Ver
-                        </Link>
+                        {userRole === "Supervisor" ? (
+                          <span className="action-button disabled" title="Sin permiso">
+                            <i className="fas fa-eye-slash"></i> Ver
+                          </span>
+                        ) : (
+                          <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
+                            <i className="fas fa-eye"></i> Ver
+                          </Link>
+                        )}
                       </td>
                     </tr>
                   );

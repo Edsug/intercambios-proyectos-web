@@ -25,24 +25,11 @@ export default function SeccionDatosAlumno({
   const [nacionalidades, setNacionalidades] = useState([]);
   const [discapacidades, setDiscapacidades] = useState([]);
   const [previewFoto, setPreviewFoto] = useState(userDefault);
+  const [sexos, setSexos] = useState([]);
 
   // Siempre que el input código cambie y no esté vacío, intenta cargar la imagen del servidor
   useEffect(() => {
-    if (fotoFile instanceof File) {
-      // Si hay una foto seleccionada por el usuario, mostrarla siempre
-      const url = URL.createObjectURL(fotoFile);
-      setPreviewFoto(url);
-      return () => URL.revokeObjectURL(url);
-    }
-    if (formData.FOTO instanceof File) {
-      const url = URL.createObjectURL(formData.FOTO);
-      setPreviewFoto(url);
-      return () => URL.revokeObjectURL(url);
-    }
-    if (typeof formData.FOTO === "string" && formData.FOTO) {
-      setPreviewFoto(formData.FOTO);
-      return;
-    }
+    // Si hay código, siempre busca la foto en el servidor
     if (formData.CODIGO && String(formData.CODIGO).trim() !== "") {
       const exts = ["jpg", "jpeg", "png", "gif"];
       let found = false;
@@ -72,6 +59,23 @@ export default function SeccionDatosAlumno({
       })();
       return () => { cancelled = true; };
     }
+
+    // Si no hay código, muestra la foto local si existe
+    if (fotoFile instanceof File) {
+      const url = URL.createObjectURL(fotoFile);
+      setPreviewFoto(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    if (formData.FOTO instanceof File) {
+      const url = URL.createObjectURL(formData.FOTO);
+      setPreviewFoto(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    if (typeof formData.FOTO === "string" && formData.FOTO) {
+      setPreviewFoto(formData.FOTO);
+      return;
+    }
+
     setPreviewFoto(userDefault);
   // Solo depende de formData.CODIGO, fotoFile y formData.FOTO
   }, [formData.CODIGO, fotoFile, formData.FOTO]);
@@ -182,6 +186,9 @@ export default function SeccionDatosAlumno({
 
     fetch('http://localhost/basecambios/get_discapacidades.php')
       .then(r => r.json()).then(setDiscapacidades).catch(console.error);
+
+    fetch('http://localhost/basecambios/get_sexos.php')
+      .then(r => r.json()).then(setSexos).catch(console.error);
   }, [formData.NACIONALIDAD, setFormData]);
 
   // La foto ya no es obligatoria
@@ -458,10 +465,11 @@ export default function SeccionDatosAlumno({
               required
             >
               <option value="">—Seleccione—</option>
-              <option value="M">MASCULINO</option>
-              <option value="F">FEMENINO</option>
-              <option value="O">OTRO</option>
+              {sexos.map((s, i) => (
+                <option key={s.id || i} value={s.nombre}>{s.nombre}</option>
+              ))}
             </select>
+
             {errores.SEXO && <span className="error-message">{errores.SEXO}</span>}
           </label>
           <label>

@@ -370,12 +370,12 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="sexo"
             value={alumno.sexo || ""}
-            onChange={onChange} // <-- Cambia aquí
+            onChange={onChange}
             required
           >
             <option value="">—Seleccione—</option>
             {sexos.map((s, i) => (
-              <option key={i} value={s}>{s}</option>
+              <option key={s.id || i} value={s.nombre}>{s.nombre}</option>
             ))}
           </select>
         </label>

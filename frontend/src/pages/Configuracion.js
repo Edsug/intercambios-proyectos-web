@@ -18,6 +18,7 @@ import Actividades from "../components/configuracion/Actividades";
 import Ciclos from "../components/configuracion/Ciclos";
 import Discapacidades from "../components/configuracion/Discapacidades";
 import EstadosPrograma from "../components/configuracion/EstadosPrograma";
+import Sexos from "../components/configuracion/Sexos"; // <-- AGREGADO
 
 const Configuracion = () => {
   const [currentTab, setCurrentTab] = useState("sistema");
@@ -51,6 +52,7 @@ const Configuracion = () => {
     { id: "actividades", title: "🎯 Actividades", component: <Actividades /> },
     { id: "ciclos", title: "📅 Ciclos", component: <Ciclos /> },
     { id: "discapacidades", title: "♿ Discapacidades", component: <Discapacidades /> },
+    { id: "sexos", title: "⚧️ Sexos", component: <Sexos /> }, // <-- AGREGADO
     { id: "estadosPrograma", title: "📑 Estados Programa", component: <EstadosPrograma /> }
   ];
 
