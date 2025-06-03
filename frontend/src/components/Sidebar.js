@@ -13,8 +13,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     items.push("dashboard", "registro", "busqueda", "configuracion");
   } else if (cargo === "Asistente") {
     items.push("dashboard", "registro", "busqueda");
-  } else if (cargo === "Administrador consulta") {
-    items.push("busqueda", "reportes");
+  } else if (cargo === "Supervisor") {
+    items.push("busqueda");
   }
 
   const itemComponents = {

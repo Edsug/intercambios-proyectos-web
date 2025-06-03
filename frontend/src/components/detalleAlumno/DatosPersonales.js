@@ -370,7 +370,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="sexo"
             value={alumno.sexo || ""}
-            onChange={handleValidatedChange}
+            onChange={onChange} // <-- Cambia aquí
             required
           >
             <option value="">—Seleccione—</option>
@@ -397,7 +397,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="nacionalidad"
             value={alumno.nacionalidad || ""}
-            onChange={handleValidatedChange}
+            onChange={onChange} // <-- Cambia aquí
             required
           >
             <option value="">—Seleccione—</option>
@@ -426,7 +426,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             type="number"
             name="semestre"
             value={alumno.semestre || ""}
-            onChange={handleValidatedChange}
+            onChange={onChange}
             min="0"
             max="12"
           />
@@ -437,10 +437,12 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             type="number"
             name="promedio"
             value={alumno.promedio || ""}
-            onChange={handleValidatedChange}
-            step="0.01"
+            onChange={onChange}
             min="80"
             max="100"
+            step="any" // Permite decimales y cualquier número dentro del rango
+            inputMode="decimal" // Sugerencia para teclado numérico en móviles
+            pattern="[0-9]*"   // Permite solo números desde el teclado
           />
         </label>
       </div>

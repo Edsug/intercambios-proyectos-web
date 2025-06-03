@@ -174,7 +174,7 @@ const Usuarios = () => {
               <label>Cargo:</label>
               <select name="cargo" value={nuevoUsuario.cargo} onChange={handleNuevoUsuarioChange}>
                 <option value="Asistente">Asistente</option>
-                <option value="Administrador consulta">Supervisor</option>
+                <option value="Supervisor">Supervisor</option>
               </select>
             </div>
             <button type="submit" className="save-button">Agregar Usuario</button>

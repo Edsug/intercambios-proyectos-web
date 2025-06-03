@@ -111,10 +111,39 @@ export default function AlumnoDetail() {
     }));
   };
 
+  // Validación antes de guardar
+  const validateAlumno = (alumno) => {
+    // Validar promedio
+    if (alumno.promedio !== "" && (Number(alumno.promedio) < 80 || Number(alumno.promedio) > 100)) {
+      setError("El promedio debe estar entre 80 y 100.");
+      return false;
+    }
+    // Validar semestre
+    if (alumno.semestre !== "" && (Number(alumno.semestre) < 0 || Number(alumno.semestre) > 12)) {
+      setError("El semestre debe estar entre 0 y 12.");
+      return false;
+    }
+    // Validar campos obligatorios ejemplo
+    const obligatorios = [
+      "codigo", "nombre", "apellidos", "nivel_academico", "sexo", "nacionalidad"
+    ];
+    for (const campo of obligatorios) {
+      if (!alumno[campo] || alumno[campo] === "") {
+        setError("El campo '" + campo.replace("_", " ").toUpperCase() + "' es obligatorio.");
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSave = () => {
-    setSaving(true);
     setError("");
     setSuccess("");
+    if (!validateAlumno(alumno)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setSaving(true);
     fetch(`${BASE_URL}/update_alumno.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
