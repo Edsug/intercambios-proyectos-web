@@ -193,8 +193,8 @@ export default function SeccionDatosAlumno({
 
   // La foto ya no es obligatoria
   const handleNext = async () => {
-    if (!formData.CODIGO) {
-      toast.error("Primero ingresa el código del alumno.");
+    if (!formData.CODIGO || !/^\d{9}$/.test(formData.CODIGO)) {
+      toast.error("El código debe tener exactamente 9 dígitos numéricos.");
       return;
     }
     if (formData.FOTO instanceof File) {
@@ -255,15 +255,21 @@ export default function SeccionDatosAlumno({
           <label>
             CÓDIGO:
             <input
-              type="NUMBER"
+              type="text"
               name="CODIGO"
               value={formData.CODIGO}
               onChange={e => {
-                handleChange(e);
+                // Solo permitir números y máximo 9 caracteres
+                const value = e.target.value.replace(/\D/g, '').slice(0, 9);
+                handleChange({ target: { name: "CODIGO", value } });
               }}
               style={{ textTransform: "uppercase" }}
               maxLength={9}
-              required />
+              required
+              inputMode="numeric"
+              pattern="\d{9}"
+              autoComplete="off"
+            />
             {errores.CODIGO && <span className="error-message">{errores.CODIGO}</span>}
           </label>
           <label>
