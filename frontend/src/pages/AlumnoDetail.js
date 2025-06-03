@@ -8,6 +8,7 @@ import Programa         from "../components/detalleAlumno/Programa";
 import Movilidad        from "../components/detalleAlumno/Movilidad";
 import BecasSection     from "../components/detalleAlumno/BecasSection";
 import DatosAdicionales from "../components/detalleAlumno/DatosAdicionales";
+import BotonPDFAlumno   from "../components/detalleAlumno/BotonPDFAlumno";
 
 import "../styles/AlumnoDetail.css";
 
@@ -175,7 +176,7 @@ export default function AlumnoDetail() {
     fetch(`${BASE_URL}/delete_alumno.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ codigo })
+      body: JSON.stringify({ id: alumno.id }) // Cambia aquí: usa id en vez de codigo
     })
       .then(res => res.json())
       .then(json => {
@@ -225,7 +226,7 @@ export default function AlumnoDetail() {
           sexos: catalogos.sexos || [],
           tipos_sangre: catalogos.tipos_sangre || [],
           nacionalidades: catalogos.nacionalidades || [],
-          discapacidades: catalogos.discapacidades || [] // si usas discapacidades
+          discapacidades: catalogos.discapacidades || []
         }}
       />
 
@@ -246,7 +247,7 @@ export default function AlumnoDetail() {
           tiposDestino: catalogos.tipos_destino,
           paises: catalogos.paises,
           estados: catalogos.estados,
-          ciclos: catalogos.ciclos // ✅ agregado
+          ciclos: catalogos.ciclos
         }}
       />
 
@@ -267,6 +268,7 @@ export default function AlumnoDetail() {
         <button className="save-btn" onClick={handleSave} disabled={saving}>
           {saving ? "Guardando..." : "Guardar Cambios"}
         </button>
+        <BotonPDFAlumno alumno={alumno} />
         <button className="danger" onClick={handleDelete} disabled={saving}>
           Eliminar Alumno
         </button>

@@ -355,7 +355,14 @@ export default function SeccionDatosAlumno({
             <select
               name="DISCAPACIDAD_ID"
               value={formData.DISCAPACIDAD_ID || ""}
-              onChange={handleChange}
+              onChange={e => {
+                // Si selecciona "NINGUNA", envía null
+                const value = e.target.value === "" ? null : e.target.value;
+                setFormData(prev => ({
+                  ...prev,
+                  DISCAPACIDAD_ID: value
+                }));
+              }}
             >
               <option value="">NINGUNA</option>
               {discapacidades.map((d, i) => (

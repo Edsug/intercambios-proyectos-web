@@ -454,10 +454,19 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="discapacidad_id"
             value={alumno.discapacidad_id || ""}
-            onChange={handleValidatedChange}
+            onChange={e => {
+              // Si selecciona "NINGUNA", envía null para borrar en la BD
+              const value = e.target.value === "" ? null : e.target.value;
+              handleValidatedChange({
+                target: {
+                  name: "discapacidad_id",
+                  value: value
+                }
+              });
+            }}
             required
           >
-            <option value="">—Seleccione—</option>
+            <option value="">NINGUNA</option>
             {discapacidades.map((d, i) => (
               <option key={i} value={d.id}>{d.nombre}</option>
             ))}
@@ -467,7 +476,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <input
             type="checkbox"
             name="pertenece_comunidad"
-            checked={!!alumno.pertenece_comunidad}
+            checked={Boolean(alumno.pertenece_comunidad)}
             onChange={handleValidatedChange}
           />
           ¿PERTENECE A COMUNIDAD NATIVA?
