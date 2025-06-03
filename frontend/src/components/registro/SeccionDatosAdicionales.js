@@ -77,7 +77,7 @@ export default function SeccionDatosAdicionales({
               name="SEGURO_VIAJE"
               checked={formData.SEGURO_VIAJE}
               onChange={handleChange}
-            /> 
+            />
             Seguro de Viaje
           </label>
         </div>
@@ -95,6 +95,9 @@ export default function SeccionDatosAdicionales({
                   style={{ textTransform: "uppercase" }}
                   required
                 />
+                {errores.NOMBRE_ASEGURADORA && (
+                  <span className="error-message">{errores.NOMBRE_ASEGURADORA}</span>
+                )}
               </label>
               <label>
                 PÓLIZA:
@@ -107,6 +110,9 @@ export default function SeccionDatosAdicionales({
                   style={{ textTransform: "uppercase" }}
                   required
                 />
+                {errores.NUMERO_POLIZA && (
+                  <span className="error-message">{errores.NUMERO_POLIZA}</span>
+                )}
               </label>
             </div>
             <div className="form-row">
@@ -119,6 +125,9 @@ export default function SeccionDatosAdicionales({
                   onChange={handleChange}
                   required
                 />
+                {errores.FECHA_INICIO_SEGURO && (
+                  <span className="error-message">{errores.FECHA_INICIO_SEGURO}</span>
+                )}
               </label>
               <label>
                 FIN SEGURO:
@@ -128,6 +137,9 @@ export default function SeccionDatosAdicionales({
                   value={formData.FECHA_FIN_SEGURO}
                   onChange={handleChange}
                 />
+                {errores.FECHA_FIN_SEGURO && (
+                  <span className="error-message">{errores.FECHA_FIN_SEGURO}</span>
+                )}
               </label>
             </div>
             <div className="form-row">
@@ -142,6 +154,9 @@ export default function SeccionDatosAdicionales({
                   placeholder="Teléfono de emergencias"
                   required
                 />
+                {errores.CONTACTO_ASEGURADORA && (
+                  <span className="error-message">{errores.CONTACTO_ASEGURADORA}</span>
+                )}
               </label>
               <label>
                 OBSERVACIONES SEGURO:
@@ -153,6 +168,9 @@ export default function SeccionDatosAdicionales({
                   rows="3"
                   style={{ textTransform: "uppercase" }}
                 />
+                {errores.OBSERVACIONES_SEGURO && (
+                  <span className="error-message">{errores.OBSERVACIONES_SEGURO}</span>
+                )}
               </label>
             </div>
           </>
