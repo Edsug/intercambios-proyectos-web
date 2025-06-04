@@ -11,6 +11,7 @@ export default function BotonPDFAlumno({ alumno }) {
     const pageHeight = doc.internal.pageSize.getHeight();
     const marginX = 20;
     let y = 15;
+    let logoH = 30;
 
     // Funciones auxiliares
     const getProgramaAcademico = () => {
@@ -46,29 +47,31 @@ export default function BotonPDFAlumno({ alumno }) {
         img.src = imgDataUrl;
       });
     };
-
-    // Header simple
+    
+     // Declarar logoH aquí para usarlo después
+    
+    // Logo
     try {
       const logoImg = new window.Image();
       logoImg.src = logoCompleto;
       await new Promise(resolve => (logoImg.onload = resolve));
-      
-      const logoH = 15;
+      logoH = 50; // Puedes ajustar este valor si quieres más pequeño
       const logoAspect = logoImg.width / logoImg.height;
       const logoW = logoH * logoAspect;
       doc.addImage(logoCompleto, "PNG", marginX, y, logoW, logoH);
     } catch (e) {
       console.error("Error cargando logo:", e);
     }
-
-    // Título
+    
+    // Título alineado arriba
     doc.setFontSize(18);
     doc.setTextColor(33, 37, 41);
     doc.setFont("helvetica", "bold");
-    doc.text("FICHA DE ALUMNO", pageWidth - marginX, y + 10, { align: "right" });
+    doc.text("FICHA DE ALUMNO", pageWidth - marginX, y + 12, { align: "right" });
     
-    y += 25;
-
+    // Ajusta y para que la línea separadora quede justo debajo del logo
+    y += logoH + 8;
+    
     // Línea separadora
     doc.setDrawColor(33, 150, 243);
     doc.setLineWidth(0.5);
@@ -87,7 +90,7 @@ export default function BotonPDFAlumno({ alumno }) {
       for (let ext of extensions) {
         const url = `http://localhost/basecambios/ver_foto.php?codigo=${alumno.codigo}&ext=${ext}`;
         try {
-          const res = await fetch(url, { method: "GET" });
+          const res = await fetch(url, { method: "GET", credentials: "include" });
           if (res.ok) {
             const blob = await res.blob();
             if (blob.type.startsWith("image/") && blob.size > 100) {
@@ -141,13 +144,13 @@ export default function BotonPDFAlumno({ alumno }) {
       doc.text(`${programa.label}: ${programa.value}`, infoX, infoY);
       infoY += 6;
     }
-
-    // Nivel y semestre
-    if (alumno.nivel_academico) {
-      doc.text(`${alumno.nivel_academico}${alumno.semestre ? ` - ${alumno.semestre}° Semestre` : ''}`, infoX, infoY);
+        
+    // Semestre (solo si existe)
+    if (alumno.semestre) {
+      doc.text(`${alumno.semestre}° Semestre`, infoX, infoY);
       infoY += 6;
-    }
-
+  }
+        // ...existing code...
     // Promedio
     if (alumno.promedio) {
       doc.setFont("helvetica", "bold");

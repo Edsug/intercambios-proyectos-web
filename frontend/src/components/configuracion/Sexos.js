@@ -122,8 +122,9 @@ export default function Sexos() {
                   </>
                 ) : (
                   <>
-                    <button onClick={() => handleEditar(sexo)}>Editar</button>
-                    <button onClick={() => handleEliminar(sexo.id)}>Eliminar</button>
+
+                    <button className="edit-button" onClick={() => handleEditar(sexo)}>Editar</button>
+                    <button className="delete-button"onClick={() => handleEliminar(sexo.id)}>Eliminar</button>
                   </>
                 )}
               </td>
