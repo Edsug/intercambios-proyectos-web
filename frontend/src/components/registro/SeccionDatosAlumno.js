@@ -409,7 +409,7 @@ export default function SeccionDatosAlumno({
             </select>
             {errores.DISCAPACIDAD_ID && <span className="error-message">{errores.DISCAPACIDAD_ID}</span>}
           </label>
-          <label className="checkbox-label">
+          <label className="inline-checkbox-label">
             <input
               type="checkbox"
               name="PERTENECE_COMUNIDAD"

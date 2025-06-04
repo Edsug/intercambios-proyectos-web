@@ -482,6 +482,56 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
+.form-row .inline-checkbox-label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  min-width: unset !important;
+  padding-left: 0 !important;
+  margin-left: 24px;
+  gap: 0.5rem;
+  flex: 0 0 auto !important;
+}
+
+.inline-checkbox-label input[type="checkbox"] {
+  /* Mantén el diseño personalizado */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.inline-checkbox-label input[type="checkbox"]:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.inline-checkbox-label input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.inline-checkbox-label input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
 /* Botones de navegación */
 .form-navigation {
   display: flex;
