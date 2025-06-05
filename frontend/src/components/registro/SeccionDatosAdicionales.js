@@ -93,11 +93,9 @@ export default function SeccionDatosAdicionales({
                   onChange={handleChange}
                   placeholder="Nombre de la aseguradora"
                   style={{ textTransform: "uppercase" }}
-                  required
+                  
                 />
-                {errores.NOMBRE_ASEGURADORA && (
-                  <span className="error-message">{errores.NOMBRE_ASEGURADORA}</span>
-                )}
+                {errores.NOMBRE_ASEGURADORA && (<span className="error-message">{errores.NOMBRE_ASEGURADORA}</span>)}
               </label>
               <label>
                 PÓLIZA:
@@ -108,7 +106,7 @@ export default function SeccionDatosAdicionales({
                   onChange={handleChange}
                   placeholder="Número de póliza"
                   style={{ textTransform: "uppercase" }}
-                  required
+              
                 />
                 {errores.NUMERO_POLIZA && (
                   <span className="error-message">{errores.NUMERO_POLIZA}</span>
@@ -123,7 +121,7 @@ export default function SeccionDatosAdicionales({
                   name="FECHA_INICIO_SEGURO"
                   value={formData.FECHA_INICIO_SEGURO}
                   onChange={handleChange}
-                  required
+                  
                 />
                 {errores.FECHA_INICIO_SEGURO && (
                   <span className="error-message">{errores.FECHA_INICIO_SEGURO}</span>
@@ -152,7 +150,7 @@ export default function SeccionDatosAdicionales({
                   onChange={handleChange}
                   style={{ textTransform: "uppercase" }}
                   placeholder="Teléfono de emergencias"
-                  required
+                 
                 />
                 {errores.CONTACTO_ASEGURADORA && (
                   <span className="error-message">{errores.CONTACTO_ASEGURADORA}</span>

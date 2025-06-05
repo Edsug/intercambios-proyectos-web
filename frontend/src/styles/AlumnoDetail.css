@@ -182,29 +182,57 @@
 
 .alumno-detail {
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1.5rem;
   font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
   animation: fadeIn 0.5s ease-out;
+  padding: calc(25px + var(--header-height, 60px)) 25px 25px;
+  background-color: var(--background-color);
+  min-height: 100vh;
+  margin: 0 auto;
+  overflow: hidden;
 }
 
-.alumno-detail .content-header {
-  margin-bottom: 30px;
+.content-header {
   text-align: center;
-  animation: fadeInDown 0.5s ease-out;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 3px solid var(--primary-color);
+  position: relative;
 }
 
-.alumno-detail .content-header h1 {
-  color: var(--secondary-color, #0b5ed7);
-  font-size: 28px;
-  margin-bottom: 10px;
+.content-header::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transition-duration: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+  border-radius: 2px;
+}
+
+.content-header h1 {
+  font-size: 2.5rem;
   font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
 }
 
-.alumno-detail .content-header p {
-  color: var(--text-light, #6c757d);
-  font-size: 16px;
+.content-header p {
+  display: inline-block;
+  font-size: 1.15rem;
+  color: var(--primary-color, #0b5ed7);
+  background: rgba(11, 94, 215, 0.08);
+  padding: 0.4em 1.2em;
+  border-radius: 22px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 0.5em;
+  box-shadow: 0 2px 8px rgba(11,94,215,0.07);
+  border: 1.5px solid var(--primary-color, #0b5ed7);
+  transition: background 0.2s, color 0.2s;
 }
 
 /* Secciones del formulario */

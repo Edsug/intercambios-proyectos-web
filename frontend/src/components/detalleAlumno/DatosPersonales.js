@@ -472,7 +472,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             ))}
           </select>
         </label>
-        <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <label className="checkbox-label checkbox-label-vertical">
           <input
             type="checkbox"
             name="pertenece_comunidad"

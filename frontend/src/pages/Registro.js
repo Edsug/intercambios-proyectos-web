@@ -149,6 +149,8 @@ const Registro = () => {
             errs.NUMERO_POLIZA = "Ingrese el número de póliza.";
           if (!formData.FECHA_INICIO_SEGURO)
             errs.FECHA_INICIO_SEGURO = "Ingrese la fecha de inicio del seguro.";
+          if (!formData.FECHA_FIN_SEGURO)
+            errs.FECHA_FIN_SEGURO = "Ingrese la fecha de fin del seguro.";
           if (!formData.CONTACTO_ASEGURADORA)
             errs.CONTACTO_ASEGURADORA = "Ingrese el contacto de la aseguradora.";
         }

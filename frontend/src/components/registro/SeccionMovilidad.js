@@ -78,8 +78,9 @@ export default function SeccionMovilidad({
                 <option key={i} value={t}>{t}</option>
               ))}
             </select>
+            {errores.TIPO_MOVILIDAD && <span className="error-message">{errores.TIPO_MOVILIDAD}</span>}
           </label>
-          {errores.TIPO_MOVILIDAD && <span className="error-message">{errores.TIPO_MOVILIDAD}</span>}
+          
 
           <label>
             CICLO ACADÉMICO:
@@ -173,8 +174,9 @@ export default function SeccionMovilidad({
               onChange={handleChange}
               required
             />
+            {errores.INSTITUCION_DESTINO && <span className="error-message">{errores.INSTITUCION_DESTINO}</span>}
           </label>
-          {errores.INSTITUCION_DESTINO && <span className="error-message">{errores.INSTITUCION_DESTINO}</span>}
+
 
           {formData.TIPO_DESTINO === "INTERNACIONAL" ? (
             <label className="select-label">

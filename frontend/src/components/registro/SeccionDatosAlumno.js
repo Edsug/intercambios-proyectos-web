@@ -452,10 +452,24 @@ export default function SeccionDatosAlumno({
           <label>
             PROMEDIO:
             <input
-              type="number" name="PROMEDIO"
+              type="number"
+              name="PROMEDIO"
               value={formData.PROMEDIO}
-              onChange={handleChange}
-              step="0.01" min="" max="100" required />
+              onChange={e => {
+                let value = e.target.value;
+                if (value === "") {
+                  handleChange(e);
+                  return;
+                }
+                // Limita el valor máximo a 100
+                if (parseFloat(value) > 100) value = "100";
+                handleChange({ target: { name: "PROMEDIO", value } });
+              }}
+              step="0.01"
+              min=""
+              max="100"
+              required
+            />
             {errores.PROMEDIO && <span className="error-message">{errores.PROMEDIO}</span>}
           </label>
         </div>
