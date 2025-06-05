@@ -36,6 +36,74 @@ section {
     font-size: 1rem;
     line-height: 1.4;
   }
+
+    /* Checkbox row alineado a la izquierda */
+  .form-row.checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start !important;
+    gap: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    padding-left: 2rem;
+    position: relative;
+  }
+  
+  /* Etiqueta con pequeño gap entre casilla y texto */
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 0.5rem;
+    flex: 0 0 auto !important;
+    margin: 0;
+    padding-left: 44px;
+  }
+  
+  /* Checkbox totalmente personalizado */
+  .checkbox-label input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color, #3498db);
+    border-radius: 4px;
+    margin: 0;
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    background: #fff;
+  }
+  
+  /* Palomita solo cuando está marcado */
+  .checkbox-label input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  /* Estado checked: rellena fondo y muestra palomita */
+  .checkbox-label input[type="checkbox"]:checked {
+    background-color: var(--primary-color, #3498db);
+    border-color: var(--primary-color, #3498db);
+  }
+  
+  .checkbox-label input[type="checkbox"]:checked::after {
+    opacity: 1;
+  }
   
   /* Checkboxes */
   input[type="checkbox"] {
@@ -104,46 +172,7 @@ section {
     margin-bottom: 12px;
     font-size: 0.95rem;
   }
-  
-  /* Estilos para campos relacionados con seguro de viaje */
-  section > div:has(input[name="nombre_aseguradora"]) {
-    border-left-color: #e74c3c;
-  }
-  
-  section > div:has(input[name="nombre_aseguradora"]) label {
-    color: #c0392b;
-    font-weight: 500;
-  }
-  
-  /* Estilos para campos de discapacidad */
-  section > div:has(textarea[name="datos_discapacidad"]) {
-    border-left-color: #f39c12;
-  }
-  
-  section > div:has(textarea[name="datos_discapacidad"]) label {
-    color: #d68910;
-    font-weight: 500;
-  }
-  
-  /* Estilos para campos de revalidación */
-  section > div:has(textarea[name="datos_revalidacion"]) {
-    border-left-color: #9b59b6;
-  }
-  
-  section > div:has(textarea[name="datos_revalidacion"]) label {
-    color: #8e44ad;
-    font-weight: 500;
-  }
-  
-  /* Estilos para campos de experiencia */
-  section > div:has(textarea[name="detalles_experiencia"]) {
-    border-left-color: #27ae60;
-  }
-  
-  section > div:has(textarea[name="detalles_experiencia"]) label {
-    color: #229954;
-    font-weight: 500;
-  }
+
   
   /* Estados de validación */
   input:invalid {

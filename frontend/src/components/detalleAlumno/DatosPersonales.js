@@ -472,14 +472,14 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             ))}
           </select>
         </label>
-        <label className="checkbox-label checkbox-label-vertical">
+        <label className="checkbox-label checkbox-vertical">
           <input
             type="checkbox"
             name="pertenece_comunidad"
             checked={Boolean(alumno.pertenece_comunidad)}
             onChange={handleValidatedChange}
           />
-          ¿PERTENECE A COMUNIDAD NATIVA?
+          <span>¿PERTENECE A COMUNIDAD NATIVA?</span>
         </label>
         {alumno.pertenece_comunidad ? (
           <label>

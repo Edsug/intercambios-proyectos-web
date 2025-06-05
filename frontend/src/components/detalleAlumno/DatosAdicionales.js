@@ -8,15 +8,17 @@ export default function DatosAdicionales({ alumno, onChange }) {
     <Section title="Datos Adicionales" className="programa-section">
       <div className="section-content">
         {/* Revalidación de materias */}
-        <div className="checkbox-container">
-          <input
-            type="checkbox"
-            id="revalidacion_materias"
-            name="revalidacion_materias"
-            checked={alumno.revalidacion_materias || false}
-            onChange={onChange}
-          />
-          <label htmlFor="revalidacion_materias">Revalidación de materias</label>
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              id="revalidacion_materias"
+              name="revalidacion_materias"
+              checked={alumno.revalidacion_materias || false}
+              onChange={onChange}
+            />
+            Revalidación de materias
+          </label>
         </div>
         {alumno.revalidacion_materias && (
           <div className="conditional-field">
@@ -31,31 +33,31 @@ export default function DatosAdicionales({ alumno, onChange }) {
         )}
 
         {/* Certificado de calificaciones */}
-        <div className="checkbox-container">
-          <input
-            type="checkbox"
-            id="certificado_calificaciones"
-            name="certificado_calificaciones"
-            checked={alumno.certificado_calificaciones || false}
-            onChange={onChange}
-          />
-          <label htmlFor="certificado_calificaciones">
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              id="certificado_calificaciones"
+              name="certificado_calificaciones"
+              checked={alumno.certificado_calificaciones || false}
+              onChange={onChange}
+            />
             Entregó certificado de calificaciones
           </label>
         </div>
 
-        {/* SE ELIMINA DISCAPACIDAD DE ESTA SECCIÓN */}
-
         {/* Seguro de viaje */}
-        <div className="checkbox-container">
-          <input
-            type="checkbox"
-            id="seguro_viaje"
-            name="seguro_viaje"
-            checked={alumno.seguro_viaje || false}
-            onChange={onChange}
-          />
-          <label htmlFor="seguro_viaje">Seguro de viaje</label>
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              id="seguro_viaje"
+              name="seguro_viaje"
+              checked={alumno.seguro_viaje || false}
+              onChange={onChange}
+            />
+            Seguro de viaje
+          </label>
         </div>
         {alumno.seguro_viaje && (
           <div className="conditional-field">
@@ -115,15 +117,17 @@ export default function DatosAdicionales({ alumno, onChange }) {
         )}
 
         {/* Experiencia compartida */}
-        <div className="checkbox-container">
-          <input
-            type="checkbox"
-            id="experiencia_compartida"
-            name="experiencia_compartida"
-            checked={alumno.experiencia_compartida || false}
-            onChange={onChange}
-          />
-          <label htmlFor="experiencia_compartida">Compartió experiencia</label>
+        <div className="form-row checkbox-row">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              id="experiencia_compartida"
+              name="experiencia_compartida"
+              checked={alumno.experiencia_compartida || false}
+              onChange={onChange}
+            />
+            Compartió experiencia
+          </label>
         </div>
         {alumno.experiencia_compartida && (
           <div className="conditional-field">

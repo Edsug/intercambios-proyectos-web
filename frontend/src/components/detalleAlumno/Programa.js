@@ -42,6 +42,7 @@ export default function Programa({ alumno, onChange }) {
         <label>
           FOLIO:
           <input
+            type="text"
             name="folio"
             style={{ textTransform: "uppercase" }}
             value={alumno.folio || ""}
