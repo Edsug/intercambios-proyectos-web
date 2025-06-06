@@ -1,8 +1,6 @@
 // components/detalleAlumno/BecasSection.js
 import React, { useState, useEffect } from "react";
-import "../../styles/BecasSection.css";
 import Section from "../common/Section";
-
 
 export default function BecasSection({
   alumno,
@@ -36,72 +34,94 @@ export default function BecasSection({
       .map(b => b.nombre);
 
   return (
-    <Section title="Becas" className="programa-section">
-
+    <Section title="Becas" className="becas-section">
       {alumno.becas.length === 0 && (
-        <p>No hay becas registradas para este alumno.</p>
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem', 
+          color: '#666',
+          background: 'rgba(0, 168, 107, 0.05)',
+          borderRadius: '10px',
+          border: '2px dashed rgba(0, 168, 107, 0.2)',
+          marginBottom: '1.5rem'
+        }}>
+          <p>No hay becas registradas para este alumno.</p>
+        </div>
       )}
 
       {alumno.becas.map((beca, index) => (
         <div key={index} className="beca-row">
-          <label>Tipo:</label>
-          <select
-            value={beca.tipo}
-            onChange={e => {
-              const newTipo = e.target.value;
-              // al cambiar tipo, resetea también el nombre
-              onBecaChange(index, "tipo", newTipo);
-              onBecaChange(index, "nombre", "");
-            }}
-          >
-            <option value="">Seleccione</option>
-            {tipos.map(t => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
+          <div className="form-row">
+            <label>
+              Tipo:
+              <select
+                value={beca.tipo}
+                onChange={e => {
+                  const newTipo = e.target.value;
+                  // al cambiar tipo, resetea también el nombre
+                  onBecaChange(index, "tipo", newTipo);
+                  onBecaChange(index, "nombre", "");
+                }}
+              >
+                <option value="">Seleccione</option>
+                {tipos.map(t => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label>Nombre:</label>
-          <select
-            value={beca.nombre}
-            onChange={e => onBecaChange(index, "nombre", e.target.value)}
-            disabled={!beca.tipo}
-          >
-            <option value="">Seleccione</option>
-            {getNombresPorTipo(beca.tipo).map(n => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
+            <label>
+              Nombre:
+              <select
+                value={beca.nombre}
+                onChange={e => onBecaChange(index, "nombre", e.target.value)}
+                disabled={!beca.tipo}
+              >
+                <option value="">Seleccione</option>
+                {getNombresPorTipo(beca.tipo).map(n => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label>Monto:</label>
-          <input
-            type="number"
-            step="0.01"
-            value={beca.monto}
-            onChange={e => onBecaChange(index, "monto", e.target.value)}
-          />
+            <label>
+              Monto:
+              <input
+                type="number"
+                step="0.01"
+                value={beca.monto}
+                onChange={e => onBecaChange(index, "monto", e.target.value)}
+                placeholder="0.00"
+              />
+            </label>
+          </div>
 
-          <label>Detalles:</label>
-          <textarea
-            value={beca.detalles}
-            onChange={e => onBecaChange(index, "detalles", e.target.value)}
-          />
+          <div className="form-row">
+            <label style={{ width: '100%' }}>
+              Detalles:
+              <textarea
+                value={beca.detalles}
+                onChange={e => onBecaChange(index, "detalles", e.target.value)}
+                placeholder="Detalles adicionales de la beca..."
+              />
+            </label>
+          </div>
 
           <button
             type="button"
             onClick={() => onRemove(index)}
             className="remove-beca"
-          >
-            Eliminar
-          </button>
+            title="Eliminar beca"
+          />
         </div>
       ))}
 
       <button type="button" onClick={onAdd} className="add-beca">
-        + Agregar Beca
+        Agregar Beca
       </button>
     </Section>
   );

@@ -10,7 +10,7 @@ import BecasSection     from "../components/detalleAlumno/BecasSection";
 import DatosAdicionales from "../components/detalleAlumno/DatosAdicionales";
 import BotonPDFAlumno   from "../components/detalleAlumno/BotonPDFAlumno";
 
-import "../styles/AlumnoDetail.css";
+import "../styles/FichaAlumno.css";
 
 const BASE_URL = "http://localhost/basecambios";
 
@@ -74,6 +74,10 @@ export default function AlumnoDetail() {
         data.becas = Array.isArray(data.becas) ? data.becas : [];
         data.codigo_original = data.codigo;
         setAlumno(data);
+        // Scroll al top después de cargar los datos
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 100);
       })
       .catch(err => {
         setError(err.message);
@@ -81,6 +85,12 @@ export default function AlumnoDetail() {
       })
       .finally(() => setLoading(false));
   }, [codigo, navigate]);
+
+  // 3) Scroll al top en el montaje inicial y al cambiar de código
+  useEffect(() => {
+    // Scroll inmediato al montar el componente
+    window.scrollTo(0, 0);
+  }, [codigo]);
 
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -193,6 +203,11 @@ export default function AlumnoDetail() {
       .finally(() => setSaving(false));
   };
 
+  // Función para regresar a búsqueda
+  const handleGoBack = () => {
+    navigate("/busqueda");
+  };
+
   if (loading) return <div className="alumno-detail"><p>Cargando...</p></div>;
 
   if (!alumno) {
@@ -210,6 +225,12 @@ export default function AlumnoDetail() {
       <header className="content-header">
         <h1>Ficha de Alumno</h1>
         <p>Código: {alumno.codigo}</p>
+        {/* Flecha de regreso minimalista */}
+        <button 
+          className="back-button" 
+          onClick={handleGoBack}
+          title="Regresar a Búsqueda"
+        />
       </header>
 
       {error && <div className="alerta-formulario error">{error}</div>}

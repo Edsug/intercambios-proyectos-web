@@ -4,7 +4,7 @@ import Login from "./components/Login";
 import Dashboard from "./pages/Dashboard";
 import Registro from "./pages/Registro";
 import Busqueda from "./pages/Busqueda";
-import AlumnoDetail from "./pages/AlumnoDetail"; // Importa el nuevo componente
+import AlumnoDetail from "./pages/FichaAlumno"; // Importa el nuevo componente
 import Configuracion from "./pages/Configuracion";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";

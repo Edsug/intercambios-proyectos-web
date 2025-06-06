@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import Section from "../common/Section";
 import userDefault from "../../assets/user.png";
 import { toast } from "react-toastify";
-import "../../styles/DatosPersonales.css";
 
 export default function DatosPersonales({ alumno, onChange, catalogos, onFotoChange }) {
   const {
@@ -210,44 +209,32 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
         value={alumno.codigo_original || alumno.codigo || ""}
       />
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24 }}>
-        <div className="foto-alumno-container">
-          <img
-            className="foto-alumno-img"
-            src={fotoUrl}
-            alt="Foto del alumno"
-            style={{
-              width: 180,
-              height: 180,
-              objectFit: "cover",
-              borderRadius: "16px",
-              border: "2px solid #3498db",
-              background: "#f4f8fb",
-              boxShadow: "0 2px 8px rgba(52, 152, 219, 0.08)",
-              marginBottom: "8px"
-            }}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = userDefault;
-            }}
-          />
-          <button
-            type="button"
-            className="foto-upload-button foto-change-button"
-            onClick={() => fileInputRef.current && fileInputRef.current.click()}
-            disabled={subiendoFoto}
-          >
-            {subiendoFoto ? "Subiendo..." : "Cambiar Foto"}
-          </button>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFotoChange}
-          />
-          <span className="foto-alumno-label">Foto</span>
-        </div>
+      <div className="foto-alumno-container">
+        <img
+          className="foto-alumno-img"
+          src={fotoUrl}
+          alt="Foto del alumno"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = userDefault;
+          }}
+        />
+        <button
+          type="button"
+          className="foto-upload-button foto-change-button"
+          onClick={() => fileInputRef.current && fileInputRef.current.click()}
+          disabled={subiendoFoto}
+        >
+          {subiendoFoto ? "Subiendo..." : "Cambiar Foto"}
+        </button>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handleFotoChange}
+        />
+        <span className="foto-alumno-label">Foto</span>
       </div>
 
       {/* Campos del formulario: código, nombre, etc. (igual que antes) */}
@@ -397,7 +384,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
           <select
             name="nacionalidad"
             value={alumno.nacionalidad || ""}
-            onChange={onChange} // <-- Cambia aquí
+            onChange={onChange}
             required
           >
             <option value="">—Seleccione—</option>
@@ -447,7 +434,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
         </label>
       </div>
 
-      {/* NUEVO: Discapacidad y Comunidad Nativa */}
+      {/* Discapacidad y Comunidad Nativa */}
       <div className="form-row">
         <label>
           DISCAPACIDAD:
@@ -472,15 +459,19 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             ))}
           </select>
         </label>
-        <label className="checkbox-label checkbox-vertical">
-          <input
-            type="checkbox"
-            name="pertenece_comunidad"
-            checked={Boolean(alumno.pertenece_comunidad)}
-            onChange={handleValidatedChange}
-          />
-          <span>¿PERTENECE A COMUNIDAD NATIVA?</span>
-        </label>
+        
+        <div className="checkbox-vertical">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="pertenece_comunidad"
+              checked={Boolean(alumno.pertenece_comunidad)}
+              onChange={handleValidatedChange}
+            />
+            <span>¿PERTENECE A COMUNIDAD NATIVA?</span>
+          </label>
+        </div>
+        
         {alumno.pertenece_comunidad ? (
           <label>
             NOMBRE DE LA COMUNIDAD:
@@ -494,6 +485,64 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             />
           </label>
         ) : null}
+      </div>
+
+      {/* Información de contacto */}
+      <div className="form-row">
+        <label>
+          TELÉFONO:
+          <input
+            type="text"
+            name="telefono"
+            value={alumno.telefono || ""}
+            onChange={onChange}
+            placeholder="Número de teléfono"
+          />
+        </label>
+        <label>
+          CORREO ELECTRÓNICO:
+          <input
+            type="email"
+            name="correo"
+            value={alumno.correo || ""}
+            onChange={onChange}
+            placeholder="correo@ejemplo.com"
+          />
+        </label>
+      </div>
+
+      {/* Contacto de emergencia */}
+      <div className="form-row">
+        <label>
+          CONTACTO DE EMERGENCIA:
+          <input
+            type="text"
+            name="nombre_contacto_emergencia"
+            value={alumno.nombre_contacto_emergencia || ""}
+            onChange={onChange}
+            placeholder="Nombre del contacto de emergencia"
+          />
+        </label>
+        <label>
+          TELÉFONO DE EMERGENCIA:
+          <input
+            type="text"
+            name="contacto_emergencia"
+            value={alumno.contacto_emergencia || ""}
+            onChange={onChange}
+            placeholder="Teléfono de emergencia"
+          />
+        </label>
+        <label>
+          NSS:
+          <input
+            type="text"
+            name="nss"
+            value={alumno.nss || ""}
+            onChange={onChange}
+            placeholder="Número de Seguridad Social"
+          />
+        </label>
       </div>
     </Section>
   );
