@@ -95,7 +95,7 @@ export default function BotonPDFAlumno({ alumno }) {
       for (let ext of extensions) {
         const url = `http://localhost/basecambios/ver_foto.php?codigo=${alumno.codigo}&ext=${ext}`;
         try {
-          const res = await fetch(url, { method: "GET", credentials: "include" });
+          const res = await fetch(url, { method: "GET" });
           if (res.ok) {
             const blob = await res.blob();
             if (blob.type.startsWith("image/") && blob.size > 100) {
@@ -105,10 +105,16 @@ export default function BotonPDFAlumno({ alumno }) {
                 reader.readAsDataURL(blob);
               });
               const imgDataResized = await resizeImage(imgData, 400);
+
+              // Detecta el tipo de imagen para addImage
+              let imgType = "JPEG";
+              if (blob.type === "image/png") imgType = "PNG";
+              if (blob.type === "image/gif") imgType = "GIF";
+
               doc.setDrawColor(200);
               doc.setLineWidth(0.5);
               doc.rect(fotoX, y, fotoSize, fotoSize);
-              doc.addImage(imgDataResized, "JPEG", fotoX, y, fotoSize, fotoSize);
+              doc.addImage(imgDataResized, imgType, fotoX, y, fotoSize, fotoSize);
               fotoCargada = true;
               break;
             }
