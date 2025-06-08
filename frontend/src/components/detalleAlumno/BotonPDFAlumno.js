@@ -50,27 +50,32 @@ export default function BotonPDFAlumno({ alumno }) {
     
      // Declarar logoH aquí para usarlo después
     
-    // Logo
+    // Logo y título alineados horizontalmente
     try {
       const logoImg = new window.Image();
       logoImg.src = logoCompleto;
       await new Promise(resolve => (logoImg.onload = resolve));
-      logoH = 50; // Puedes ajustar este valor si quieres más pequeño
+      logoH = 40; // Ajusta el tamaño si lo deseas
       const logoAspect = logoImg.width / logoImg.height;
       const logoW = logoH * logoAspect;
-      doc.addImage(logoCompleto, "PNG", marginX, y, logoW, logoH);
+
+      // Centrar ambos elementos en la parte superior
+      const totalWidth = logoW + 10 + doc.getTextWidth("FICHA DE ALUMNO");
+      const startX = (pageWidth - totalWidth) / 2;
+
+      // Logo
+      doc.addImage(logoCompleto, "PNG", startX, y, logoW, logoH);
+
+      // Título alineado a la derecha del logo
+      doc.setFontSize(18);
+      doc.setTextColor(33, 37, 41);
+      doc.setFont("helvetica", "bold");
+      doc.text("FICHA DE ALUMNO", startX + logoW + 10, y + logoH / 2 + 6, { align: "left" });
+
+      y += logoH + 8;
     } catch (e) {
       console.error("Error cargando logo:", e);
     }
-    
-    // Título alineado arriba
-    doc.setFontSize(18);
-    doc.setTextColor(33, 37, 41);
-    doc.setFont("helvetica", "bold");
-    doc.text("FICHA DE ALUMNO", pageWidth - marginX, y + 12, { align: "right" });
-    
-    // Ajusta y para que la línea separadora quede justo debajo del logo
-    y += logoH + 8;
     
     // Línea separadora
     doc.setDrawColor(33, 150, 243);
@@ -150,11 +155,8 @@ export default function BotonPDFAlumno({ alumno }) {
       doc.text(`${alumno.semestre}° Semestre`, infoX, infoY);
       infoY += 6;
   }
-        // ...existing code...
-    // Promedio
+        // Promedio
     if (alumno.promedio) {
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(33, 150, 243);
       doc.text(`Promedio: ${alumno.promedio}`, infoX, infoY);
     }
 
@@ -286,16 +288,24 @@ export default function BotonPDFAlumno({ alumno }) {
 
     // Seguro de viaje
     const seguroItems = [];
-    if (alumno.seguro_viaje) seguroItems.push(["Tiene seguro de viaje", "Sí"]);
-    if (alumno.nombre_aseguradora) seguroItems.push(["Nombre de la aseguradora", alumno.nombre_aseguradora]);
-    if (alumno.numero_poliza) seguroItems.push(["Número de póliza", alumno.numero_poliza]);
-    if (alumno.fecha_inicio_seguro) seguroItems.push(["Fecha inicio del seguro", alumno.fecha_inicio_seguro]);
-    if (alumno.fecha_fin_seguro) seguroItems.push(["Fecha fin del seguro", alumno.fecha_fin_seguro]);
-    if (alumno.contacto_aseguradora) seguroItems.push(["Contacto de la aseguradora", alumno.contacto_aseguradora]);
-    if (alumno.observaciones_seguro) seguroItems.push(["Observaciones del seguro", alumno.observaciones_seguro]);
+    if (alumno.seguro_viaje) {
+      const isValid = val =>
+        !!val &&
+        val !== "0000-00-00" &&
+        val !== "null" &&
+        val !== "undefined" &&
+        val !== "-";
+      if (isValid(alumno.nombre_aseguradora)) seguroItems.push(["Nombre de la aseguradora", alumno.nombre_aseguradora]);
+      if (isValid(alumno.numero_poliza)) seguroItems.push(["Número de póliza", alumno.numero_poliza]);
+      if (isValid(alumno.fecha_inicio_seguro)) seguroItems.push(["Fecha inicio del seguro", alumno.fecha_inicio_seguro]);
+      if (isValid(alumno.fecha_fin_seguro)) seguroItems.push(["Fecha fin del seguro", alumno.fecha_fin_seguro]);
+      if (isValid(alumno.contacto_aseguradora)) seguroItems.push(["Contacto de la aseguradora", alumno.contacto_aseguradora]);
+      if (isValid(alumno.observaciones_seguro)) seguroItems.push(["Observaciones del seguro", alumno.observaciones_seguro]);
 
-    if (seguroItems.length > 0) {
-      createSection("SEGURO DE VIAJE", seguroItems);
+      // Solo imprime la sección si hay al menos un dato real
+      if (seguroItems.length > 0) {
+        createSection("SEGURO DE VIAJE", seguroItems);
+      }
     }
 
     // Experiencia
