@@ -1,7 +1,8 @@
 // src/pages/Perfil.js
 import React, { useState, useEffect } from "react";
 import "../styles/Perfil.css";
-import BarraSeguridad from "../components/configuracion/BarraSeguridad"; // Ajusta si lo mueves a otra carpeta
+import BarraSeguridad from "../components/configuracion/BarraSeguridad";
+import { BASE_URL } from "../config";
 
 const Perfil = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
@@ -40,7 +41,7 @@ const Perfil = () => {
       return;
     }
 
-    const response = await fetch("http://localhost/basecambios/actualizar_perfil.php", {
+    const response = await fetch(`${BASE_URL}actualizar_perfil.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

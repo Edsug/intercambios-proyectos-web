@@ -8,6 +8,7 @@ import SeccionMovilidad from "../components/registro/SeccionMovilidad";
 import SeccionDatosBeca from "../components/registro/SeccionDatosBeca";
 import SeccionDatosAdicionales from "../components/registro/SeccionDatosAdicionales";
 import SeccionDatosAlumno from "../components/registro/SeccionDatosAlumno";
+import { BASE_URL } from "../config"; // <-- Asegúrate de importar BASE_URL
 
 const Registro = () => {
   const [correoLocal, setCorreoLocal] = useState("");
@@ -130,7 +131,6 @@ const Registro = () => {
         break;
 
       case 4:
-        // Becas opcionales: sólo validamos si hay alguna
         if (formData.BECAS && formData.BECAS.length > 0) {
           formData.BECAS.forEach((beca, idx) => {
             if (!beca.tipo) errs[`BECAS_${idx}_tipo`] = "Seleccione tipo de beca.";
@@ -155,7 +155,6 @@ const Registro = () => {
             errs.CONTACTO_ASEGURADORA = "Ingrese el contacto de la aseguradora.";
         }
         break;
-
 
       default:
         break;
@@ -201,7 +200,7 @@ const Registro = () => {
       return;
     }
     try {
-      const resp = await fetch("http://localhost/basecambios/registro_alumno.php", {
+      const resp = await fetch(`${BASE_URL}registro_alumno.php`, {
         method: "POST",
         mode: "cors",
         headers: { "Content-Type": "application/json" },

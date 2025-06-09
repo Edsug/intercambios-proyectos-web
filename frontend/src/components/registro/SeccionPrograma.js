@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { BASE_URL } from "../../config";
 
 export default function SeccionPrograma({ formData, handleChange, nextSection, errores }) {
   const [programas, setProgramas] = useState([]);
   const [estados, setEstados] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost/basecambios/get_programas.php')
+    fetch(`${BASE_URL}get_programas.php`)
       .then(res => res.json())
       .then(data => setProgramas(data))
       .catch(err => console.error("Error al cargar programas:", err));
 
-    fetch('http://localhost/basecambios/get_estado_programa.php')
+    fetch(`${BASE_URL}get_estado_programa.php`)
       .then(res => res.json())
       .then(data => setEstados(data))
       .catch(err => console.error("Error al cargar estados de programa:", err));

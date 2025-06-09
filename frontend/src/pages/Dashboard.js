@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import "../styles/Dashboard.css";
+import { BASE_URL } from "../config"; // Asegúrate de importar BASE_URL
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -17,7 +18,6 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalAlumnos: 0,
     nuevosRegistros: 0,
-    // cursosActivos: 0, // Eliminado
   });
   const [nivelesData, setNivelesData] = useState(null);
   const [promedioSemestreData, setPromedioSemestreData] = useState(null);
@@ -35,20 +35,18 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost/basecambios/get_dashboard_stats.php")
+    fetch(`${BASE_URL}get_dashboard_stats.php`)
       .then(res => res.json())
       .then(data => {
         setStats({
           totalAlumnos: data.totalAlumnos,
           nuevosRegistros: data.nuevosRegistros,
-          // cursosActivos: data.cursosActivos, // Eliminado
         });
       })
       .catch(console.error)
       .finally(() => setLoading(false));
 
-    // Cargar datos para gráfica de niveles académicos
-    fetch("http://localhost/basecambios/get_grafica_niveles.php")
+    fetch(`${BASE_URL}get_grafica_niveles.php`)
       .then(res => res.json())
       .then(data => {
         setNivelesData({
@@ -61,8 +59,7 @@ const Dashboard = () => {
         });
       });
 
-    // Cargar datos para gráfica de promedio por semestre
-    fetch("http://localhost/basecambios/get_grafica_promedio_semestre.php")
+    fetch(`${BASE_URL}get_grafica_promedio_semestre.php`)
       .then(res => res.json())
       .then(data => {
         setPromedioSemestreData({
@@ -75,8 +72,7 @@ const Dashboard = () => {
         });
       });
 
-    // Cargar datos para gráfica de carreras
-    fetch("http://localhost/basecambios/get_grafica_carreras.php")
+    fetch(`${BASE_URL}get_grafica_carreras.php`)
       .then(res => res.json())
       .then(data => {
         setCarrerasData({
@@ -89,8 +85,7 @@ const Dashboard = () => {
         });
       });
 
-    // Cargar datos para gráfica de maestrías
-    fetch("http://localhost/basecambios/get_grafica_maestrias.php")
+    fetch(`${BASE_URL}get_grafica_maestrias.php`)
       .then(res => res.json())
       .then(data => {
         setMaestriasData({
@@ -103,8 +98,7 @@ const Dashboard = () => {
         });
       });
 
-    // Cargar datos para gráfica de doctorados
-    fetch("http://localhost/basecambios/get_grafica_doctorados.php")
+    fetch(`${BASE_URL}get_grafica_doctorados.php`)
       .then(res => res.json())
       .then(data => {
         setDoctoradosData({
@@ -117,40 +111,30 @@ const Dashboard = () => {
         });
       });
 
-    // Cargar datos para gráfica de género
-    // Cargar datos para gráfica de género
-// Cargar datos para gráfica de género
-fetch("http://localhost/basecambios/get_grafica_genero.php")
-  .then(res => res.json())
-  .then(data => {
-    // Agrupar por nombre de género (ignorando ID)
-    const resumen = {};
+    fetch(`${BASE_URL}get_grafica_genero.php`)
+      .then(res => res.json())
+      .then(data => {
+        const resumen = {};
+        data.forEach(d => {
+          const genero = d.sexo.trim();
+          if (!resumen[genero]) {
+            resumen[genero] = 0;
+          }
+          resumen[genero] += parseInt(d.total);
+        });
+        const labels = Object.keys(resumen);
+        const valores = Object.values(resumen);
+        setGeneroData({
+          labels,
+          datasets: [{
+            label: "Alumnos por género",
+            data: valores,
+            backgroundColor: palette1.slice(0, labels.length)
+          }]
+        });
+      });
 
-    data.forEach(d => {
-      const genero = d.sexo.trim(); // Usamos el nombre tal como viene
-      if (!resumen[genero]) {
-        resumen[genero] = 0;
-      }
-      resumen[genero] += parseInt(d.total);
-    });
-
-    const labels = Object.keys(resumen);
-    const valores = Object.values(resumen);
-
-    setGeneroData({
-      labels,
-      datasets: [{
-        label: "Alumnos por género",
-        data: valores,
-        backgroundColor: palette1.slice(0, labels.length)
-      }]
-    });
-  });
-
-
-
-    // Cargar datos para gráfica de nacionalidad
-    fetch("http://localhost/basecambios/get_grafica_nacionalidad.php")
+    fetch(`${BASE_URL}get_grafica_nacionalidad.php`)
       .then(res => res.json())
       .then(data => {
         setNacionalidadData({
@@ -163,8 +147,7 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
         });
       });
 
-    // Cargar datos para gráfica de estados
-    fetch("http://localhost/basecambios/get_grafica_estados.php")
+    fetch(`${BASE_URL}get_grafica_estados.php`)
       .then(res => res.json())
       .then(data => {
         setEstadosData({
@@ -177,8 +160,7 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
         });
       });
 
-    // Cargar datos para gráfica de programas
-    fetch("http://localhost/basecambios/get_grafica_programas.php")
+    fetch(`${BASE_URL}get_grafica_programas.php`)
       .then(res => res.json())
       .then(data => {
         setProgramasData({
@@ -191,8 +173,7 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
         });
       });
 
-    // Cargar datos para gráfica de tipos de movilidad
-    fetch("http://localhost/basecambios/get_grafica_tipos_movilidad.php")
+    fetch(`${BASE_URL}get_grafica_tipos_movilidad.php`)
       .then(res => res.json())
       .then(data => {
         setTiposMovilidadData({
@@ -205,8 +186,7 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
         });
       });
 
-    // Cargar datos para gráfica de becas
-    fetch("http://localhost/basecambios/get_grafica_becas.php")
+    fetch(`${BASE_URL}get_grafica_becas.php`)
       .then(res => res.json())
       .then(data => {
         setBecasData({
@@ -219,8 +199,7 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
         });
       });
 
-    // Cargar datos para gráfica de discapacidad
-    fetch("http://localhost/basecambios/get_grafica_discapacidad.php")
+    fetch(`${BASE_URL}get_grafica_discapacidad.php`)
       .then(res => res.json())
       .then(data => {
         setDiscapacidadData({
@@ -233,8 +212,7 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
         });
       });
 
-    // Cargar datos para gráfica de comunidad nativa
-    fetch("http://localhost/basecambios/get_grafica_comunidad.php")
+    fetch(`${BASE_URL}get_grafica_comunidad.php`)
       .then(res => res.json())
       .then(data => {
         setComunidadData({
@@ -248,7 +226,6 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
       });
   }, []);
 
-  // Opciones para mostrar la cantidad en el centro de cada sección del pastel
   const pieOptions = {
     plugins: {
       legend: {
@@ -300,10 +277,6 @@ fetch("http://localhost/basecambios/get_grafica_genero.php")
           <h3>Registros nuevos (últ. 7d)</h3>
           <p className="stat-number">{stats.nuevosRegistros}</p>
         </div>
-        {/* <div className="stat-card">
-          <h3>Cursos activos</h3>
-          <p className="stat-number">{stats.cursosActivos}</p>
-        </div> */}
       </div>
 
       <div className="dashboard-graphics-grid">

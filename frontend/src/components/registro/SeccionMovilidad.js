@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BASE_URL } from "../../config";
 
 export default function SeccionMovilidad({
   formData,
@@ -14,22 +15,22 @@ export default function SeccionMovilidad({
   const [ciclosPorAnio, setCiclosPorAnio] = useState({}); // {2024: ['A','B'], 2025: ['A']...}
 
   useEffect(() => {
-    fetch('http://localhost/basecambios/get_tipos_movilidad.php')
+    fetch(`${BASE_URL}get_tipos_movilidad.php`)
       .then(res => res.json())
       .then(setTiposMovilidad)
       .catch(console.error);
 
-    fetch('http://localhost/basecambios/get_paises.php')
+    fetch(`${BASE_URL}get_paises.php`)
       .then(res => res.json())
       .then(setPaises)
       .catch(console.error);
 
-    fetch('http://localhost/basecambios/get_estadogeo.php')
+    fetch(`${BASE_URL}get_estadogeo.php`)
       .then(res => res.json())
       .then(setEstadosRepublica)
       .catch(console.error);
 
-    fetch('http://localhost/basecambios/get_ciclos.php')
+    fetch(`${BASE_URL}get_ciclos.php`)
       .then(res => res.json())
       .then(ciclos => {
         // ciclos es un array de strings tipo "2024A", "2024B", "2025A", etc.

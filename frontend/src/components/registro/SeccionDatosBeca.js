@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../config";
 
 export default function SeccionDatosBeca({
   formData,
@@ -11,20 +12,6 @@ export default function SeccionDatosBeca({
 }) {
   const [catalogoBecas, setCatalogoBecas] = useState([]);
   const [montoInput, setMontoInput] = useState('');
-    const handleMontoChange = (e) => {
-      const value = e.target.value.replace(/[^0-9]/g, '');
-      setMontoInput(value);
-      setNewBeca(prev => ({ ...prev, monto: value }));
-    };
-    const handleMontoBlur = () => {
-      if (montoInput) {
-        const num = parseFloat(montoInput);
-        setMontoInput(num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
-      }
-    };
-    const handleMontoFocus = () => {
-      setMontoInput(newBeca.monto || '');
-    };
   const [showAddError, setShowAddError] = useState(false);
   const [newBeca, setNewBeca] = useState({
     tipo: '',
@@ -32,9 +19,25 @@ export default function SeccionDatosBeca({
     nombre: '',
     detalles: ''
   });
+
+  const handleMontoChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    setMontoInput(value);
+    setNewBeca(prev => ({ ...prev, monto: value }));
+  };
+  const handleMontoBlur = () => {
+    if (montoInput) {
+      const num = parseFloat(montoInput);
+      setMontoInput(num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' }));
+    }
+  };
+  const handleMontoFocus = () => {
+    setMontoInput(newBeca.monto || '');
+  };
+
   // Cargar catálogo desde PHP
   useEffect(() => {
-    fetch('http://localhost/basecambios/get_becas_catalogo.php')
+    fetch(`${BASE_URL}get_becas_catalogo.php`)
       .then(res => res.json())
       .then(data => {
         setCatalogoBecas(data);
@@ -83,7 +86,6 @@ export default function SeccionDatosBeca({
       detalles: ''
     });
   };
-
 
   return (
     <div className="form-section">

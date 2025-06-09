@@ -40,7 +40,7 @@ export default function SeccionDatosAdicionales({
             </label>
           </div>
         )}
-                {/* Cambio de estatus SIIAU */}
+        {/* Cambio de estatus SIIAU */}
         <div className="form-row checkbox-row">
           <label className="checkbox-label">
             <input

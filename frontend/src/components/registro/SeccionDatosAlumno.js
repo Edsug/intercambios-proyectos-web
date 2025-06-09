@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import userDefault from '../../assets/user.png';
+import { BASE_URL } from "../../config"; // <-- Agrega esta línea
 
 export default function SeccionDatosAlumno({
   formData,
@@ -141,18 +142,18 @@ export default function SeccionDatosAlumno({
   };
 
   const subirFotoServidor = async (file, codigo) => {
-    const formData = new FormData();
-    formData.append('foto', file);
-    formData.append('codigo', codigo);
+    const formDataSend = new FormData();
+    formDataSend.append('foto', file);
+    formDataSend.append('codigo', codigo);
 
     try {
-      const res = await fetch('http://localhost/basecambios/upload_foto.php', {
+      const res = await fetch(`${BASE_URL}upload_foto.php`, { // <--- Cambia aquí
         method: 'POST',
-        body: formData
+        body: formDataSend
       });
       const data = await res.json();
       if (data.success) {
-        setPreviewFoto(`http://localhost/basecambios/${data.ruta}?t=${Date.now()}`);
+        setPreviewFoto(`${BASE_URL}${data.ruta}?t=${Date.now()}`);
         setFormData(prev => ({ ...prev, FOTO: data.ruta }));
         if (setFotoFile) setFotoFile(null); // Limpia el file local si quieres
         toast.success('Foto subida correctamente');

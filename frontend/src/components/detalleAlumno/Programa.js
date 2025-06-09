@@ -2,18 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import Section from "../common/Section";
+import { BASE_URL } from "../../config"; // Usa la URL base global
 
 export default function Programa({ alumno, onChange }) {
   const [programas, setProgramas] = useState([]);
   const [estados, setEstados] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost/basecambios/get_programas.php")
+    fetch(`${BASE_URL}get_programas.php`)
       .then(res => res.json())
       .then(data => setProgramas(data))
       .catch(err => console.error("Error cargando programas:", err));
 
-    fetch("http://localhost/basecambios/get_estado_programa.php")
+    fetch(`${BASE_URL}get_estado_programa.php`)
       .then(res => res.json())
       .then(data => setEstados(data))
       .catch(err => console.error("Error cargando estados de programa:", err));
@@ -67,7 +68,6 @@ export default function Programa({ alumno, onChange }) {
           </select>
         </label>
       </div>
-
     </Section>
   );
 }
