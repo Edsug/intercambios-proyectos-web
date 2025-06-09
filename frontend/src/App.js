@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Perfil from "./pages/Perfil";
 import "./App.css";
+import { BASE_URL } from "./App";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

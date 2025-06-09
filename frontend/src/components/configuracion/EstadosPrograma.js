@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const EstadosPrograma = () => {
   const [estados, setEstados] = useState([]);
@@ -12,7 +13,7 @@ const EstadosPrograma = () => {
   const obtenerEstados = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/get_estado_programas_admin.php");
+      const res = await fetch(`${BASE_URL}get_estado_programas_admin.php`);
       const data = await res.json();
       setEstados(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -35,7 +36,7 @@ const EstadosPrograma = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_estado_programa.php", {
+      const res = await fetch(`${BASE_URL}agregar_estado_programa.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoEstado),
@@ -61,7 +62,7 @@ const EstadosPrograma = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_estado_programa.php", {
+      const res = await fetch(`${BASE_URL}actualizar_estado_programa.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,7 +91,7 @@ const EstadosPrograma = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_estado_programa.php", {
+      const res = await fetch(`${BASE_URL}eliminar_estado_programa.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

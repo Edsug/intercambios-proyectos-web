@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Paises = () => {
   const [paises, setPaises] = useState([]);
@@ -10,7 +11,7 @@ const Paises = () => {
 
   const obtenerPaises = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_paises_admin.php");
+      const res = await fetch(`${BASE_URL}get_paises_admin.php`);
       const data = await res.json();
       setPaises(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -25,7 +26,7 @@ const Paises = () => {
   const agregarPais = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_pais.php", {
+      const res = await fetch(`${BASE_URL}agregar_pais.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoPais),
@@ -41,7 +42,7 @@ const Paises = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_pais.php", {
+      const res = await fetch(`${BASE_URL}actualizar_pais.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,7 +67,7 @@ const Paises = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_paises.php", {
+      const res = await fetch(`${BASE_URL}eliminar_paises.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

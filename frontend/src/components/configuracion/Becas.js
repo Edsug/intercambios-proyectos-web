@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Becas = () => {
   const [becas, setBecas] = useState([]);
@@ -11,7 +12,7 @@ const Becas = () => {
 
   const obtenerBecas = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_becas_catalogo_admin.php");
+      const res = await fetch(`${BASE_URL}get_becas_catalogo_admin.php`);
       const data = await res.json();
       setBecas(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -32,7 +33,7 @@ const Becas = () => {
     }
 
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_beca_catalogo.php", {
+      const res = await fetch(`${BASE_URL}agregar_beca_catalogo.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaBeca),
@@ -48,7 +49,7 @@ const Becas = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_beca_catalogo.php", {
+      const res = await fetch(`${BASE_URL}actualizar_beca_catalogo.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -72,7 +73,7 @@ const Becas = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_beca_catalogo.php", {
+      const res = await fetch(`${BASE_URL}eliminar_beca_catalogo.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

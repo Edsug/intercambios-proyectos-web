@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config";
 import { toast } from "react-toastify";
 
 export default function Sexos() {
@@ -9,7 +11,7 @@ export default function Sexos() {
 
   // Cargar sexos al montar
   useEffect(() => {
-    fetch("http://localhost/basecambios/get_sexos_admin.php")
+    fetch(`${BASE_URL}get_sexos_admin.php`)
       .then(r => r.json())
       .then(setSexos)
       .catch(() => toast.error("Error al cargar sexos"));
@@ -19,13 +21,13 @@ export default function Sexos() {
   const handleAgregar = async (e) => {
     e.preventDefault();
     if (!nuevoSexo.trim()) return;
-    const res = await fetch("http://localhost/basecambios/agregar_sexo.php", {
+    const res = await fetch(`${BASE_URL}agregar_sexo.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre: nuevoSexo.trim() })
     });
     const data = await res.json();
-    if (data.success) {
+    if (data.success || data.id) {
       setSexos([...sexos, { id: data.id, nombre: nuevoSexo.trim() }]);
       setNuevoSexo("");
       toast.success("Sexo agregado");
@@ -42,7 +44,7 @@ export default function Sexos() {
 
   const handleGuardar = async (id) => {
     if (!editNombre.trim()) return;
-    const res = await fetch("http://localhost/basecambios/actualizar_sexo.php", {
+    const res = await fetch(`${BASE_URL}actualizar_sexo.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, nombre: editNombre.trim() })
@@ -61,7 +63,7 @@ export default function Sexos() {
   // Eliminar sexo
   const handleEliminar = async (id) => {
     if (!window.confirm("¿Eliminar este sexo?")) return;
-    const res = await fetch("http://localhost/basecambios/eliminar_sexo.php", {
+    const res = await fetch(`${BASE_URL}eliminar_sexo.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id })
@@ -122,9 +124,8 @@ export default function Sexos() {
                   </>
                 ) : (
                   <>
-
                     <button className="edit-button" onClick={() => handleEditar(sexo)}>Editar</button>
-                    <button className="delete-button"onClick={() => handleEliminar(sexo.id)}>Eliminar</button>
+                    <button className="delete-button" onClick={() => handleEliminar(sexo.id)}>Eliminar</button>
                   </>
                 )}
               </td>

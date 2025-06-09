@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Usa la URL base global
 
 const TiposDestino = () => {
   const [destinos, setDestinos] = useState([]);
@@ -10,9 +11,9 @@ const TiposDestino = () => {
 
   const obtenerDestinos = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_tipos_destino_admin.php");
+      const res = await fetch(`${BASE_URL}get_tipos_destino_admin.php`);
       const data = await res.json();
-      setDestinos(data);
+      setDestinos(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener tipos de destino:", err);
     }
@@ -25,7 +26,7 @@ const TiposDestino = () => {
   const agregarDestino = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_tipo_destino.php", {
+      const res = await fetch(`${BASE_URL}agregar_tipo_destino.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoDestino),
@@ -41,7 +42,7 @@ const TiposDestino = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_tipo_destino.php", {
+      const res = await fetch(`${BASE_URL}actualizar_tipo_destino.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,7 +67,7 @@ const TiposDestino = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_tipos_destino.php", {
+      const res = await fetch(`${BASE_URL}eliminar_tipos_destino.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

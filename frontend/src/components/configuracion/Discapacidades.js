@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Discapacidades = () => {
   const [discapacidades, setDiscapacidades] = useState([]);
@@ -12,7 +13,7 @@ const Discapacidades = () => {
   const obtenerDiscapacidades = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/get_discapacidades_admin.php");
+      const res = await fetch(`${BASE_URL}get_discapacidades_admin.php`);
       const data = await res.json();
       setDiscapacidades(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -35,7 +36,7 @@ const Discapacidades = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_discapacidad.php", {
+      const res = await fetch(`${BASE_URL}agregar_discapacidad.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaDiscapacidad),
@@ -61,7 +62,7 @@ const Discapacidades = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_discapacidad.php", {
+      const res = await fetch(`${BASE_URL}actualizar_discapacidad.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,7 +91,7 @@ const Discapacidades = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_discapacidad.php", {
+      const res = await fetch(`${BASE_URL}eliminar_discapacidad.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

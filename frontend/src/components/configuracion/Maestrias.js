@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Maestrias = () => {
   const [maestrias, setMaestrias] = useState([]);
@@ -10,7 +11,7 @@ const Maestrias = () => {
 
   const obtenerMaestrias = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_maestrias_admin.php");
+      const res = await fetch(`${BASE_URL}get_maestrias_admin.php`);
       const data = await res.json();
       setMaestrias(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -25,7 +26,7 @@ const Maestrias = () => {
   const agregarMaestria = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_maestria.php", {
+      const res = await fetch(`${BASE_URL}agregar_maestria.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaMaestria),
@@ -41,7 +42,7 @@ const Maestrias = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_maestria.php", {
+      const res = await fetch(`${BASE_URL}actualizar_maestria.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,7 +67,7 @@ const Maestrias = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_maestrias.php", {
+      const res = await fetch(`${BASE_URL}eliminar_maestrias.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

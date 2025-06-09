@@ -1,6 +1,7 @@
 // src/components/configuracion/Usuarios.js
 import React, { useEffect, useState } from "react";
 import BarraSeguridad from "./BarraSeguridad";
+import { BASE_URL } from "../../config"; // <--- Agrega esta línea
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -11,7 +12,7 @@ const Usuarios = () => {
 
   const obtenerUsuarios = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/obtener_usuarios.php");
+      const res = await fetch(`${BASE_URL}obtener_usuarios.php`);
       const data = await res.json();
       const filtrados = data.filter(u => u.cargo !== 'Administrador');
       setUsuarios(filtrados);
@@ -36,7 +37,7 @@ const Usuarios = () => {
       return;
     }
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_usuario.php", {
+      const res = await fetch(`${BASE_URL}agregar_usuario.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoUsuario),
@@ -53,7 +54,7 @@ const Usuarios = () => {
   const eliminarUsuario = async (id) => {
     if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
     try {
-      await fetch("http://localhost/basecambios/eliminar_usuario.php", {
+      await fetch(`${BASE_URL}eliminar_usuario.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
@@ -85,7 +86,7 @@ const Usuarios = () => {
         nuevaContrasena: nuevaContrasena.trim() !== "" ? nuevaContrasena : undefined,
       };
 
-      const res = await fetch("http://localhost/basecambios/actualizar_usuario.php", {
+      const res = await fetch(`${BASE_URL}actualizar_usuario.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -129,6 +130,7 @@ const Usuarios = () => {
                     <select value={editandoUsuario.cargo} onChange={(e) => setEditandoUsuario({ ...editandoUsuario, cargo: e.target.value })}>
                       <option value="Asistente">Asistente</option>
                       <option value="Supervisor">Supervisor</option>
+                      <option value="Super">Super</option>
                     </select>
                   ) : user.cargo}</td>
                   <td>{editandoUsuario?.id === user.id ? (
@@ -175,6 +177,7 @@ const Usuarios = () => {
               <select name="cargo" value={nuevoUsuario.cargo} onChange={handleNuevoUsuarioChange}>
                 <option value="Asistente">Asistente</option>
                 <option value="Supervisor">Supervisor</option>
+                <option value="Super">Super</option>
               </select>
             </div>
             <button type="submit" className="save-button">Agregar Usuario</button>

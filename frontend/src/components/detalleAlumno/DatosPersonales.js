@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Section from "../common/Section";
 import userDefault from "../../assets/user.png";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../config";
 
 export default function DatosPersonales({ alumno, onChange, catalogos, onFotoChange }) {
   const {
@@ -37,7 +38,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
       return promise.then(() => {
         if (found) return;
         return new Promise((resolve) => {
-          const testUrl = `http://localhost/basecambios/images/${alumno.codigo}.${ext}?t=${Date.now()}`;
+          const testUrl = `${BASE_URL}images/${alumno.codigo}.${ext}?t=${Date.now()}`;
           const img = new window.Image();
           img.onload = () => {
             if (!found) {
@@ -109,7 +110,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
       formData.append("codigo", alumno.codigo);
 
       setSubiendoFoto(true);
-      fetch("http://localhost/basecambios/upload_foto.php", {
+      fetch(`${BASE_URL}upload_foto.php`, {
         method: "POST",
         body: formData
       })
@@ -119,7 +120,7 @@ export default function DatosPersonales({ alumno, onChange, catalogos, onFotoCha
             toast.success("Foto guardada correctamente.");
             onFotoChange({ target: { name: "FOTO", value: data.ruta } });
             setPreviewUrl(null); // Limpia el preview para volver a cargar desde el servidor
-            setFotoUrl(`http://localhost/basecambios/images/${alumno.codigo}.jpg?t=${Date.now()}`);
+            setFotoUrl(`${BASE_URL}images/${alumno.codigo}.jpg?t=${Date.now()}`);
           } else {
             toast.error(data.error || "Error al subir la foto.");
           }

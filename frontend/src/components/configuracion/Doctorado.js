@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Doctorados = () => {
   const [doctorados, setDoctorados] = useState([]);
@@ -10,7 +11,7 @@ const Doctorados = () => {
 
   const obtenerDoctorados = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_doctorados_admin.php");
+      const res = await fetch(`${BASE_URL}get_doctorados_admin.php`);
       const data = await res.json();
       setDoctorados(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -25,7 +26,7 @@ const Doctorados = () => {
   const agregarDoctorado = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_doctorado.php", {
+      const res = await fetch(`${BASE_URL}agregar_doctorado.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoDoctorado),
@@ -41,7 +42,7 @@ const Doctorados = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_doctorado.php", {
+      const res = await fetch(`${BASE_URL}actualizar_doctorado.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +65,7 @@ const Doctorados = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_doctorado.php", {
+      const res = await fetch(`${BASE_URL}eliminar_doctorado.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

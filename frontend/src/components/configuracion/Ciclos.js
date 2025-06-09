@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Ciclos = () => {
   const [ciclos, setCiclos] = useState([]);
@@ -10,7 +11,7 @@ const Ciclos = () => {
 
   const obtenerCiclos = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_ciclos_admin.php");
+      const res = await fetch(`${BASE_URL}get_ciclos_admin.php`);
       const data = await res.json();
       setCiclos(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -26,7 +27,7 @@ const Ciclos = () => {
     e.preventDefault();
     const nombre = `${nuevoCiclo.anio}${nuevoCiclo.ab}`;
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_ciclo.php", {
+      const res = await fetch(`${BASE_URL}agregar_ciclo.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre, visible: nuevoCiclo.visible }),
@@ -45,7 +46,7 @@ const Ciclos = () => {
     if (!cicloOriginal) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_ciclo.php", {
+      const res = await fetch(`${BASE_URL}actualizar_ciclo.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -68,7 +69,7 @@ const Ciclos = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_ciclo.php", {
+      const res = await fetch(`${BASE_URL}eliminar_ciclo.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

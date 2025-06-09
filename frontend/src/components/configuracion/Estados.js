@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Estados = () => {
   const [estados, setEstados] = useState([]);
@@ -10,9 +11,9 @@ const Estados = () => {
 
   const obtenerEstados = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_estados_admin.php");
+      const res = await fetch(`${BASE_URL}get_estados_admin.php`);
       const data = await res.json();
-      setEstados(data);
+      setEstados(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener estados:", err);
     }
@@ -25,7 +26,7 @@ const Estados = () => {
   const agregarEstado = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_estado.php", {
+      const res = await fetch(`${BASE_URL}agregar_estado.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoEstado),
@@ -41,7 +42,7 @@ const Estados = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_estado.php", {
+      const res = await fetch(`${BASE_URL}actualizar_estado.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +65,7 @@ const Estados = () => {
     if (!confirmar) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_estados.php", {
+      const res = await fetch(`${BASE_URL}eliminar_estados.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

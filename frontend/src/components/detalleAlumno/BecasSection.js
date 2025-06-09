@@ -1,6 +1,7 @@
 // components/detalleAlumno/BecasSection.js
 import React, { useState, useEffect } from "react";
 import Section from "../common/Section";
+import { BASE_URL } from "../../config"; // Usa la URL base global
 
 export default function BecasSection({
   alumno,
@@ -10,13 +11,11 @@ export default function BecasSection({
 }) {
   const [catalogo, setCatalogo] = useState([]);
 
-  // Carga el catálogo directamente desde el PHP
+  // Carga el catálogo usando BASE_URL
   useEffect(() => {
-    fetch("http://localhost/basecambios/get_becas_catalogo.php")
+    fetch(`${BASE_URL}get_becas_catalogo.php`)
       .then(res => res.json())
       .then(data => {
-        // data = [{ id, tipo, nombre, visible }, …]
-        // si tu PHP no devuelve 'visible', ignóralo
         setCatalogo(data);
       })
       .catch(err => {
@@ -58,7 +57,6 @@ export default function BecasSection({
                 value={beca.tipo}
                 onChange={e => {
                   const newTipo = e.target.value;
-                  // al cambiar tipo, resetea también el nombre
                   onBecaChange(index, "tipo", newTipo);
                   onBecaChange(index, "nombre", "");
                 }}

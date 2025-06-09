@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import userDefault from "../../assets/user.png";
 import logoCompleto from "../../assets/logo_completo.png";
+import { BASE_URL } from "../../config"; // Usa la URL base global
 
 export default function BotonPDFAlumno({ alumno }) {
   const handlePDF = async () => {
@@ -48,8 +49,6 @@ export default function BotonPDFAlumno({ alumno }) {
       });
     };
     
-     // Declarar logoH aquí para usarlo después
-    
     // Logo y título alineados horizontalmente
     try {
       const logoImg = new window.Image();
@@ -93,7 +92,8 @@ export default function BotonPDFAlumno({ alumno }) {
     if (alumno.codigo) {
       const extensions = ["jpg", "jpeg", "png", "gif"];
       for (let ext of extensions) {
-        const url = `http://localhost/basecambios/ver_foto.php?codigo=${alumno.codigo}&ext=${ext}`;
+        // Usa BASE_URL para la ruta de la foto
+        const url = `${BASE_URL}ver_foto.php?codigo=${alumno.codigo}&ext=${ext}`;
         try {
           const res = await fetch(url, { method: "GET" });
           if (res.ok) {
@@ -160,8 +160,8 @@ export default function BotonPDFAlumno({ alumno }) {
     if (alumno.semestre) {
       doc.text(`${alumno.semestre}° Semestre`, infoX, infoY);
       infoY += 6;
-  }
-        // Promedio
+    }
+    // Promedio
     if (alumno.promedio) {
       doc.text(`Promedio: ${alumno.promedio}`, infoX, infoY);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Carreras = () => {
   const [carreras, setCarreras] = useState([]);
@@ -12,7 +13,7 @@ const Carreras = () => {
   const obtenerCarreras = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/get_carreras_admin.php");
+      const res = await fetch(`${BASE_URL}get_carreras_admin.php`);
       const data = await res.json();
       setCarreras(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -35,7 +36,7 @@ const Carreras = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_carrera.php", {
+      const res = await fetch(`${BASE_URL}agregar_carrera.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaCarrera),
@@ -61,7 +62,7 @@ const Carreras = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_carrera.php", {
+      const res = await fetch(`${BASE_URL}actualizar_carrera.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,7 +91,7 @@ const Carreras = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_carreras.php", {
+      const res = await fetch(`${BASE_URL}eliminar_carreras.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

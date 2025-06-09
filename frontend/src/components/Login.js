@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import logoImg from "../assets/LetrasCu.png";
 import loginIllustration from "../assets/Traveling2.svg"; 
+import { BASE_URL } from "../config";
 
 const Login = ({ setIsAuthenticated }) => {
   const [usuario, setUsuario] = useState("");
@@ -28,7 +29,7 @@ const Login = ({ setIsAuthenticated }) => {
     }
 
     try {
-      const response = await fetch("http://localhost/basecambios/login.php", {
+      const response = await fetch(`${BASE_URL}login.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre_usuario: usuario, contrasena: password }),

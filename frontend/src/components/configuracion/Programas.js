@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Programas = () => {
   const [programas, setProgramas] = useState([]);
@@ -10,9 +11,9 @@ const Programas = () => {
 
   const obtenerProgramas = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_programas_admin.php");
+      const res = await fetch(`${BASE_URL}get_programas_admin.php`);
       const data = await res.json();
-      setProgramas(data);
+      setProgramas(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error al obtener programas:", err);
     }
@@ -25,7 +26,7 @@ const Programas = () => {
   const agregarPrograma = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_programa.php", {
+      const res = await fetch(`${BASE_URL}agregar_programa.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoPrograma),
@@ -41,7 +42,7 @@ const Programas = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_programa.php", {
+      const res = await fetch(`${BASE_URL}actualizar_programa.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +65,7 @@ const Programas = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_programas.php", {
+      const res = await fetch(`${BASE_URL}eliminar_programas.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

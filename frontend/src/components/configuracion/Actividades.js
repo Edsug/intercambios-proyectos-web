@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Configuracion.css";
+import { BASE_URL } from "../../config"; // Importa la URL base
 
 const Actividades = () => {
   const [actividades, setActividades] = useState([]);
@@ -10,7 +11,7 @@ const Actividades = () => {
 
   const obtenerActividades = async () => {
     try {
-      const res = await fetch("http://localhost/basecambios/get_tipos_movilidad_admin.php");
+      const res = await fetch(`${BASE_URL}get_tipos_movilidad_admin.php`);
       const data = await res.json();
       setActividades(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -25,7 +26,7 @@ const Actividades = () => {
   const agregarActividad = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost/basecambios/agregar_tipo_movilidad.php", {
+      const res = await fetch(`${BASE_URL}agregar_tipo_movilidad.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevaActividad),
@@ -41,7 +42,7 @@ const Actividades = () => {
 
   const guardarEdicion = async (id) => {
     try {
-      const res = await fetch("http://localhost/basecambios/actualizar_tipo_movilidad.php", {
+      const res = await fetch(`${BASE_URL}actualizar_tipo_movilidad.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -66,7 +67,7 @@ const Actividades = () => {
     if (!confirmacion) return;
 
     try {
-      const res = await fetch("http://localhost/basecambios/eliminar_tipo_movilidad.php", {
+      const res = await fetch(`${BASE_URL}eliminar_tipo_movilidad.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
