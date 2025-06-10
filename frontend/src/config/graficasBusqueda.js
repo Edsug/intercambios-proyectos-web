@@ -169,21 +169,6 @@ export function getProgramasData(alumnos) {
   };
 }
 
-export function getTiposMovilidadData(alumnos) {
-  const tipos = {};
-  alumnos.forEach(a => {
-    const t = a.tipo_movilidad || "Sin dato";
-    tipos[t] = (tipos[t] || 0) + 1;
-  });
-  return {
-    labels: Object.keys(tipos),
-    datasets: [{
-      label: "Alumnos por tipo de movilidad",
-      data: Object.values(tipos),
-      backgroundColor: palette2.slice(0, Object.keys(tipos).length)
-    }]
-  };
-}
 
 export function getBecasData(alumnos) {
   const becas = {};
@@ -236,3 +221,26 @@ export function getComunidadData(alumnos) {
     }]
   };
 }
+
+// Puedes poner esto en un archivo común, por ejemplo: src/config/chartOptions.js
+export const barOptions = (labelsCount = 0) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true, position: "top", labels: { font: { size: 16 } } },
+    tooltip: { enabled: true, bodyFont: { size: 14 } }
+  },
+  scales: {
+    x: {
+      ticks: {
+        font: { size: labelsCount > 10 ? 10 : 14 },
+        callback: function(value) {
+          const label = this.getLabelForValue(value);
+          // Divide en líneas de máximo 16 caracteres
+          return label ? label.match(/.{1,16}/g) : value;
+        }
+      }
+    },
+    y: { ticks: { font: { size: 14 } }, beginAtZero: true }
+  }
+});

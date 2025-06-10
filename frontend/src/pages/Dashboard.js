@@ -241,6 +241,8 @@ const Dashboard = () => {
       });
   }, []);
 
+  const carrerasLabelsCount = carrerasData && carrerasData.labels ? carrerasData.labels.length : 0;
+
   const barOptions = {
     responsive: true,
     plugins: {
@@ -248,7 +250,15 @@ const Dashboard = () => {
       tooltip: { enabled: true, bodyFont: { size: 14 } }
     },
     scales: {
-      x: { ticks: { font: { size: 14 } } },
+      x: {
+        ticks: {
+          font: { size: carrerasLabelsCount > 10 ? 10 : 14 },
+          callback: function(value, index, ticks) {
+            const label = this.getLabelForValue(value);
+            return label ? label.match(/.{1,16}/g) : value;
+          }
+        }
+      },
       y: { ticks: { font: { size: 14 } }, beginAtZero: true }
     }
   };
@@ -303,7 +313,14 @@ const Dashboard = () => {
         {carrerasData && carrerasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por carrera (Licenciatura)</h3>
-            <Bar data={carrerasData} options={barOptions} height={220} />
+            <div className="chart-container">
+              <Bar
+                data={carrerasData}
+                options={barOptions}
+                height={220}
+                width={Math.max(400, carrerasData.labels.length * 40)} // 40px por etiqueta
+              />
+            </div>
           </div>
         )}
         {maestriasData && maestriasData.labels.length > 0 && (

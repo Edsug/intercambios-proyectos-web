@@ -15,16 +15,11 @@ import {
   getNacionalidadData,
   getEstadosData,
   getProgramasData,
-  getTiposMovilidadData,
   getBecasData,
   getDiscapacidadData,
-  getComunidadData
+  getComunidadData,
+  barOptions
 } from '../config/graficasBusqueda';
-
-// Asegúrate de que las gráficas usen la paleta de colores de graficas.css
-// Para esto, cada función get*Data debe usar getChartColors(labels.length) en backgroundColor
-// Si ya lo hace, solo asegúrate de que el CSS esté cargado (ya lo está)
-// Si quieres que el layout y los colores sean idénticos al dashboard, usa las mismas clases y estructura
 
 export default function Busqueda() {
   const {
@@ -57,7 +52,6 @@ export default function Busqueda() {
   const nacionalidadData = alumnos.length > 0 ? getNacionalidadData(alumnos) : null;
   const estadosData = alumnos.length > 0 ? getEstadosData(alumnos) : null;
   const programasData = alumnos.length > 0 ? getProgramasData(alumnos) : null;
-  const tiposMovilidadData = alumnos.length > 0 ? getTiposMovilidadData(alumnos) : null;
   const becasData = alumnos.length > 0 ? getBecasData(alumnos) : null;
   const discapacidadData = alumnos.length > 0 ? getDiscapacidadData(alumnos) : null;
   const comunidadData = alumnos.length > 0 ? getComunidadData(alumnos) : null;
@@ -68,13 +62,6 @@ export default function Busqueda() {
     }
   };
 
-  const barOptions = {
-    plugins: {
-      legend: { display: true, position: "top" }
-    },
-    responsive: true,
-    maintainAspectRatio: false,
-  };
 
   return (
     <div className="dashboard-content">
@@ -250,7 +237,7 @@ export default function Busqueda() {
             {nivelesData && nivelesData.labels.length > 0 && (
               <div className="dashboard-graphic-card">
                 <h4>Alumnos por nivel académico</h4>
-                <Bar data={nivelesData} options={barOptions} height={220} />
+                <Bar data={nivelesData} options={barOptions(nivelesData.labels.length)} height={220} />
               </div>
             )}
             {promedioSemestreData && promedioSemestreData.labels.length > 0 && (
@@ -268,7 +255,14 @@ export default function Busqueda() {
             {maestriasData && maestriasData.labels.length > 0 && (
               <div className="dashboard-graphic-card">
                 <h4>Alumnos por maestría</h4>
-                <Bar data={maestriasData} options={barOptions} height={220} />
+                <div className="chart-container">
+                  <Bar
+                    data={maestriasData}
+                    options={barOptions(maestriasData.labels.length)}
+                    height={220}
+                    width={Math.max(400, maestriasData.labels.length * 40)} // 40px por etiqueta
+                  />
+                </div>
               </div>
             )}
             {doctoradosData && doctoradosData.labels.length > 0 && (
@@ -301,12 +295,14 @@ export default function Busqueda() {
                 <Pie data={programasData} options={pieOptions} height={220} />
               </div>
             )}
+            {/* Elimina este bloque:
             {tiposMovilidadData && tiposMovilidadData.labels.length > 0 && (
               <div className="dashboard-graphic-card">
                 <h4>Alumnos por tipo de movilidad</h4>
                 <Pie data={tiposMovilidadData} options={pieOptions} height={220} />
               </div>
-            )}
+            )} 
+            */}
             {becasData && becasData.labels.length > 0 && (
               <div className="dashboard-graphic-card">
                 <h4>Alumnos por tipo de beca</h4>
@@ -587,6 +583,8 @@ export default function Busqueda() {
           </div>
         )}
       </section>
+
+      {console.log(alumnos.map(a => a.tipo_movilidad))}
     </div>
   );
 }
