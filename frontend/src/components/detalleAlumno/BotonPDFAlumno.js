@@ -210,7 +210,7 @@ export default function BotonPDFAlumno({ alumno }) {
     infoY += 12;
 
     // Código con estilo badge
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(255, 255, 255);
     doc.setFillColor(...colors.accent);
@@ -223,14 +223,32 @@ export default function BotonPDFAlumno({ alumno }) {
     // Programa académico
     const programa = getProgramaAcademico();
     if (programa) {
-      doc.setFontSize(11);
+      doc.setFontSize(8);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(...colors.textLight);
-      doc.text(`${programa.label}: `, infoX, infoY);
+      const labelText = `${programa.label}: `;
+      doc.text(labelText, infoX, infoY);
+
       doc.setFont("helvetica", "bold");
       doc.setTextColor(...colors.text);
-      doc.text(programa.value, infoX + doc.getTextWidth(`${programa.label}: `), infoY);
-      infoY += 8;
+
+      // Ajusta el ancho máximo disponible para el texto del programa
+      const maxWidth = pageWidth - infoX - marginX - 10;
+      const programaLines = doc.splitTextToSize(programa.value, maxWidth);
+
+      // Imprime el texto del programa justo después del label, en la misma línea si cabe, si no en la siguiente línea(s)
+      if (programaLines.length > 0) {
+        // Si la primera línea cabe junto al label, imprímela ahí
+        doc.text(programaLines[0], infoX + doc.getTextWidth(labelText), infoY);
+        // Si hay más líneas, imprímelas debajo, alineadas al inicio del valor
+        for (let i = 1; i < programaLines.length; i++) {
+          infoY += 6;
+          doc.text(programaLines[i], infoX + doc.getTextWidth(labelText), infoY);
+        }
+        infoY += 8;
+      } else {
+        infoY += 8;
+      }
     }
 
     // Semestre y promedio en línea
@@ -279,7 +297,7 @@ export default function BotonPDFAlumno({ alumno }) {
         head: [],
         body: validData.map(([label, value]) => [label, value]),
         styles: {
-          fontSize: 9,
+          fontSize: 8,
           cellPadding: 6,
           textColor: colors.text,
           lineColor: colors.border,
@@ -406,7 +424,7 @@ export default function BotonPDFAlumno({ alumno }) {
       if (isValid(alumno.observaciones_seguro)) seguroItems.push(["Observaciones", alumno.observaciones_seguro]);
 
       if (seguroItems.length > 0) {
-        createSection("SEGURO DE VIAJE", seguroItems, "◊");
+        createSection("SEGURO DE VIAJE", seguroItems);
       }
     }
 

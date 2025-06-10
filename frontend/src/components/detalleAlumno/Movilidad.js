@@ -85,7 +85,10 @@ export default function Movilidad({ alumno, onChange, catalogos }) {
             type="text"
             name="institucion_destino"
             value={alumno.institucion_destino || ""}
-            onChange={onChange}
+            onChange={e => {
+              e.target.value = e.target.value.toUpperCase();
+              onChange(e);
+            }}
           />
         </label>
 

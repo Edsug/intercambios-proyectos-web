@@ -172,7 +172,14 @@ export default function SeccionMovilidad({
               name="INSTITUCION_DESTINO"
               style={{ textTransform: "uppercase" }}
               value={formData.INSTITUCION_DESTINO}
-              onChange={handleChange}
+              onChange={e => {
+                handleChange({
+                  target: {
+                    name: "INSTITUCION_DESTINO",
+                    value: e.target.value.toUpperCase()
+                  }
+                });
+              }}
               required
             />
             {errores.INSTITUCION_DESTINO && <span className="error-message">{errores.INSTITUCION_DESTINO}</span>}
