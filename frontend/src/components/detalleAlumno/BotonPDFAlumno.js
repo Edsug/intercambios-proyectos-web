@@ -3,18 +3,29 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import userDefault from "../../assets/user.png";
 import logoCompleto from "../../assets/logo_completo.png";
-import { BASE_URL } from "../../config"; // Usa la URL base global
+import { BASE_URL } from "../../config";
 
 export default function BotonPDFAlumno({ alumno }) {
   const handlePDF = async () => {
     const doc = new jsPDF("p", "mm", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const marginX = 20;
-    let y = 15;
-    let logoH = 30;
+    const marginX = 25;
+    const marginY = 20;
+    let y = marginY;
 
-    // Funciones auxiliares
+    // Paleta de colores mejorada
+    const colors = {
+      primary: [31, 81, 255], // Azul moderno
+      secondary: [100, 116, 139], // Gris azulado
+      accent: [16, 185, 129], // Verde esmeralda
+      text: [15, 23, 42], // Gris muy oscuro
+      textLight: [71, 85, 105], // Gris medio
+      border: [226, 232, 240], // Gris muy claro
+      background: [248, 250, 252] // Fondo muy claro
+    };
+
+    // Funciones auxiliares mejoradas
     const getProgramaAcademico = () => {
       if (alumno.nivel_academico === "LICENCIATURA" && alumno.carrera) 
         return { label: "Carrera", value: alumno.carrera };
@@ -42,57 +53,113 @@ export default function BotonPDFAlumno({ alumno }) {
           canvas.width = size;
           canvas.height = size;
           const ctx = canvas.getContext("2d");
+          // Añadir bordes redondeados
+          ctx.beginPath();
+          ctx.roundRect(0, 0, size, size, size * 0.1);
+          ctx.clip();
           ctx.drawImage(img, 0, 0, size, size);
-          resolve(canvas.toDataURL("image/jpeg", 0.85));
+          resolve(canvas.toDataURL("image/jpeg", 0.9));
         };
         img.src = imgDataUrl;
       });
     };
-    
-    // Logo y título alineados horizontalmente
+
+    // Función para añadir encabezado en cada página
+    const addHeader = () => {
+      // Quita o comenta la siguiente línea para eliminar el fondo gris/azulado del header
+      // doc.setFillColor(...colors.background);
+      // doc.rect(0, 0, pageWidth, 15, 'F');
+      
+      // Línea decorativa superior (ELIMINAR O COMENTAR ESTAS LÍNEAS)
+      // doc.setDrawColor(...colors.primary);
+      // doc.setLineWidth(2);
+      // doc.line(0, 15, pageWidth, 15);
+    };
+
+    // Función para añadir pie de página
+    const addFooter = (pageNum, totalPages) => {
+      const footerY = pageHeight - 15;
+      
+      // Línea decorativa inferior
+      doc.setDrawColor(...colors.border);
+      doc.setLineWidth(0.5);
+      doc.line(marginX, footerY - 5, pageWidth - marginX, footerY - 5);
+      
+      // Texto del pie de página
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...colors.textLight);
+      
+      // Fecha de generación
+      const fecha = new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      doc.text(`Generado el ${fecha}`, marginX, footerY);
+      
+      // Número de página
+      doc.text(`Página ${pageNum} de ${totalPages}`, pageWidth - marginX, footerY, { align: "right" });
+      
+      // Logo institucional pequeño
+      doc.text("Sistema de Intercambios - CUSUR", pageWidth / 2, footerY, { align: "center" });
+    };
+
+    // Header principal con logo y título mejorado
+    addHeader();
+    y = 25;
+
     try {
       const logoImg = new window.Image();
       logoImg.src = logoCompleto;
       await new Promise(resolve => (logoImg.onload = resolve));
-      logoH = 40; // Ajusta el tamaño si lo deseas
+      
+      const logoH = 35;
       const logoAspect = logoImg.width / logoImg.height;
       const logoW = logoH * logoAspect;
 
-      // Centrar ambos elementos en la parte superior
-      const totalWidth = logoW + 10 + doc.getTextWidth("FICHA DE ALUMNO");
-      const startX = (pageWidth - totalWidth) / 2;
+      // Card container para el header
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(...colors.border);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(marginX, y, pageWidth - 2 * marginX, 55, 3, 3, 'FD');
 
       // Logo
-      doc.addImage(logoCompleto, "PNG", startX, y, logoW, logoH);
+      doc.addImage(logoCompleto, "PNG", marginX + 15, y + 10, logoW, logoH);
 
-      // Título alineado a la derecha del logo
-      doc.setFontSize(18);
-      doc.setTextColor(33, 37, 41);
+      // Título principal
+      doc.setFontSize(15);
       doc.setFont("helvetica", "bold");
-      doc.text("FICHA DE ALUMNO", startX + logoW + 10, y + logoH / 2 + 6, { align: "left" });
+      doc.setTextColor(...colors.primary);
+      doc.text("FICHA DE ESTUDIANTE", marginX + logoW + 30, y + 25);
+      
+      // Subtítulo
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...colors.secondary);
+      doc.text("Programa de Intercambio Académico", marginX + logoW + 30, y + 35);
 
-      y += logoH + 8;
+      y += 70;
     } catch (e) {
       console.error("Error cargando logo:", e);
+      y += 20;
     }
+
+    // Sección de información principal del estudiante
+    const fotoSize = 50;
+    const cardY = y;
     
-    // Línea separadora
-    doc.setDrawColor(33, 150, 243);
+    // Card principal del estudiante
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(...colors.border);
     doc.setLineWidth(0.5);
-    doc.line(marginX, y, pageWidth - marginX, y);
-    y += 10;
+    doc.roundedRect(marginX, cardY, pageWidth - 2 * marginX, 70, 5, 5, 'FD');
 
-    // Información del alumno con foto
-    const fotoSize = 40;
-    const fotoX = marginX;
-    const infoX = fotoX + fotoSize + 15;
-
-    // Cargar foto
+    // Foto del estudiante
     let fotoCargada = false;
     if (alumno.codigo) {
       const extensions = ["jpg", "jpeg", "png", "gif"];
       for (let ext of extensions) {
-        // Usa BASE_URL para la ruta de la foto
         const url = `${BASE_URL}ver_foto.php?codigo=${alumno.codigo}&ext=${ext}`;
         try {
           const res = await fetch(url, { method: "GET" });
@@ -106,15 +173,14 @@ export default function BotonPDFAlumno({ alumno }) {
               });
               const imgDataResized = await resizeImage(imgData, 400);
 
-              // Detecta el tipo de imagen para addImage
               let imgType = "JPEG";
               if (blob.type === "image/png") imgType = "PNG";
               if (blob.type === "image/gif") imgType = "GIF";
 
-              doc.setDrawColor(200);
-              doc.setLineWidth(0.5);
-              doc.rect(fotoX, y, fotoSize, fotoSize);
-              doc.addImage(imgDataResized, imgType, fotoX, y, fotoSize, fotoSize);
+              // Foto con sombra sutil
+              doc.setFillColor(0, 0, 0, 0.1);
+              doc.roundedRect(marginX + 17, cardY + 12, fotoSize, fotoSize, 8, 8, 'F');
+              doc.addImage(imgDataResized, imgType, marginX + 15, cardY + 10, fotoSize, fotoSize);
               fotoCargada = true;
               break;
             }
@@ -126,102 +192,135 @@ export default function BotonPDFAlumno({ alumno }) {
     }
 
     if (!fotoCargada) {
-      doc.setDrawColor(200);
-      doc.rect(fotoX, y, fotoSize, fotoSize);
-      doc.addImage(userDefault, "PNG", fotoX, y, fotoSize, fotoSize);
+      doc.setFillColor(240, 240, 240);
+      doc.roundedRect(marginX + 15, cardY + 10, fotoSize, fotoSize, 8, 8, 'F');
+      doc.addImage(userDefault, "PNG", marginX + 15, cardY + 10, fotoSize, fotoSize);
     }
 
-    // Información básica al lado de la foto
-    let infoY = y + 5;
-    
-    // Nombre
-    doc.setFontSize(14);
+    // Información principal del estudiante
+    const infoX = marginX + fotoSize + 30;
+    let infoY = cardY + 20;
+
+    // Nombre prominente
+    doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(33, 37, 41);
+    doc.setTextColor(...colors.text);
     const nombreCompleto = `${alumno.nombre || ''} ${alumno.apellidos || ''}`.trim();
     doc.text(nombreCompleto, infoX, infoY);
-    infoY += 8;
+    infoY += 12;
 
-    // Código
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Código: ${alumno.codigo || 'N/A'}`, infoX, infoY);
-    infoY += 6;
+    // Código con estilo badge
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(...colors.accent);
+    const codigoText = `CÓDIGO: ${alumno.codigo || 'N/A'}`;
+    const codigoWidth = doc.getTextWidth(codigoText) + 8;
+    doc.roundedRect(infoX, infoY - 6, codigoWidth, 10, 2, 2, 'F');
+    doc.text(codigoText, infoX + 4, infoY);
+    infoY += 15;
 
-    // Programa
+    // Programa académico
     const programa = getProgramaAcademico();
     if (programa) {
-      doc.text(`${programa.label}: ${programa.value}`, infoX, infoY);
-      infoY += 6;
-    }
-        
-    // Semestre (solo si existe)
-    if (alumno.semestre) {
-      doc.text(`${alumno.semestre}° Semestre`, infoX, infoY);
-      infoY += 6;
-    }
-    // Promedio
-    if (alumno.promedio) {
-      doc.text(`Promedio: ${alumno.promedio}`, infoX, infoY);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...colors.textLight);
+      doc.text(`${programa.label}: `, infoX, infoY);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...colors.text);
+      doc.text(programa.value, infoX + doc.getTextWidth(`${programa.label}: `), infoY);
+      infoY += 8;
     }
 
-    y += fotoSize + 15;
+    // Semestre y promedio en línea
+    const extraInfo = [];
+    if (alumno.semestre) extraInfo.push(`${alumno.semestre}° Semestre`);
+    if (alumno.promedio) extraInfo.push(`Promedio: ${alumno.promedio}`);
+    
+    if (extraInfo.length > 0) {
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...colors.secondary);
+      doc.text(extraInfo.join(' • '), infoX, infoY);
+    }
 
-    // Función para crear secciones simples
-    const createSection = (title, data) => {
+    y = cardY + 85;
+
+    // Función mejorada para crear secciones
+    const createSection = (title, data, icon = "•") => {
       // Verificar espacio en página
-      if (y > pageHeight - 50) {
+      if (y > pageHeight - 80) {
         doc.addPage();
-        y = 20;
+        addHeader();
+        y = 35;
       }
 
       // Filtrar datos vacíos
       const validData = data.filter(([label, value]) => 
-        value !== null && value !== undefined && value !== ''
+        value !== null && value !== undefined && value !== '' && value !== 'N/A'
       );
 
       if (validData.length === 0) return;
 
-      // Título de sección
-      doc.setFontSize(12);
+      // Encabezado de sección con diseño mejorado
+      doc.setFillColor(...colors.primary);
+      doc.roundedRect(marginX, y, pageWidth - 2 * marginX, 12, 2, 2, 'F');
+      
+      doc.setFontSize(11);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(33, 150, 243);
-      doc.text(title, marginX, y);
-      y += 8;
+      doc.setTextColor(255, 255, 255);
+      doc.text(`${icon} ${title}`, marginX + 8, y + 8);
+      y += 20;
 
-      // Crear tabla simple
+      // Crear tabla con diseño moderno
       doc.autoTable({
         startY: y,
         head: [],
-        body: validData.map(([label, value]) => [label + ':', value]),
+        body: validData.map(([label, value]) => [label, value]),
         styles: {
           fontSize: 9,
-          cellPadding: 3,
-          textColor: [33, 37, 41],
-          lineColor: [200, 200, 200],
-          lineWidth: 0.1
+          cellPadding: 6,
+          textColor: colors.text,
+          lineColor: colors.border,
+          lineWidth: 0.3,
+          font: 'helvetica'
+        },
+        headStyles: {
+          fillColor: colors.background,
+          textColor: colors.text,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [252, 252, 253]
         },
         columnStyles: {
-          0: { cellWidth: 60, fontStyle: 'bold' },
-          1: { cellWidth: 110 }
+          0: { 
+            cellWidth: 50, 
+            fontStyle: 'bold',
+            textColor: colors.secondary,
+            fillColor: [248, 250, 252]
+          },
+          1: { 
+            cellWidth: 110,
+            textColor: colors.text
+          }
         },
-        margin: { left: marginX, right: marginX },
-        didDrawPage: () => {
-          // Pie de página simple
-          const footerY = pageHeight - 10;
-          doc.setFontSize(8);
-          doc.setTextColor(150, 150, 150);
-          doc.text("Sistema de Intercambios - CUSUR", pageWidth / 2, footerY, { align: "center" });
+        margin: { left: marginX, right: marginX, bottom: 25 }, // <-- RESERVA ESPACIO PARA EL PIE DE PÁGINA
+        tableLineColor: colors.border,
+        tableLineWidth: 0.3,
+        didDrawCell: (data) => {
+          // Añadir bordes redondeados a las celdas (efecto visual)
+          if (data.row.index === 0 && data.column.index === 0) {
+            // Primera celda - esquina superior izquierda
+          }
         }
       });
 
-      y = doc.lastAutoTable.finalY + 10;
+      y = doc.lastAutoTable.finalY + 15;
     };
 
-    // Crear todas las secciones
-    
-    // Información personal
+    // Crear todas las secciones con símbolos compatibles
     createSection("INFORMACIÓN PERSONAL", [
       ["Género", alumno.sexo],
       ["Nacionalidad", alumno.nacionalidad],
@@ -231,7 +330,6 @@ export default function BotonPDFAlumno({ alumno }) {
       ["Correo electrónico", alumno.correo]
     ]);
 
-    // Contacto de emergencia
     createSection("CONTACTO DE EMERGENCIA", [
       ["Contacto de emergencia", alumno.nombre_contacto_emergencia],
       ["Teléfono de emergencia", alumno.contacto_emergencia],
@@ -248,7 +346,6 @@ export default function BotonPDFAlumno({ alumno }) {
       createSection("INFORMACIÓN ADICIONAL", infoAdicional);
     }
 
-    // Programa académico
     createSection("PROGRAMA ACADÉMICO", [
       ["Programa", alumno.programa],
       ["Folio", alumno.folio],
@@ -277,7 +374,7 @@ export default function BotonPDFAlumno({ alumno }) {
     if (alumno.becas && alumno.becas.length > 0) {
       const becasData = alumno.becas.map((beca, index) => [
         `Beca ${index + 1}`,
-        `${beca.tipo || ''} - ${beca.nombre || ''} | Monto: $${beca.monto || 0}${beca.detalles ? ` | ${beca.detalles}` : ''}`
+        `${beca.tipo || ''} - ${beca.nombre || ''} | Monto: ${beca.monto || 0}${beca.detalles ? ` | ${beca.detalles}` : ''}`
       ]);
       createSection("BECAS Y APOYOS ECONÓMICOS", becasData);
     }
@@ -301,30 +398,37 @@ export default function BotonPDFAlumno({ alumno }) {
         val !== "null" &&
         val !== "undefined" &&
         val !== "-";
-      if (isValid(alumno.nombre_aseguradora)) seguroItems.push(["Nombre de la aseguradora", alumno.nombre_aseguradora]);
+      if (isValid(alumno.nombre_aseguradora)) seguroItems.push(["Aseguradora", alumno.nombre_aseguradora]);
       if (isValid(alumno.numero_poliza)) seguroItems.push(["Número de póliza", alumno.numero_poliza]);
-      if (isValid(alumno.fecha_inicio_seguro)) seguroItems.push(["Fecha inicio del seguro", alumno.fecha_inicio_seguro]);
-      if (isValid(alumno.fecha_fin_seguro)) seguroItems.push(["Fecha fin del seguro", alumno.fecha_fin_seguro]);
-      if (isValid(alumno.contacto_aseguradora)) seguroItems.push(["Contacto de la aseguradora", alumno.contacto_aseguradora]);
-      if (isValid(alumno.observaciones_seguro)) seguroItems.push(["Observaciones del seguro", alumno.observaciones_seguro]);
+      if (isValid(alumno.fecha_inicio_seguro)) seguroItems.push(["Inicio del seguro", alumno.fecha_inicio_seguro]);
+      if (isValid(alumno.fecha_fin_seguro)) seguroItems.push(["Fin del seguro", alumno.fecha_fin_seguro]);
+      if (isValid(alumno.contacto_aseguradora)) seguroItems.push(["Contacto aseguradora", alumno.contacto_aseguradora]);
+      if (isValid(alumno.observaciones_seguro)) seguroItems.push(["Observaciones", alumno.observaciones_seguro]);
 
-      // Solo imprime la sección si hay al menos un dato real
       if (seguroItems.length > 0) {
-        createSection("SEGURO DE VIAJE", seguroItems);
+        createSection("SEGURO DE VIAJE", seguroItems, "◊");
       }
     }
 
     // Experiencia
     const experienciaItems = [];
     if (alumno.experiencia_compartida) experienciaItems.push(["Ha compartido experiencia", "Sí"]);
-    if (alumno.detalles_experiencia) experienciaItems.push(["Detalles de la experiencia", alumno.detalles_experiencia]);
+    if (alumno.detalles_experiencia) experienciaItems.push(["Detalles", alumno.detalles_experiencia]);
 
     if (experienciaItems.length > 0) {
       createSection("EXPERIENCIA COMPARTIDA", experienciaItems);
     }
 
-    // Guardar PDF
-    doc.save(`ficha_alumno_${alumno.codigo || "sin_codigo"}.pdf`);
+    // Añadir pie de página a todas las páginas
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      addFooter(i, totalPages);
+    }
+
+    // Guardar PDF con nombre más descriptivo
+    const fecha = new Date().toISOString().split('T')[0];
+    doc.save(`ficha_estudiante_${alumno.codigo || "sin_codigo"}_${fecha}.pdf`);
   };
 
   return (
@@ -333,17 +437,35 @@ export default function BotonPDFAlumno({ alumno }) {
       onClick={handlePDF} 
       style={{ 
         marginBottom: 16,
-        padding: '10px 20px',
-        backgroundColor: '#2196F3',
+        padding: '12px 24px',
+        background: 'linear-gradient(135deg, #1f51ff 0%, #1e40af 100%)',
         color: 'white',
         border: 'none',
-        borderRadius: '4px',
+        borderRadius: '8px',
         cursor: 'pointer',
         fontSize: '14px',
-        fontWeight: 'bold'
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        boxShadow: '0 4px 12px rgba(31, 81, 255, 0.3)',
+        transition: 'all 0.3s ease',
+        ':hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: '0 6px 16px rgba(31, 81, 255, 0.4)'
+        }
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.transform = 'translateY(-2px)';
+        e.target.style.boxShadow = '0 6px 16px rgba(31, 81, 255, 0.4)';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.transform = 'translateY(0)';
+        e.target.style.boxShadow = '0 4px 12px rgba(31, 81, 255, 0.3)';
       }}
     >
-      📄 Descargar Ficha PDF
+      <span style={{ fontSize: '14px' }}>▼</span>
+      Descargar Ficha PDF
     </button>
   );
 }

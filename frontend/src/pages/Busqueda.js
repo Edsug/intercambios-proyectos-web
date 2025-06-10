@@ -2,7 +2,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/Busqueda.css';
+import '../styles/graficas.css'; // <--- Ya está importado
 import { useBusquedaConfig } from '../config/config-busqueda';
+import { Bar, Pie } from 'react-chartjs-2';
+import {
+  getNivelesData,
+  getPromedioSemestreData,
+  getCarrerasData,
+  getMaestriasData,
+  getDoctoradosData,
+  getGeneroData,
+  getNacionalidadData,
+  getEstadosData,
+  getProgramasData,
+  getTiposMovilidadData,
+  getBecasData,
+  getDiscapacidadData,
+  getComunidadData
+} from '../config/graficasBusqueda';
+
+// Asegúrate de que las gráficas usen la paleta de colores de graficas.css
+// Para esto, cada función get*Data debe usar getChartColors(labels.length) en backgroundColor
+// Si ya lo hace, solo asegúrate de que el CSS esté cargado (ya lo está)
+// Si quieres que el layout y los colores sean idénticos al dashboard, usa las mismas clases y estructura
 
 export default function Busqueda() {
   const {
@@ -23,6 +45,36 @@ export default function Busqueda() {
 
   const userRole = localStorage.getItem("cargo"); // corregido
 
+  // Estado para mostrar/ocultar gráficas
+  const [mostrarGraficas, setMostrarGraficas] = React.useState(false);
+
+  const nivelesData = alumnos.length > 0 ? getNivelesData(alumnos) : null;
+  const promedioSemestreData = alumnos.length > 0 ? getPromedioSemestreData(alumnos) : null;
+  const carrerasData = alumnos.length > 0 ? getCarrerasData(alumnos) : null;
+  const maestriasData = alumnos.length > 0 ? getMaestriasData(alumnos) : null;
+  const doctoradosData = alumnos.length > 0 ? getDoctoradosData(alumnos) : null;
+  const generoData = alumnos.length > 0 ? getGeneroData(alumnos) : null;
+  const nacionalidadData = alumnos.length > 0 ? getNacionalidadData(alumnos) : null;
+  const estadosData = alumnos.length > 0 ? getEstadosData(alumnos) : null;
+  const programasData = alumnos.length > 0 ? getProgramasData(alumnos) : null;
+  const tiposMovilidadData = alumnos.length > 0 ? getTiposMovilidadData(alumnos) : null;
+  const becasData = alumnos.length > 0 ? getBecasData(alumnos) : null;
+  const discapacidadData = alumnos.length > 0 ? getDiscapacidadData(alumnos) : null;
+  const comunidadData = alumnos.length > 0 ? getComunidadData(alumnos) : null;
+
+  const pieOptions = {
+    plugins: {
+      legend: { display: true, position: "bottom" }
+    }
+  };
+
+  const barOptions = {
+    plugins: {
+      legend: { display: true, position: "top" }
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+  };
 
   return (
     <div className="dashboard-content">
@@ -176,6 +228,108 @@ export default function Busqueda() {
           </div>
         )}
       </section>
+
+      {/* Botón para mostrar/ocultar gráficas, solo si hay alumnos */}
+      {alumnos.length > 0 && (
+        <section className="graficas-toggle-section" style={{ textAlign: "right", marginBottom: "1.5rem" }}>
+          <button
+            className="btn btn-info"
+            onClick={() => setMostrarGraficas(g => !g)}
+            style={{ minWidth: 180 }}
+          >
+            {mostrarGraficas ? "Ocultar gráficas" : "Mostrar gráficas"}
+          </button>
+        </section>
+      )}
+
+      {/* Sección especial de gráficas, solo visible si mostrarGraficas es true */}
+      {alumnos.length > 0 && mostrarGraficas && (
+        <section className="busqueda-graphics">
+          <h3>Resumen de los resultados encontrados</h3>
+          <div className="dashboard-graphics-grid">
+            {nivelesData && nivelesData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por nivel académico</h4>
+                <Bar data={nivelesData} options={barOptions} height={220} />
+              </div>
+            )}
+            {promedioSemestreData && promedioSemestreData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Promedio por semestre</h4>
+                <Bar data={promedioSemestreData} options={barOptions} height={220} />
+              </div>
+            )}
+            {carrerasData && carrerasData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por carrera (Licenciatura)</h4>
+                <Bar data={carrerasData} options={barOptions} height={220} />
+              </div>
+            )}
+            {maestriasData && maestriasData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por maestría</h4>
+                <Bar data={maestriasData} options={barOptions} height={220} />
+              </div>
+            )}
+            {doctoradosData && doctoradosData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por doctorado</h4>
+                <Bar data={doctoradosData} options={barOptions} height={220} />
+              </div>
+            )}
+            {generoData && generoData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por género</h4>
+                <Pie data={generoData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {nacionalidadData && nacionalidadData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por nacionalidad</h4>
+                <Pie data={nacionalidadData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {estadosData && estadosData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos nacionales por estado</h4>
+                <Pie data={estadosData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {programasData && programasData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por programa</h4>
+                <Pie data={programasData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {tiposMovilidadData && tiposMovilidadData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por tipo de movilidad</h4>
+                <Pie data={tiposMovilidadData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {becasData && becasData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por tipo de beca</h4>
+                <Pie data={becasData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {discapacidadData && discapacidadData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos con discapacidad</h4>
+                <Pie data={discapacidadData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {comunidadData && comunidadData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos de comunidad nativa</h4>
+                <Pie data={comunidadData} options={pieOptions} height={220} />
+              </div>
+            )}
+          </div>
+          {/* Elemento oculto para exponer la paleta de colores al JS si se requiere */}
+          <div className="chart-color-palette" />
+        </section>
+      )}
 
       {alumnos.length > 0 && (
         <section className="export-section">
@@ -413,15 +567,17 @@ export default function Busqueda() {
                           : <span className="empty-cell">-</span>}
                       </td>
                       <td>
-                        {userRole === "Supervisor" ? (
-                          <span className="action-button disabled" title="Sin permiso">
-                            <i className="fas fa-eye-slash"></i> Ver
-                          </span>
-                        ) : (
-                          <Link to={`/alumno/${a.codigo}`} className="action-button view" title="Ver alumno">
-                            <i className="fas fa-eye"></i> Ver
-                          </Link>
-                        )}
+                        <div className="actions-cell">
+                          {(userRole === "Supervisor" || userRole === "Administrador") ? (
+                            <Link to={`/alumno/${a.codigo}`} className="btn btn-sm btn-primary" title="Ver alumno">
+                              <i className="fas fa-eye"></i> Ver
+                            </Link>
+                          ) : (
+                            <span className="action-button disabled" title="Sin permiso">
+                              <i className="fas fa-eye-slash"></i> Ver
+                            </span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );

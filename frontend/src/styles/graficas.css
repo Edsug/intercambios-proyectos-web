@@ -1,0 +1,603 @@
+/* Variables CSS específicas para gráficas del dashboard */
+.dashboard-graphics-grid {
+  --dashboard-primary: #667eea;
+  --dashboard-secondary: #764ba2;
+  --dashboard-accent: #f093fb;
+  --dashboard-success: #4facfe;
+  --dashboard-warning: #f7971e;
+  --dashboard-danger: #ff6b6b;
+  --dashboard-info: #4ecdc4;
+  --dashboard-text-primary: #2d3748;
+  --dashboard-text-secondary: #718096;
+  --dashboard-shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --dashboard-shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --dashboard-shadow-heavy: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --dashboard-border-radius: 20px;
+  --dashboard-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Paleta extendida de colores para gráficas de barras - 30 colores únicos */
+  --chart-colors: [
+    '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b',
+    '#ff6b6b', '#4ecdc4', '#f7971e', '#a18cd1', '#fbc2eb',
+    '#ff9a9e', '#fecfef', '#fad0c4', '#ffd1ff', '#a8edea',
+    '#fed6e3', '#ffecd2', '#fcb69f', '#f5576c', '#00f2fe',
+    '#38f9d7', '#fa709a', '#fee140', '#ff9472', '#f2709c',
+    '#b721ff', '#21d4fd', '#56ab2f', '#a8e6cf', '#2980b9'
+  ];
+}
+
+/* Colores adicionales para JavaScript - Variables CSS personalizadas */
+:root {
+  /* Paleta de colores vibrantes para barras */
+  --bar-color-1: #667eea;  /* Azul índigo */
+  --bar-color-2: #764ba2;  /* Púrpura profundo */
+  --bar-color-3: #f093fb;  /* Rosa magenta */
+  --bar-color-4: #4facfe;  /* Azul cielo */
+  --bar-color-5: #43e97b;  /* Verde esmeralda */
+  --bar-color-6: #ff6b6b;  /* Rojo coral */
+  --bar-color-7: #4ecdc4;  /* Turquesa */
+  --bar-color-8: #f7971e;  /* Naranja vibrante */
+  --bar-color-9: #a18cd1;  /* Lavanda */
+  --bar-color-10: #fbc2eb; /* Rosa pastel */
+  
+  /* Colores complementarios */
+  --bar-color-11: #ff9a9e; /* Rosa coral claro */
+  --bar-color-12: #fecfef; /* Rosa muy claro */
+  --bar-color-13: #fad0c4; /* Durazno */
+  --bar-color-14: #ffd1ff; /* Rosa lavanda */
+  --bar-color-15: #a8edea; /* Azul agua */
+  --bar-color-16: #fed6e3; /* Rosa suave */
+  --bar-color-17: #ffecd2; /* Crema */
+  --bar-color-18: #fcb69f; /* Naranja suave */
+  --bar-color-19: #f5576c; /* Rojo frambuesa */
+  --bar-color-20: #00f2fe; /* Cian brillante */
+  
+  /* Colores naturales y terrosos */
+  --bar-color-21: #38f9d7; /* Verde agua */
+  --bar-color-22: #fa709a; /* Rosa intenso */
+  --bar-color-23: #fee140; /* Amarillo brillante */
+  --bar-color-24: #ff9472; /* Naranja sunset */
+  --bar-color-25: #f2709c; /* Rosa fucsia */
+  --bar-color-26: #b721ff; /* Púrpura galaxy */
+  --bar-color-27: #21d4fd; /* Azul eléctrico */
+  --bar-color-28: #56ab2f; /* Verde lima */
+  --bar-color-29: #a8e6cf; /* Verde menta */
+  --bar-color-30: #2980b9; /* Azul océano */
+  
+  /* Colores adicionales para mayor variedad */
+  --bar-color-31: #e74c3c; /* Rojo intenso */
+  --bar-color-32: #9b59b6; /* Púrpura */
+  --bar-color-33: #3498db; /* Azul claro */
+  --bar-color-34: #1abc9c; /* Verde turquesa */
+  --bar-color-35: #f39c12; /* Naranja dorado */
+  --bar-color-36: #e67e22; /* Naranja oscuro */
+  --bar-color-37: #95a5a6; /* Gris azulado */
+  --bar-color-38: #34495e; /* Gris oscuro */
+  --bar-color-39: #16a085; /* Verde esmeralda oscuro */
+  --bar-color-40: #27ae60; /* Verde */
+  
+  /* Colores metálicos y especiales */
+  --bar-color-41: #d4af37; /* Dorado */
+  --bar-color-42: #c0392b; /* Rojo oscuro */
+  --bar-color-43: #8e44ad; /* Púrpura medio */
+  --bar-color-44: #2c3e50; /* Azul marino */
+  --bar-color-45: #f1c40f; /* Amarillo */
+  --bar-color-46: #e8a317; /* Amarillo mostaza */
+  --bar-color-47: #d68910; /* Dorado oscuro */
+  --bar-color-48: #a569bd; /* Púrpura claro */
+  --bar-color-49: #5dade2; /* Azul claro */
+  --bar-color-50: #58d68d; /* Verde claro */
+}
+
+/* Grid para las gráficas del dashboard */
+.dashboard-graphics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 2.5rem;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+/* Tarjeta individual de gráfica del dashboard */
+.dashboard-graphic-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--dashboard-border-radius);
+  box-shadow: var(--dashboard-shadow-light);
+  padding: 2.5rem 2rem 2rem 2rem;
+  min-height: 380px;
+  min-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  transition: var(--dashboard-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto de hover mejorado para gráficas del dashboard */
+.dashboard-graphic-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--dashboard-shadow-heavy);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+/* Efecto de brillo sutil para gráficas del dashboard */
+.dashboard-graphic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.4), 
+    transparent
+  );
+  transition: left 0.5s;
+  z-index: 1;
+}
+
+.dashboard-graphic-card:hover::before {
+  left: 100%;
+}
+
+/* Título de la gráfica del dashboard */
+.dashboard-graphic-card h3,
+.dashboard-graphic-card h4 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: var(--dashboard-text-primary);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(135deg, var(--dashboard-primary), var(--dashboard-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Línea decorativa bajo el título de gráficas del dashboard */
+.dashboard-graphic-card h3::after,
+.dashboard-graphic-card h4::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--dashboard-accent), var(--dashboard-info));
+  border-radius: 2px;
+}
+
+/* Contenedor del canvas para gráficas del dashboard */
+.dashboard-graphic-card .chart-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  z-index: 2;
+}
+
+/* Ajuste para el canvas de Chart.js en dashboard */
+.dashboard-graphic-card canvas {
+  max-width: 100% !important;
+  max-height: 240px !important;
+  margin: 0 auto;
+  border-radius: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Leyenda debajo de la gráfica del dashboard */
+.dashboard-graphic-card .chartjs-legend {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--dashboard-text-secondary);
+  z-index: 2;
+  position: relative;
+}
+
+/* Amplia variedad de colores para gráficas del dashboard - 20 combinaciones únicas */
+
+/* Tarjeta 1 - Azul agua a rosa suave */
+.dashboard-graphic-card:nth-child(1) {
+  background: linear-gradient(145deg, #a8edea 0%, #fed6e3 100%);
+}
+
+/* Tarjeta 2 - Melocotón a naranja suave */
+.dashboard-graphic-card:nth-child(2) {
+  background: linear-gradient(145deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+/* Tarjeta 3 - Rosa coral a lila */
+.dashboard-graphic-card:nth-child(3) {
+  background: linear-gradient(145deg, #ff9a9e 0%, #fecfef 100%);
+}
+
+/* Tarjeta 4 - Púrpura suave a rosa */
+.dashboard-graphic-card:nth-child(4) {
+  background: linear-gradient(145deg, #a18cd1 0%, #fbc2eb 100%);
+}
+
+/* Tarjeta 5 - Rosa pálido a lila */
+.dashboard-graphic-card:nth-child(5) {
+  background: linear-gradient(145deg, #fad0c4 0%, #ffd1ff 100%);
+}
+
+/* Tarjeta 6 - Azul profundo a púrpura */
+.dashboard-graphic-card:nth-child(6) {
+  background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(6) h3,
+.dashboard-graphic-card:nth-child(6) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 7 - Rosa magenta a rojo */
+.dashboard-graphic-card:nth-child(7) {
+  background: linear-gradient(145deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(7) h3,
+.dashboard-graphic-card:nth-child(7) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 8 - Azul cielo a cian */
+.dashboard-graphic-card:nth-child(8) {
+  background: linear-gradient(145deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(8) h3,
+.dashboard-graphic-card:nth-child(8) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 9 - Verde esmeralda a turquesa */
+.dashboard-graphic-card:nth-child(9) {
+  background: linear-gradient(145deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* Tarjeta 10 - Rosa a amarillo */
+.dashboard-graphic-card:nth-child(10) {
+  background: linear-gradient(145deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Tarjeta 11 - Naranja sunset a rosa */
+.dashboard-graphic-card:nth-child(11) {
+  background: linear-gradient(145deg, #ff9472 0%, #f2709c 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(11) h3,
+.dashboard-graphic-card:nth-child(11) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 12 - Púrpura galaxy a azul */
+.dashboard-graphic-card:nth-child(12) {
+  background: linear-gradient(145deg, #b721ff 0%, #21d4fd 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(12) h3,
+.dashboard-graphic-card:nth-child(12) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 13 - Verde lima a amarillo */
+.dashboard-graphic-card:nth-child(13) {
+  background: linear-gradient(145deg, #56ab2f 0%, #a8e6cf 100%);
+}
+
+/* Tarjeta 14 - Azul oceano a verde */
+.dashboard-graphic-card:nth-child(14) {
+  background: linear-gradient(145deg, #2980b9 0%, #6bb6ff 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(14) h3,
+.dashboard-graphic-card:nth-child(14) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 15 - Rosa pastel a lavanda */
+.dashboard-graphic-card:nth-child(15) {
+  background: linear-gradient(145deg, #ffeef8 0%, #e6e6fa 100%);
+  border: 2px solid #d8b4fe;
+}
+
+/* Tarjeta 16 - Coral a durazno */
+.dashboard-graphic-card:nth-child(16) {
+  background: linear-gradient(145deg, #ff7e5f 0%, #feb47b 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(16) h3,
+.dashboard-graphic-card:nth-child(16) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 17 - Mint a azul claro */
+.dashboard-graphic-card:nth-child(17) {
+  background: linear-gradient(145deg, #00c9ff 0%, #92fe9d 100%);
+}
+
+/* Tarjeta 18 - Sunset dramático */
+.dashboard-graphic-card:nth-child(18) {
+  background: linear-gradient(145deg, #fc4a1a 0%, #f7b733 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(18) h3,
+.dashboard-graphic-card:nth-child(18) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 19 - Púrpura real a rosa */
+.dashboard-graphic-card:nth-child(19) {
+  background: linear-gradient(145deg, #8360c3 0%, #2ebf91 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(19) h3,
+.dashboard-graphic-card:nth-child(19) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Tarjeta 20 - Aurora boreal */
+.dashboard-graphic-card:nth-child(20) {
+  background: linear-gradient(145deg, #00f5ff 0%, #fc00ff 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(20) h3,
+.dashboard-graphic-card:nth-child(20) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Patrón que se repite después de 20 tarjetas con variaciones */
+.dashboard-graphic-card:nth-child(n+21) {
+  background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.dashboard-graphic-card:nth-child(n+21) h3,
+.dashboard-graphic-card:nth-child(n+21) h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+/* Indicador de categoría para gráficas del dashboard */
+.dashboard-graphic-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 30px 30px 0;
+  border-color: transparent rgba(255, 255, 255, 0.3) transparent transparent;
+}
+
+/* Loading state para gráficas del dashboard */
+.dashboard-graphic-card.loading {
+  background: linear-gradient(145deg, #f7fafc, #edf2f7);
+  animation: dashboard-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dashboard-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .8;
+  }
+}
+
+/* Estados adicionales para gráficas del dashboard */
+.dashboard-graphic-card.success {
+  border-left: 5px solid var(--dashboard-success);
+}
+
+.dashboard-graphic-card.warning {
+  border-left: 5px solid var(--dashboard-warning);
+}
+
+.dashboard-graphic-card.info {
+  border-left: 5px solid var(--dashboard-info);
+}
+
+/* Responsive mejorado para gráficas del dashboard */
+@media (max-width: 768px) {
+  .dashboard-graphics-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0.5rem;
+  }
+  
+  .dashboard-graphic-card {
+    min-width: unset;
+    min-height: 300px;
+    padding: 1.5rem 1rem;
+    margin: 0;
+  }
+  
+  .dashboard-graphic-card h3,
+  .dashboard-graphic-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-graphic-card canvas {
+    max-height: 200px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-graphics-grid {
+    gap: 1rem;
+  }
+  
+  .dashboard-graphic-card {
+    min-height: 280px;
+    padding: 1rem;
+    border-radius: 16px;
+  }
+  
+  .dashboard-graphic-card h3,
+  .dashboard-graphic-card h4 {
+    font-size: 1rem;
+  }
+  
+  .dashboard-graphic-card canvas {
+    max-height: 180px !important;
+  }
+}
+
+/* Animaciones de entrada para gráficas del dashboard */
+.dashboard-graphic-card {
+  animation: dashboard-slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dashboard-slideInUp {
+  from {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Retrasos escalonados para la animación de gráficas del dashboard */
+.dashboard-graphic-card:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-graphic-card:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-graphic-card:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-graphic-card:nth-child(4) { animation-delay: 0.4s; }
+.dashboard-graphic-card:nth-child(5) { animation-delay: 0.5s; }
+.dashboard-graphic-card:nth-child(6) { animation-delay: 0.6s; }
+.dashboard-graphic-card:nth-child(7) { animation-delay: 0.7s; }
+.dashboard-graphic-card:nth-child(8) { animation-delay: 0.8s; }
+.dashboard-graphic-card:nth-child(9) { animation-delay: 0.9s; }
+.dashboard-graphic-card:nth-child(10) { animation-delay: 1.0s; }
+
+/* Mejoras para accesibilidad en gráficas del dashboard */
+.dashboard-graphic-card:focus {
+  outline: 3px solid var(--dashboard-primary);
+  outline-offset: 2px;
+}
+
+/* Modo oscuro específico para gráficas del dashboard */
+@media (prefers-color-scheme: dark) {
+  .dashboard-graphics-grid {
+    --dashboard-text-primary: #f7fafc;
+    --dashboard-text-secondary: #a0aec0;
+  }
+  
+  .dashboard-graphic-card {
+    background: linear-gradient(145deg, #2d3748 0%, #4a5568 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--dashboard-text-primary);
+  }
+}
+
+/* Estilos específicos por categoría de datos del dashboard */
+.dashboard-graphic-card[data-category="academic"] {
+  background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.dashboard-graphic-card[data-category="academic"] h3,
+.dashboard-graphic-card[data-category="academic"] h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+.dashboard-graphic-card[data-category="demographic"] {
+  background: linear-gradient(145deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.dashboard-graphic-card[data-category="demographic"] h3,
+.dashboard-graphic-card[data-category="demographic"] h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+.dashboard-graphic-card[data-category="mobility"] {
+  background: linear-gradient(145deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.dashboard-graphic-card[data-category="mobility"] h3,
+.dashboard-graphic-card[data-category="mobility"] h4 {
+  color: white;
+  -webkit-text-fill-color: white;
+}
+
+.dashboard-graphic-card[data-category="scholarship"] {
+  background: linear-gradient(145deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* Clase helper para acceder fácilmente a los colores desde JavaScript */
+.chart-color-palette {
+  display: none; /* Invisible, solo para referencia */
+}
+
+/* Variables CSS para fácil acceso desde JavaScript */
+.chart-color-palette::before {
+  content: '#667eea,#764ba2,#f093fb,#4facfe,#43e97b,#ff6b6b,#4ecdc4,#f7971e,#a18cd1,#fbc2eb,#ff9a9e,#fecfef,#fad0c4,#ffd1ff,#a8edea,#fed6e3,#ffecd2,#fcb69f,#f5576c,#00f2fe,#38f9d7,#fa709a,#fee140,#ff9472,#f2709c,#b721ff,#21d4fd,#56ab2f,#a8e6cf,#2980b9,#e74c3c,#9b59b6,#3498db,#1abc9c,#f39c12,#e67e22,#95a5a6,#34495e,#16a085,#27ae60,#d4af37,#c0392b,#8e44ad,#2c3e50,#f1c40f,#e8a317,#d68910,#a569bd,#5dade2,#58d68d';
+}
+
+/* Función JavaScript helper (comentario de referencia) */
+/*
+function getChartColors(count = 10) {
+  const colors = [
+    '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b',
+    '#ff6b6b', '#4ecdc4', '#f7971e', '#a18cd1', '#fbc2eb',
+    '#ff9a9e', '#fecfef', '#fad0c4', '#ffd1ff', '#a8edea',
+    '#fed6e3', '#ffecd2', '#fcb69f', '#f5576c', '#00f2fe',
+    '#38f9d7', '#fa709a', '#fee140', '#ff9472', '#f2709c',
+    '#b721ff', '#21d4fd', '#56ab2f', '#a8e6cf', '#2980b9',
+    '#e74c3c', '#9b59b6', '#3498db', '#1abc9c', '#f39c12',
+    '#e67e22', '#95a5a6', '#34495e', '#16a085', '#27ae60',
+    '#d4af37', '#c0392b', '#8e44ad', '#2c3e50', '#f1c40f',
+    '#e8a317', '#d68910', '#a569bd', '#5dade2', '#58d68d'
+  ];
+  
+  return colors.slice(0, count);
+}
+
+// Para usar en Chart.js:
+const chartData = {
+  datasets: [{
+    backgroundColor: getChartColors(yourDataLength),
+    borderColor: getChartColors(yourDataLength).map(color => color + '80'), // Agregar transparencia
+    data: yourData
+  }]
+};
+*/

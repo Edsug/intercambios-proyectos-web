@@ -2,17 +2,32 @@ import React, { useState, useEffect } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
 import "../styles/Dashboard.css";
-import { BASE_URL } from "../config"; // Asegúrate de importar BASE_URL
+import "../styles/graficas.css"; // Usa graficas.css para el diseño de gráficas
+import { BASE_URL } from "../config";
 
 Chart.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
-// Paletas de colores para las gráficas (fuera del componente)
-const palette1 = [
-  "#8e44ad", "#e84393", "#f1c40f", "#16a085", "#2980b9", "#e67e22", "#2ecc71", "#9b59b6", "#f39c12", "#27ae60", "#3498db"
-];
-const palette2 = [
-  "#ff7675", "#00b894", "#fdcb6e", "#0984e3", "#fd79a8", "#636e72", "#00cec9", "#fab1a0", "#6c5ce7", "#d35400", "#b2bec3"
-];
+// Helper para obtener colores desde CSS (usando la clase oculta oculta chart-color-palette)
+function getChartColors(count = 10) {
+  const palette = getComputedStyle(document.documentElement)
+    .getPropertyValue('--chart-colors')
+    .replace(/[\[\]']/g, "") // eslint-disable-line no-useless-escape
+    .split(',')
+    .map(c => c.trim())
+    .filter(Boolean);
+  // Fallback si no encuentra la variable CSS
+  if (!palette.length || palette[0].startsWith('--')) {
+    return [
+      '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b',
+      '#ff6b6b', '#4ecdc4', '#f7971e', '#a18cd1', '#fbc2eb',
+      '#ff9a9e', '#fecfef', '#fad0c4', '#ffd1ff', '#a8edea',
+      '#fed6e3', '#ffecd2', '#fcb69f', '#f5576c', '#00f2fe',
+      '#38f9d7', '#fa709a', '#fee140', '#ff9472', '#f2709c',
+      '#b721ff', '#21d4fd', '#56ab2f', '#a8e6cf', '#2980b9'
+    ];
+  }
+  return palette.slice(0, count);
+}
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -54,7 +69,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por nivel académico",
             data: data.map(d => d.total),
-            backgroundColor: ["#3498db", "#2ecc71", "#e67e22"]
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -67,7 +82,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Promedio por semestre",
             data: data.map(d => d.promedio),
-            backgroundColor: "#9b59b6"
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -80,7 +95,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por carrera (Licenciatura)",
             data: data.map(d => d.total),
-            backgroundColor: "#2980b9"
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -93,7 +108,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por maestría",
             data: data.map(d => d.total),
-            backgroundColor: "#27ae60"
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -106,7 +121,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por doctorado",
             data: data.map(d => d.total),
-            backgroundColor: "#e67e22"
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -129,7 +144,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por género",
             data: valores,
-            backgroundColor: palette1.slice(0, labels.length)
+            backgroundColor: getChartColors(labels.length)
           }]
         });
       });
@@ -142,7 +157,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por nacionalidad",
             data: data.map(d => d.total),
-            backgroundColor: ["#8e44ad", "#f39c12"]
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -155,7 +170,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos nacionales por estado",
             data: data.map(d => d.total),
-            backgroundColor: "#16a085"
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -168,7 +183,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por programa",
             data: data.map(d => d.total),
-            backgroundColor: palette1.slice(0, data.length)
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -181,7 +196,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por tipo de movilidad",
             data: data.map(d => d.total),
-            backgroundColor: palette2.slice(0, data.length)
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -194,7 +209,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos por tipo de beca",
             data: data.map(d => d.total),
-            backgroundColor: palette1.slice(0, data.length)
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -207,7 +222,7 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos con discapacidad",
             data: data.map(d => d.total),
-            backgroundColor: palette2.slice(0, data.length)
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
@@ -220,36 +235,29 @@ const Dashboard = () => {
           datasets: [{
             label: "Alumnos de comunidad nativa",
             data: data.map(d => d.total),
-            backgroundColor: palette1.slice(0, data.length)
+            backgroundColor: getChartColors(data.length)
           }]
         });
       });
   }, []);
 
-  const pieOptions = {
+  const barOptions = {
+    responsive: true,
     plugins: {
-      legend: {
-        display: true,
-        position: "bottom",
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const label = context.label || '';
-            const value = context.parsed || 0;
-            return `${label}: ${value}`;
-          }
-        }
-      },
-      datalabels: {
-        color: '#222',
-        font: { weight: 'bold', size: 14 },
-        formatter: (value, context) => {
-          return value;
-        },
-        anchor: 'center',
-        align: 'center',
-      }
+      legend: { display: true, position: "top", labels: { font: { size: 16 } } },
+      tooltip: { enabled: true, bodyFont: { size: 14 } }
+    },
+    scales: {
+      x: { ticks: { font: { size: 14 } } },
+      y: { ticks: { font: { size: 14 } }, beginAtZero: true }
+    }
+  };
+
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: "bottom", labels: { font: { size: 16 } } },
+      tooltip: { enabled: true, bodyFont: { size: 14 } }
     }
   };
 
@@ -283,82 +291,84 @@ const Dashboard = () => {
         {nivelesData && nivelesData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por nivel académico</h3>
-            <Bar data={nivelesData} />
+            <Bar data={nivelesData} options={barOptions} height={220} />
           </div>
         )}
         {promedioSemestreData && promedioSemestreData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Promedio por semestre</h3>
-            <Bar data={promedioSemestreData} />
+            <Bar data={promedioSemestreData} options={barOptions} height={220} />
           </div>
         )}
         {carrerasData && carrerasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por carrera (Licenciatura)</h3>
-            <Bar data={carrerasData} />
+            <Bar data={carrerasData} options={barOptions} height={220} />
           </div>
         )}
         {maestriasData && maestriasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por maestría</h3>
-            <Bar data={maestriasData} />
+            <Bar data={maestriasData} options={barOptions} height={220} />
           </div>
         )}
         {doctoradosData && doctoradosData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por doctorado</h3>
-            <Bar data={doctoradosData} />
+            <Bar data={doctoradosData} options={barOptions} height={220} />
           </div>
         )}
         {generoData && generoData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por género</h3>
-            <Pie data={generoData} options={pieOptions} />
+            <Pie data={generoData} options={pieOptions} height={220} />
           </div>
         )}
         {nacionalidadData && nacionalidadData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por nacionalidad</h3>
-            <Pie data={nacionalidadData} options={pieOptions} />
+            <Pie data={nacionalidadData} options={pieOptions} height={220} />
           </div>
         )}
         {estadosData && estadosData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos nacionales por estado</h3>
-            <Pie data={estadosData} options={pieOptions} />
+            <Pie data={estadosData} options={pieOptions} height={220} />
           </div>
         )}
         {programasData && programasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por programa</h3>
-            <Pie data={programasData} options={pieOptions} />
+            <Pie data={programasData} options={pieOptions} height={220} />
           </div>
         )}
         {tiposMovilidadData && tiposMovilidadData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por tipo de movilidad</h3>
-            <Pie data={tiposMovilidadData} options={pieOptions} />
+            <Pie data={tiposMovilidadData} options={pieOptions} height={220} />
           </div>
         )}
         {becasData && becasData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos por tipo de beca</h3>
-            <Pie data={becasData} options={pieOptions} />
+            <Pie data={becasData} options={pieOptions} height={220} />
           </div>
         )}
         {discapacidadData && discapacidadData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos con discapacidad</h3>
-            <Pie data={discapacidadData} options={pieOptions} />
+            <Pie data={discapacidadData} options={pieOptions} height={220} />
           </div>
         )}
         {comunidadData && comunidadData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
             <h3>Alumnos de comunidad nativa</h3>
-            <Pie data={comunidadData} options={pieOptions} />
+            <Pie data={comunidadData} options={pieOptions} height={220} />
           </div>
         )}
       </div>
+      {/* Elemento oculto para exponer la paleta de colores al JS si se requiere */}
+      <div className="chart-color-palette" />
     </div>
   );
 };
