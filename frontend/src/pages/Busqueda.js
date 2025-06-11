@@ -13,11 +13,11 @@ import {
   getDoctoradosData,
   getGeneroData,
   getNacionalidadData,
-  getEstadosData,
   getProgramasData,
   getBecasData,
   getDiscapacidadData,
   getComunidadData,
+  getEstadoProgramaData, // <-- Agrega esta línea
   barOptions
 } from '../config/graficasBusqueda';
 
@@ -50,11 +50,11 @@ export default function Busqueda() {
   const doctoradosData = alumnos.length > 0 ? getDoctoradosData(alumnos) : null;
   const generoData = alumnos.length > 0 ? getGeneroData(alumnos) : null;
   const nacionalidadData = alumnos.length > 0 ? getNacionalidadData(alumnos) : null;
-  const estadosData = alumnos.length > 0 ? getEstadosData(alumnos) : null;
   const programasData = alumnos.length > 0 ? getProgramasData(alumnos) : null;
   const becasData = alumnos.length > 0 ? getBecasData(alumnos) : null;
   const discapacidadData = alumnos.length > 0 ? getDiscapacidadData(alumnos) : null;
   const comunidadData = alumnos.length > 0 ? getComunidadData(alumnos) : null;
+  const estadoProgramaData = alumnos.length > 0 ? getEstadoProgramaData(alumnos) : null;
 
   const pieOptions = {
     plugins: {
@@ -283,12 +283,6 @@ export default function Busqueda() {
                 <Pie data={nacionalidadData} options={pieOptions} height={220} />
               </div>
             )}
-            {estadosData && estadosData.labels.length > 0 && (
-              <div className="dashboard-graphic-card">
-                <h4>Alumnos nacionales por estado</h4>
-                <Pie data={estadosData} options={pieOptions} height={220} />
-              </div>
-            )}
             {programasData && programasData.labels.length > 0 && (
               <div className="dashboard-graphic-card">
                 <h4>Alumnos por programa</h4>
@@ -319,6 +313,12 @@ export default function Busqueda() {
               <div className="dashboard-graphic-card">
                 <h4>Alumnos de comunidad nativa</h4>
                 <Pie data={comunidadData} options={pieOptions} height={220} />
+              </div>
+            )}
+            {estadoProgramaData && estadoProgramaData.labels.length > 0 && (
+              <div className="dashboard-graphic-card">
+                <h4>Alumnos por estado del programa</h4>
+                <Pie data={estadoProgramaData} options={pieOptions} height={220} />
               </div>
             )}
           </div>

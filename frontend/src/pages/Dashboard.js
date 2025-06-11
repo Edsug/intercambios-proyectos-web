@@ -166,7 +166,7 @@ const Dashboard = () => {
       .then(res => res.json())
       .then(data => {
         setEstadosData({
-          labels: data.map(d => d.nombre),
+          labels: data.map(d => d.nombre), // Ahora usa 'nombre'
           datasets: [{
             label: "Alumnos nacionales por estado",
             data: data.map(d => d.total),

@@ -135,23 +135,24 @@ export function getNacionalidadData(alumnos) {
   };
 }
 
-export function getEstadosData(alumnos) {
-  const estados = {};
-  alumnos.forEach(a => {
-    if (a.tipo_destino === "NACIONAL") {
-      const e = a.estado_destino || "Sin dato";
-      estados[e] = (estados[e] || 0) + 1;
-    }
-  });
-  return {
-    labels: Object.keys(estados),
-    datasets: [{
-      label: "Alumnos nacionales por estado",
-      data: Object.values(estados),
-      backgroundColor: "#16a085"
-    }]
-  };
-}
+// Elimina o comenta la función getEstadosData si ya no la necesitas
+// export function getEstadosData(alumnos) {
+//   const estados = {};
+//   alumnos.forEach(a => {
+//     if (a.tipo_destino === "NACIONAL") {
+//       const e = a.estado_destino || "Sin dato";
+//       estados[e] = (estados[e] || 0) + 1;
+//     }
+//   });
+//   return {
+//     labels: Object.keys(estados),
+//     datasets: [{
+//       label: "Alumnos nacionales por estado",
+//       data: Object.values(estados),
+//       backgroundColor: "#16a085"
+//     }]
+//   };
+// }
 
 export function getProgramasData(alumnos) {
   const programas = {};
@@ -218,6 +219,23 @@ export function getComunidadData(alumnos) {
       label: "Alumnos de comunidad nativa",
       data: Object.values(comunidad),
       backgroundColor: palette1.slice(0, Object.keys(comunidad).length)
+    }]
+  };
+}
+
+export function getEstadoProgramaData(alumnos) {
+  const estadosPrograma = {};
+  alumnos.forEach(a => {
+    const estado = a.estado_programa || "Sin dato";
+    estadosPrograma[estado] = (estadosPrograma[estado] || 0) + 1;
+  });
+  const labels = Object.keys(estadosPrograma);
+  return {
+    labels,
+    datasets: [{
+      label: "Alumnos por estado del programa",
+      data: Object.values(estadosPrograma),
+      backgroundColor: palette2.slice(0, labels.length)
     }]
   };
 }

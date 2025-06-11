@@ -19,6 +19,9 @@ const Header = ({ toggleSidebar, isOpen }) => {
   };
 
   const handleLogout = () => {
+    // Limpia datos de sesión
+    localStorage.clear(); // O usa localStorage.removeItem('token') si solo guardas el token
+    sessionStorage.clear(); // Si usas sessionStorage
     closeUserMenu();
     window.location.reload();
   };
