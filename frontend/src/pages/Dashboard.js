@@ -349,7 +349,7 @@ const Dashboard = () => {
         )}
         {estadosData && estadosData.labels.length > 0 && (
           <div className="dashboard-graphic-card">
-            <h3>Alumnos nacionales por estado</h3>
+            <h3>Alumnos por estado del programa</h3>
             <Pie data={estadosData} options={pieOptions} height={220} />
           </div>
         )}
